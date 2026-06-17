@@ -37,5 +37,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
   各ディレクトリの `README.md` には、そのページ特有のドメイン知識、APIの仕様、状態管理のルールなどが記載されています。作業を開始する前にそれらを把握し、コードに反映させてください。
 - **局所的ルールの優先:**
   本ファイル（AGENTS.md）の全体ルールと、ディレクトリ固有の `README.md` の内容が競合する場合は、より局所的である `README.md` の指示を優先してください。
+- **ページ固有モジュールの配置ルール (Private Folders for Local Modules):**
+  ページやセクションに完全に依存する固有のコンポーネントや型定義は、ディレクトリ名の先頭にアンダースコア（`_`）を付けたローカルディレクトリ（例: `_components/`, `_types/`）を作成して配置してください。
+  - 例: `/app/page/_components/`, `/app/page/section/_components/`, `/app/page/_types/`
+  - これらのローカルディレクトリは、スコープを明確にするために必要に応じて子孫ディレクトリの任意の深さに作成して構いません。
 
 <!-- END:nextjs-agent-rules -->
