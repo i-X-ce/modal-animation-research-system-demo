@@ -62,7 +62,7 @@ const ProductCardModalContent = ({
   };
 
   return (
-    <div className="flex min-w-3xl">
+    <div className="flex w-3xl">
       <motion.div layoutId={lId("IMAGE")} style={{ flexShrink: 0 }}>
         <CardMedia
           component={"img"}
