@@ -6,7 +6,7 @@ import CartView from "./_components/CartView";
 export default function Page() {
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="sticky">
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             YAKINIKU
