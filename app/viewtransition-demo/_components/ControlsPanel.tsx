@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+
 import {
   Box,
   FormControl,
@@ -9,27 +9,74 @@ import {
   Slider,
   Stack,
   Typography,
+  Button,
+  Paper,
 } from "@mui/material";
-import { useModalStore } from "../_stores/modalStore";
+import { AnimationType, useModalStore } from "../_stores/modalStore";
+
+type DocumentWithViewTransition = Document & {
+  startViewTransition?: (updateCallback: () => void) => void;
+};
 
 export default function ControlsPanel() {
   const { animation, setAnimation } = useModalStore();
 
+  const open = useModalStore((s) => s.open);
+  const openModal = useModalStore((s) => s.openModal);
+
+  const handleOpen = () => {
+    const update = () => {
+      openModal(
+        <Box sx={{ p: 3, minWidth: 320 }}>
+          <Typography variant="h6" gutterBottom>
+            モーダル
+          </Typography>
+          <Typography>テスト</Typography>
+        </Box>,
+        "test",
+      );
+    };
+
+    const startViewTransition = (
+      document as DocumentWithViewTransition
+    ).startViewTransition;
+
+    if (animation.type === "view" && startViewTransition) {
+      startViewTransition(update);
+      return;
+    }
+
+    update();
+  };
+
   return (
     <Box sx={{ mb: 2 }}>
-      <Stack direction="row" spacing={2} alignItems="center">
+      <Stack direction="row" spacing={2}>
         <FormControl size="small" sx={{ minWidth: 160 }}>
           <InputLabel>アニメーション</InputLabel>
           <Select
             value={animation.type}
             label="アニメーション"
-            onChange={(e) => setAnimation({ type: e.target.value as any })}
+            onChange={(e) =>
+              setAnimation({ type: e.target.value as AnimationType })
+            }
           >
             <MenuItem value="view">View Transitions</MenuItem>
             <MenuItem value="classic">Classic (Fade/Slide)</MenuItem>
             <MenuItem value="none">None</MenuItem>
           </Select>
         </FormControl>
+
+        {!open && (
+          <Paper
+            sx={{ p: 2, minWidth: 160 }}
+            style={{ viewTransitionName: "test" }}
+          >
+            <Typography>テスト</Typography>
+          </Paper>
+        )}
+
+        <Button onClick={handleOpen}>モーダルテスト</Button>
 
         <Box sx={{ width: 200 }}>
           <Typography variant="caption">

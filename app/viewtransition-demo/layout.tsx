@@ -1,5 +1,6 @@
 import React from "react";
-import ProductModal from "./_components/ProductModal";
+import { CssBaseline } from "@mui/material";
+import Modal from "./_components/Modal";
 
 export const metadata = {
   title: "ViewTransition Demo",
@@ -13,7 +14,8 @@ export default function ViewTransitionLayout({
   return (
     <>
       {children}
-      <ProductModal />
+      <Modal />
+      <CssBaseline />
     </>
   );
 }

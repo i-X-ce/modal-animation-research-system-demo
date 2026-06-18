@@ -1,17 +1,24 @@
 "use client";
 import { create } from "zustand";
+import { products } from "../_consts/products";
 
-type CartItem = { productId: string; qty: number };
+export type CartItem = { productId: string; qty: number };
 
-type CartState = {
+type CartStore = {
   items: CartItem[];
+};
+
+type CartAction = {
   add: (productId: string, qty?: number) => void;
   remove: (productId: string) => void;
+  getTotalPrice: () => number;
   updateQty: (productId: string, qty: number) => void;
   clear: () => void;
 };
 
-export const useCartStore = create<CartState>((set) => ({
+type CartState = CartStore & CartAction;
+
+export const useCartStore = create<CartState>((set, get) => ({
   items: [],
   add(productId, qty = 1) {
     set((s) => {
@@ -27,6 +34,14 @@ export const useCartStore = create<CartState>((set) => ({
   },
   remove(productId) {
     set((s) => ({ items: s.items.filter((i) => i.productId !== productId) }));
+  },
+  getTotalPrice() {
+    const { items } = get();
+    return items.reduce((total, item) => {
+      const product = products.find((p) => p.id === item.productId);
+      if (!product) return total;
+      return total + product.price * item.qty;
+    }, 0);
   },
   updateQty(productId, qty) {
     set((s) => ({

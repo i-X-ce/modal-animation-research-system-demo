@@ -1,4 +1,6 @@
-export const products = [
+import { Product } from "../_types/product";
+
+export const products: Product[] = [
   {
     id: "p1",
     name: "カルビ",
@@ -27,4 +29,4 @@ export const products = [
     img: "/images/meat4.jpg",
     desc: "旨味たっぷりハラミ",
   },
-];
+] as const;

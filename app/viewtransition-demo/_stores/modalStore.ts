@@ -1,33 +1,80 @@
 "use client";
+import { ReactNode } from "react";
+import { flushSync } from "react-dom";
 import { create } from "zustand";
 
-type AnimationType = "view" | "classic" | "none";
+export type AnimationType = "view" | "classic" | "none";
 
-type ModalState = {
+type ModalStore = {
   open: boolean;
-  productId: string | null;
+  name: string | null;
+  content: ReactNode | null;
   animation: {
     type: AnimationType;
-    duration: number;
     easing: string;
+    duration: number;
     coverage: number;
   };
-  openProduct: (id: string) => void;
-  close: () => void;
-  setAnimation: (patch: Partial<ModalState["animation"]>) => void;
 };
+
+type ModalAction = {
+  openModal: (content: ReactNode, name?: string) => void;
+  closeModal: () => void;
+  setAnimation: (animation: Partial<ModalStore["animation"]>) => void;
+};
+
+type ModalState = ModalStore & ModalAction;
 
 export const useModalStore = create<ModalState>((set) => ({
   open: false,
-  productId: null,
+  name: null,
+  content: null,
   animation: { type: "view", duration: 450, easing: "ease", coverage: 0.8 },
-  openProduct(id: string) {
-    set(() => ({ open: true, productId: id }));
+  openModal(content: ReactNode, name?: string) {
+    set(() => ({ open: true, content, name: name || null }));
   },
-  close() {
-    set(() => ({ open: false, productId: null }));
+  closeModal() {
+    set(() => ({ open: false }));
   },
   setAnimation(patch) {
     set((s) => ({ animation: { ...s.animation, ...patch } }));
   },
 }));
+
+export const useToggleModal = () => {
+  const openModal = useModalStore((s) => s.openModal);
+  const closeModal = useModalStore((s) => s.closeModal);
+  const open = useModalStore((s) => s.open);
+
+  const handleOpenModal: ModalAction["openModal"] = (...props) => {
+    if (!document.startViewTransition) {
+      openModal(...props);
+      return;
+    }
+
+    document.startViewTransition(() => {
+      flushSync(() => {
+        openModal(...props);
+      });
+    });
+  };
+
+  const handleCloseModal: ModalAction["closeModal"] = (...props) => {
+    if (!document.startViewTransition) {
+      closeModal(...props);
+      return;
+    }
+
+    document.startViewTransition(() => {
+      flushSync(() => {
+        closeModal(...props);
+      });
+    });
+  };
+
+  return {
+    open,
+    handleOpenModal,
+    handleCloseModal,
+  };
+};

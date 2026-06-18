@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+
 import {
   Drawer,
   Box,
@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useCartStore } from "../_stores/cartStore";
-import { products } from "../data/products";
+import { products } from "../_consts/products";
 
 export default function CartDrawer({
   open,
@@ -21,7 +21,7 @@ export default function CartDrawer({
   open: boolean;
   onClose: () => void;
 }) {
-  const { items, remove, updateQty, clear } = useCartStore();
+  const { items, remove, clear } = useCartStore();
 
   const rows = items.map((it) => ({
     ...it,

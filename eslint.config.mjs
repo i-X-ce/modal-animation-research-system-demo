@@ -28,6 +28,12 @@ const eslintConfig = defineConfig([
           ],
         },
       ],
+      "@typescript-eslint/no-empty-interface": [
+        "error",
+        {
+          allowSingleExtends: true,
+        },
+      ],
     },
   },
 ]);

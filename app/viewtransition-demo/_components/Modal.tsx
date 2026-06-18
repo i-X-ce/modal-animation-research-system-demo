@@ -1,0 +1,42 @@
+"use client";
+
+import { Paper } from "@mui/material";
+import { useModalStore } from "../_stores/modalStore";
+import { AnimatePresence, motion } from "motion/react";
+import clsx from "clsx";
+import { MouseEventHandler } from "react";
+
+const Modal = () => {
+  const closeModal = useModalStore((s) => s.closeModal);
+  const name = useModalStore((s) => s.name);
+  const content = useModalStore((s) => s.content);
+  const open = useModalStore((s) => s.open);
+
+  const handleClose: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    closeModal();
+  };
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <motion.div
+            className={clsx(
+              "absolute inset-0 bg-black/30 backdrop-blur-lg transition-opacity duration-100",
+            )}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={handleClose}
+          />
+          <motion.div className="relative" layoutId={name || "modal"}>
+            <Paper className="overflow-hidden">{content}</Paper>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+export default Modal;
