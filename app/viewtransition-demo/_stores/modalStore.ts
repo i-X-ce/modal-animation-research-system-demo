@@ -3,6 +3,7 @@ import { Easing, Transition } from "motion";
 import { ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type AnimationType = "view" | "classic" | "none";
 
@@ -56,30 +57,40 @@ const defaultModalState: ModalStore = {
   },
 } as const;
 
-export const useModalStore = create<ModalState>((set, get) => ({
-  ...defaultModalState,
-  openModal(content: ReactNode, name?: string) {
-    const bodyElement = document.body;
-    if (bodyElement) {
-      bodyElement.style.overflow = "hidden";
-    }
-    set(() => ({ open: true, content, name: name || null }));
-  },
-  closeModal() {
-    const bodyElement = document.body;
-    if (bodyElement) {
-      bodyElement.style.overflow = "";
-    }
-    set(() => ({ open: false }));
-  },
-  setAnimation(patch) {
-    set((s) => ({ animation: { ...s.animation, ...patch } }));
-  },
-  getTransition() {
-    const { animation } = get();
-    return getTransitionFromModalAnimation(animation);
-  },
-}));
+export const useModalStore = create<ModalState>()(
+  persist(
+    (set, get) => ({
+      ...defaultModalState,
+      openModal(content: ReactNode, name?: string) {
+        const bodyElement = document.body;
+        if (bodyElement) {
+          bodyElement.style.overflow = "hidden";
+        }
+        set(() => ({ open: true, content, name: name || null }));
+      },
+      closeModal() {
+        const bodyElement = document.body;
+        if (bodyElement) {
+          bodyElement.style.overflow = "";
+        }
+        set(() => ({ open: false }));
+      },
+      setAnimation(patch) {
+        set((s) => ({ animation: { ...s.animation, ...patch } }));
+      },
+      getTransition() {
+        const { animation } = get();
+        return getTransitionFromModalAnimation(animation);
+      },
+    }),
+    {
+      name: "modal-store",
+      partialize: (state) => ({
+        animation: state.animation,
+      }),
+    },
+  ),
+);
 
 export const useToggleModal = () => {
   const openModal = useModalStore((s) => s.openModal);
