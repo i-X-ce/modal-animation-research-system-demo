@@ -11,6 +11,12 @@ const Modal = () => {
   const name = useModalStore((s) => s.name);
   const content = useModalStore((s) => s.content);
   const open = useModalStore((s) => s.open);
+  const animation = useModalStore((s) => s.animation);
+  const { coverage } = animation;
+  const size = Math.round(Math.sqrt(coverage) * 100);
+  const transition = useModalStore((s) => s.getTransition)();
+
+  console.log(animation);
 
   const handleClose: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
@@ -28,10 +34,20 @@ const Modal = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={transition}
             onClick={handleClose}
           />
-          <motion.div className="relative" layoutId={name || "modal"}>
-            <Paper className="overflow-hidden">{content}</Paper>
+          <motion.div
+            className="relative"
+            layoutId={name || "modal"}
+            transition={transition}
+          >
+            <Paper
+              className="overflow-hidden"
+              sx={{ height: `${size}dvh`, width: `${size}dvw` }}
+            >
+              {content}
+            </Paper>
           </motion.div>
         </div>
       )}

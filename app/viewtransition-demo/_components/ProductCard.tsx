@@ -42,6 +42,7 @@ const ProductCardModalContent = ({
   const [qty, setQty] = useState(1);
   const addItem = useCartStore((s) => s.add);
   const closeModal = useModalStore((s) => s.closeModal);
+  const transition = useModalStore((s) => s.getTransition)();
 
   const handleAddToCart = () => {
     addItem(id, qty);
@@ -62,22 +63,28 @@ const ProductCardModalContent = ({
   };
 
   return (
-    <div className="flex w-3xl">
-      <motion.div layoutId={lId("IMAGE")} style={{ flexShrink: 0 }}>
+    <div className="flex h-full">
+      <motion.div
+        layoutId={lId("IMAGE")}
+        style={{ flexShrink: 0 }}
+        transition={transition}
+      >
         <CardMedia
           component={"img"}
           src={"https://placehold.jp/150x150.png"}
-          sx={{ height: 300 }}
+          sx={{ height: "100%", aspectRatio: "1 / 1" }}
           alt={name}
         />
       </motion.div>
       <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, py: 4 }}>
           <Typography variant="h5" gutterBottom>
-            <motion.span layoutId={lId("NAME")}>{name}</motion.span>
+            <motion.span layoutId={lId("NAME")} transition={transition}>
+              {name}
+            </motion.span>
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            <motion.span>{desc}</motion.span>
+            <motion.span transition={transition}>{desc}</motion.span>
           </Typography>
         </Box>
 
@@ -116,7 +123,9 @@ const ProductCardModalContent = ({
               </Button>
             </Stack>
             <Typography variant="h5" color="primary" align="right">
-              <motion.span layoutId={lId("PRICE")}>￥{price * qty}</motion.span>
+              <motion.span layoutId={lId("PRICE")} transition={transition}>
+                ￥{price * qty}
+              </motion.span>
             </Typography>
           </Box>
           <Button onClick={handleAddToCart} variant="contained">
@@ -135,6 +144,7 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
   const open = useModalStore((s) => s.open);
   const isTarget = activeName === id; // モーダルの内容がこのカードの商品か
   const isOpenCard = isTarget && open; // 現在このカードが開いているか
+  const transition = useModalStore((s) => s.getTransition)();
 
   const lId = (type: keyof typeof MOTION_LAYOUT_ID) => {
     return lIdBase(id, type);
@@ -149,10 +159,10 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
       {isOpenCard ? (
         <div />
       ) : (
-        <motion.div layoutId={id}>
+        <motion.div layoutId={id} transition={transition}>
           <Card>
             <CardActionArea onClick={handleClick}>
-              <motion.div layoutId={lId("IMAGE")}>
+              <motion.div layoutId={lId("IMAGE")} transition={transition}>
                 <CardMedia
                   sx={{
                     height: 200,
@@ -162,10 +172,14 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
               </motion.div>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  <motion.span layoutId={lId("NAME")}>{name}</motion.span>
+                  <motion.span layoutId={lId("NAME")} transition={transition}>
+                    {name}
+                  </motion.span>
                 </Typography>
                 <Typography variant="h6" color="primary" align="right">
-                  <motion.span layoutId={lId("PRICE")}>￥{price}</motion.span>
+                  <motion.span layoutId={lId("PRICE")} transition={transition}>
+                    ￥{price}
+                  </motion.span>
                 </Typography>
               </CardContent>
             </CardActionArea>
