@@ -34,6 +34,7 @@ const eslintConfig = defineConfig([
           allowSingleExtends: true,
         },
       ],
+      "@typescript-eslint/no-empty-object-type": "off",
     },
   },
 ]);
