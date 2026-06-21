@@ -5,6 +5,7 @@ import { useModalStore } from "../_stores/modalStore";
 import { AnimatePresence, motion } from "motion/react";
 import clsx from "clsx";
 import { MouseEventHandler, useState } from "react";
+import ModalCloseButton from "./ModalCloseButton";
 
 const Modal = () => {
   const closeModal = useModalStore((s) => s.closeModal);
@@ -56,9 +57,13 @@ const Modal = () => {
             transition={transition}
           >
             <Paper
-              className={clsx(isAnimation ? "overflow-clip" : "overflow-auto")}
+              className={clsx(
+                "relative",
+                isAnimation ? "overflow-clip" : "overflow-auto",
+              )}
               sx={{ height: `${size}dvh`, width: `${size}dvw` }}
             >
+              <ModalCloseButton />
               {content}
             </Paper>
           </motion.div>
