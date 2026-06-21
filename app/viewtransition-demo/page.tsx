@@ -1,7 +1,7 @@
-import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
-import { Settings } from "@mui/icons-material";
+import { AppBar, Toolbar, Typography } from "@mui/material";
 import ProductView from "./_components/ProductView";
 import CartView from "./_components/CartView";
+import SettingButton from "./_components/SettingButton";
 
 export default function Page() {
   return (
@@ -11,9 +11,7 @@ export default function Page() {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             YAKINIKU
           </Typography>
-          <IconButton color="inherit">
-            <Settings />
-          </IconButton>
+          <SettingButton />
         </Toolbar>
       </AppBar>
       <div className="flex">

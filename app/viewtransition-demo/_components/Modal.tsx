@@ -12,7 +12,7 @@ const Modal = () => {
   const content = useModalStore((s) => s.content);
   const open = useModalStore((s) => s.open);
   const animation = useModalStore((s) => s.animation);
-  const { coverage } = animation;
+  const { type, coverage } = animation;
   const size = Math.round(Math.sqrt(coverage) * 100);
   const transition = useModalStore((s) => s.getTransition)();
 
@@ -22,6 +22,15 @@ const Modal = () => {
     e.stopPropagation();
     closeModal();
   };
+
+  const layoutId = (() => {
+    if (type === "view") {
+      return name || "modal";
+    } else if (type === "classic") {
+      return "modal";
+    }
+    return undefined;
+  })();
 
   return (
     <AnimatePresence>
@@ -39,11 +48,11 @@ const Modal = () => {
           />
           <motion.div
             className="relative"
-            layoutId={name || "modal"}
+            layoutId={layoutId}
             transition={transition}
           >
             <Paper
-              className="overflow-hidden"
+              className="overflow-auto"
               sx={{ height: `${size}dvh`, width: `${size}dvw` }}
             >
               {content}

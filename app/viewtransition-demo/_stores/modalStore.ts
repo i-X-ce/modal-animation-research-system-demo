@@ -1,15 +1,17 @@
 "use client";
-import { Easing, Transition } from "motion";
+import { BezierDefinition, EasingDefinition, Transition } from "motion";
 import { ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type AnimationType = "view" | "classic" | "none";
+export const ANIMATION_TYPES = ["view", "classic", "none"] as const;
+
+export type AnimationType = (typeof ANIMATION_TYPES)[number];
 
 export type ModalAnimation = {
   type: AnimationType;
-  easing: Easing;
+  easing: Exclude<EasingDefinition, BezierDefinition>;
   duration: number;
   coverage: number;
 };
