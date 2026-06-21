@@ -4,10 +4,11 @@ import { Paper } from "@mui/material";
 import { useModalStore } from "../_stores/modalStore";
 import { AnimatePresence, motion } from "motion/react";
 import clsx from "clsx";
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, useState } from "react";
 
 const Modal = () => {
   const closeModal = useModalStore((s) => s.closeModal);
+  const onExitComplete = useModalStore((s) => s.onExitComplete);
   const name = useModalStore((s) => s.name);
   const content = useModalStore((s) => s.content);
   const open = useModalStore((s) => s.open);
@@ -15,6 +16,7 @@ const Modal = () => {
   const { type, coverage } = animation;
   const size = Math.round(Math.sqrt(coverage) * 100);
   const transition = useModalStore((s) => s.getTransition)();
+  const [isAnimation, setIsAnimation] = useState(false);
 
   console.log(animation);
 
@@ -33,7 +35,7 @@ const Modal = () => {
   })();
 
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={onExitComplete}>
       {open && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <motion.div
@@ -45,6 +47,8 @@ const Modal = () => {
             exit={{ opacity: 0 }}
             transition={transition}
             onClick={handleClose}
+            onAnimationStart={() => setIsAnimation(true)}
+            onAnimationComplete={() => setIsAnimation(false)}
           />
           <motion.div
             className="relative"
@@ -52,7 +56,7 @@ const Modal = () => {
             transition={transition}
           >
             <Paper
-              className="overflow-auto"
+              className={clsx(isAnimation ? "overflow-clip" : "overflow-auto")}
               sx={{ height: `${size}dvh`, width: `${size}dvw` }}
             >
               {content}

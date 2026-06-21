@@ -41,6 +41,7 @@ export const getTransitionFromModalAnimation = (
 type ModalAction = {
   openModal: (content: ReactNode, name?: string) => void;
   closeModal: () => void;
+  onExitComplete: () => void;
   setAnimation: (animation: Partial<ModalStore["animation"]>) => void;
   getTransition: () => Transition;
 };
@@ -71,11 +72,13 @@ export const useModalStore = create<ModalState>()(
         set(() => ({ open: true, content, name: name || null }));
       },
       closeModal() {
+        set(() => ({ open: false }));
+      },
+      onExitComplete() {
         const bodyElement = document.body;
         if (bodyElement) {
           bodyElement.style.overflow = "";
         }
-        set(() => ({ open: false }));
       },
       setAnimation(patch) {
         set((s) => ({ animation: { ...s.animation, ...patch } }));
@@ -93,41 +96,3 @@ export const useModalStore = create<ModalState>()(
     },
   ),
 );
-
-export const useToggleModal = () => {
-  const openModal = useModalStore((s) => s.openModal);
-  const closeModal = useModalStore((s) => s.closeModal);
-  const open = useModalStore((s) => s.open);
-
-  const handleOpenModal: ModalAction["openModal"] = (...props) => {
-    if (!document.startViewTransition) {
-      openModal(...props);
-      return;
-    }
-
-    document.startViewTransition(() => {
-      flushSync(() => {
-        openModal(...props);
-      });
-    });
-  };
-
-  const handleCloseModal: ModalAction["closeModal"] = (...props) => {
-    if (!document.startViewTransition) {
-      closeModal(...props);
-      return;
-    }
-
-    document.startViewTransition(() => {
-      flushSync(() => {
-        closeModal(...props);
-      });
-    });
-  };
-
-  return {
-    open,
-    handleOpenModal,
-    handleCloseModal,
-  };
-};

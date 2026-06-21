@@ -16,12 +16,11 @@ const SettingButton = () => {
   };
 
   return (
-    <>
+    <motion.div transition={transition} layoutId={layoutId}>
       <IconButton onClick={handleOpenSettings} color="inherit">
         <Settings />
       </IconButton>
-      <motion.div transition={transition} layoutId={layoutId} />
-    </>
+    </motion.div>
   );
 };
 
