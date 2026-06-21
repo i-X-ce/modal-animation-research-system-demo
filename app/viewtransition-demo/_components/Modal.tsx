@@ -19,8 +19,6 @@ const Modal = () => {
   const transition = useModalStore((s) => s.getTransition)();
   const [isAnimation, setIsAnimation] = useState(false);
 
-  console.log(animation);
-
   const handleClose: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     closeModal();
@@ -55,6 +53,9 @@ const Modal = () => {
             className="relative"
             layoutId={layoutId}
             transition={transition}
+            initial={type === "view" ? {} : { y: 100, opacity: 0 }}
+            animate={type === "view" ? {} : { y: 0, opacity: 1 }}
+            exit={type === "view" ? {} : { y: 100, opacity: 0 }}
           >
             <Paper
               className={clsx(

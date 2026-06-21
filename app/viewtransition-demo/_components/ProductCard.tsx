@@ -43,6 +43,7 @@ const ProductCardModalContent = ({
   const addItem = useCartStore((s) => s.add);
   const closeModal = useModalStore((s) => s.closeModal);
   const transition = useModalStore((s) => s.getTransition)();
+  const animationType = useModalStore((s) => s.animation.type);
 
   const handleAddToCart = () => {
     addItem(id, qty);
@@ -50,12 +51,11 @@ const ProductCardModalContent = ({
   };
 
   const lId = (type: keyof typeof MOTION_LAYOUT_ID) => {
-    return lIdBase(id, type);
+    return animationType === "view" ? lIdBase(id, type) : undefined;
   };
 
   const handleAdd = () => {
     setQty((q) => Math.min(q + 1, MAX_QTY));
-    console.log("add", qty);
   };
 
   const handleRemove = () => {
@@ -161,6 +161,7 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
   const isTarget = activeName === id; // モーダルの内容がこのカードの商品か
   const isOpenCard = isTarget && open; // 現在このカードが開いているか
   const transition = useModalStore((s) => s.getTransition)();
+  const animationType = useModalStore((s) => s.animation.type);
 
   const lId = (type: keyof typeof MOTION_LAYOUT_ID) => {
     return lIdBase(id, type);
@@ -170,43 +171,41 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
     openModal(<ProductCardModalContent {...props} />, id);
   };
 
+  if (animationType === "view" && isOpenCard) {
+    return <div />;
+  }
+
   return (
-    <>
-      {isOpenCard ? (
-        <div />
-      ) : (
-        <motion.div layoutId={id} transition={transition}>
-          <Card>
-            <CardActionArea onClick={handleClick}>
-              <motion.div layoutId={lId("IMAGE")} transition={transition}>
-                <CardMedia
-                  sx={{
-                    height: 200,
-                  }}
-                  image="https://placehold.jp/150x150.png"
-                />
-              </motion.div>
-              <CardContent>
-                <motion.div layoutId={lId("NAME")} transition={transition}>
-                  <Typography variant="h6" gutterBottom>
-                    {name}
-                  </Typography>
-                </motion.div>
-                <motion.div
-                  layoutId={lId("PRICE")}
-                  transition={transition}
-                  className="w-fit ml-auto"
-                >
-                  <Typography variant="h6" color="primary" align="right">
-                    ￥{price}
-                  </Typography>
-                </motion.div>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-        </motion.div>
-      )}
-    </>
+    <motion.div layoutId={id} transition={transition}>
+      <Card>
+        <CardActionArea onClick={handleClick}>
+          <motion.div layoutId={lId("IMAGE")} transition={transition}>
+            <CardMedia
+              sx={{
+                height: 200,
+              }}
+              image="https://placehold.jp/150x150.png"
+            />
+          </motion.div>
+          <CardContent>
+            <motion.div layoutId={lId("NAME")} transition={transition}>
+              <Typography variant="h6" gutterBottom>
+                {name}
+              </Typography>
+            </motion.div>
+            <motion.div
+              layoutId={lId("PRICE")}
+              transition={transition}
+              className="w-fit ml-auto"
+            >
+              <Typography variant="h6" color="primary" align="right">
+                ￥{price}
+              </Typography>
+            </motion.div>
+          </CardContent>
+        </CardActionArea>
+      </Card>
+    </motion.div>
   );
 };
 
