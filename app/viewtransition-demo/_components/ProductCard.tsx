@@ -71,7 +71,7 @@ const ProductCardModalContent = ({
       >
         <CardMedia
           component={"img"}
-          src={"https://placehold.jp/150x150.png"}
+          src={img}
           sx={{ height: "100%", aspectRatio: "1 / 1" }}
           alt={name}
         />
@@ -184,7 +184,7 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
               sx={{
                 height: 200,
               }}
-              image="https://placehold.jp/150x150.png"
+              image={img}
             />
           </motion.div>
           <CardContent>
