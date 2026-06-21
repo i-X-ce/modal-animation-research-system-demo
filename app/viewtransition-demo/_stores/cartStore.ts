@@ -6,6 +6,8 @@ export type CartItem = { productId: string; qty: number };
 
 type CartStore = {
   items: CartItem[];
+  message: string | null;
+  messageOpen: boolean;
 };
 
 type CartAction = {
@@ -14,12 +16,15 @@ type CartAction = {
   getTotalPrice: () => number;
   updateQty: (productId: string, qty: number) => void;
   clear: () => void;
+  order: () => Promise<void>;
 };
 
 type CartState = CartStore & CartAction;
 
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
+  message: null,
+  messageOpen: false,
   add(productId, qty = 1) {
     set((s) => {
       const exists = s.items.find((i) => i.productId === productId);
@@ -52,5 +57,15 @@ export const useCartStore = create<CartState>((set, get) => ({
   },
   clear() {
     set(() => ({ items: [] }));
+  },
+  async order() {
+    const { items } = get();
+    if (items.length === 0) return;
+
+    set(() => ({ message: "注文中...", messageOpen: true }));
+    await new Promise((resolve) => setTimeout(resolve, 1000)).then(() => {});
+    set(() => ({ items: [], message: "注文が完了しました！" }));
+    await new Promise((resolve) => setTimeout(resolve, 3000)).then(() => {});
+    set(() => ({ messageOpen: false }));
   },
 }));

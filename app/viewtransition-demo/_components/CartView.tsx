@@ -16,7 +16,7 @@ import { useModalStore } from "../_stores/modalStore";
 const CartView = () => {
   const items = useCartStore((s) => s.items);
   const remove = useCartStore((s) => s.remove);
-  const clear = useCartStore((s) => s.clear);
+  const order = useCartStore((s) => s.order);
   const total = useCartStore((s) => s.getTotalPrice());
   const onClose = useModalStore((s) => s.closeModal);
 
@@ -53,9 +53,10 @@ const CartView = () => {
             variant="contained"
             size="large"
             onClick={() => {
-              clear();
+              order();
               onClose();
             }}
+            disabled={rows.length === 0}
           >
             注文する
           </Button>
