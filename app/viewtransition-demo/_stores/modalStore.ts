@@ -13,6 +13,7 @@ export type ModalAnimation = {
   easing: Exclude<EasingDefinition, BezierDefinition>;
   duration: number;
   coverage: number;
+  cardSize: number; // カードのサイズ（モーダルには関係ないんだけど）
 };
 
 export type ModalStore = {
@@ -56,6 +57,7 @@ const defaultModalState: ModalStore = {
     easing: "easeInOut",
     duration: 0.5,
     coverage: 0.2,
+    cardSize: 300,
   },
 } as const;
 

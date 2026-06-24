@@ -63,20 +63,26 @@ const ProductCardModalContent = ({
   };
 
   return (
-    <div className="flex h-full">
+    <div className="relative flex h-full">
       <motion.div
         layoutId={lId("IMAGE")}
-        style={{ flexShrink: 0 }}
         transition={transition}
+        className="flex-2"
       >
         <CardMedia
           component={"img"}
           src={img}
-          sx={{ height: "100%", aspectRatio: "1 / 1" }}
+          sx={{ height: "100%" }}
           alt={name}
         />
       </motion.div>
-      <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <CardContent
+        sx={{
+          flex: 3,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <Box sx={{ flex: 1, py: 4 }}>
           <motion.div layoutId={lId("NAME")} transition={transition}>
             <Typography variant="h5" gutterBottom>
@@ -177,9 +183,21 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
 
   return (
     <motion.div layoutId={id} transition={transition}>
-      <Card>
-        <CardActionArea onClick={handleClick}>
-          <motion.div layoutId={lId("IMAGE")} transition={transition}>
+      <Card sx={{ height: "100%" }}>
+        <CardActionArea
+          onClick={handleClick}
+          sx={{
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "stretch",
+          }}
+        >
+          <motion.div
+            layoutId={lId("IMAGE")}
+            transition={transition}
+            className="w-full"
+          >
             <CardMedia
               sx={{
                 height: 200,
@@ -187,7 +205,14 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
               image={img}
             />
           </motion.div>
-          <CardContent>
+          <CardContent
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
             <motion.div layoutId={lId("NAME")} transition={transition}>
               <Typography variant="h6" gutterBottom>
                 {name}

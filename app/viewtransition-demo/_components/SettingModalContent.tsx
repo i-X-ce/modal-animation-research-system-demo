@@ -87,17 +87,19 @@ const SettingSlider = ({
   min = 0,
   max = 0,
   step = 0.1,
+  unit = "",
   onChange,
   ...props
 }: {
   value: number;
   step: number;
+  unit?: string;
   onChange: (value: number) => void;
 } & Omit<SliderProps, "onChange">) => {
   return (
     <Stack direction={"row"} spacing={2} sx={{ alignItems: "center" }}>
       <Typography noWrap sx={{ flexShrink: 0 }}>
-        {value.toFixed(1)} s
+        {value.toFixed(1)} {unit}
       </Typography>
       <IconButton onClick={() => onChange(Math.max(min, value - step))}>
         <Remove />
@@ -119,7 +121,7 @@ const SettingSlider = ({
 
 const SettingModalContent = () => {
   const animation = useModalStore((s) => s.animation);
-  const { type, easing, duration, coverage } = animation;
+  const { type, easing, duration, coverage, cardSize } = animation;
   const setAnimation = useModalStore((s) => s.setAnimation);
 
   return (
@@ -149,6 +151,7 @@ const SettingModalContent = () => {
               max={2}
               value={duration}
               step={0.1}
+              unit="s"
               onChange={(value) => setAnimation({ duration: value })}
             />
           </SettingItem>
@@ -158,7 +161,18 @@ const SettingModalContent = () => {
               max={1}
               value={coverage}
               step={0.1}
+              unit="s"
               onChange={(value) => setAnimation({ coverage: value })}
+            />
+          </SettingItem>
+          <SettingItem label="最小カードサイズ">
+            <SettingSlider
+              min={50}
+              max={500}
+              value={cardSize}
+              step={10}
+              unit="px"
+              onChange={(value) => setAnimation({ cardSize: value })}
             />
           </SettingItem>
         </Stack>
