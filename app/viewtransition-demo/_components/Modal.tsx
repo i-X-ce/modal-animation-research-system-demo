@@ -64,8 +64,8 @@ const Modal = () => {
               )}
               sx={{ height: `${size}dvh`, width: `${size}dvw` }}
             >
-              <ModalCloseButton />
               {content}
+              <ModalCloseButton />
             </Paper>
           </motion.div>
         </div>
