@@ -1,3 +1,4 @@
+import { withBasePath } from "@/consts/path";
 import { Product } from "../_types/product";
 
 let cnt = 0;
@@ -7,7 +8,9 @@ const generateId = () => {
 };
 
 const generateImgPath = () => {
-  return `/images/meat/meat${((cnt % 12) + 1).toString().padStart(3, "0")}.jpg`;
+  return withBasePath(
+    `/images/meat/meat${((cnt % 12) + 1).toString().padStart(3, "0")}.jpg`,
+  );
 };
 
 // mogrify -path dist -format jpg -quality 85 *.png

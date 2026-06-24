@@ -1,15 +1,14 @@
 import type { NextConfig } from "next";
+import { BASE_PATH } from "./consts/userSetting";
 
 export const isDev = process.env.NODE_ENV === "development";
-
-// const repoName = "modal-animation-research-system-demo";
 
 const nextConfig: NextConfig = {
   /* config options here */
 
   output: "export",
 
-  // basePath: isDev ? "" : `/${repoName}`,
+  basePath: isDev ? undefined : BASE_PATH,
 
   images: {
     unoptimized: true,
