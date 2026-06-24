@@ -4,7 +4,7 @@ name: Deploy Next.js site to Pages
 on:
   # mainブランチへのプッシュと、"v"から始まるタグ（例: v1.0.0）のプッシュで動作
   push:
-    branches: ["main"]
+    # branches: ["main"]
     tags: ["v*"]
 
   # mainブランチに対するPull Requestで動作（ビルドテスト用）
