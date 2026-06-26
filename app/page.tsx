@@ -15,15 +15,17 @@ export default function Home() {
       <main className="p-4">
         <Paper>
           <List>
-            {[PATH.viewTransitionDemo].map(({ url, label }, index) => (
-              <Link key={index} href={url}>
-                <ListItemButton>
-                  <ListItem>
-                    <ListItemText>{label}</ListItemText>
-                  </ListItem>
-                </ListItemButton>
-              </Link>
-            ))}
+            {[PATH.viewTransitionDemo, PATH.viewTransitionDemo2].map(
+              ({ url, label }, index) => (
+                <Link key={index} href={url}>
+                  <ListItemButton>
+                    <ListItem>
+                      <ListItemText>{label}</ListItemText>
+                    </ListItem>
+                  </ListItemButton>
+                </Link>
+              ),
+            )}
           </List>
         </Paper>
       </main>

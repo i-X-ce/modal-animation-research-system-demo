@@ -9,9 +9,13 @@ export interface PathItem {
 export const PATH = {
   viewTransitionDemo: {
     url: "/viewtransition-demo",
-    label: "View Transition モーダルデモ",
-  } satisfies PathItem,
-};
+    label: "View Transition モーダルデモ （焼肉）",
+  },
+  viewTransitionDemo2: {
+    url: "/viewtransition-demo2",
+    label: "View Transition モーダルデモ2 （カフェ）",
+  },
+} satisfies Record<string, PathItem>;
 
 /**
  * basePath を付与したパスを返す（画像やリンクのパスに使用する）
