@@ -724,3 +724,43 @@ export const products: Product[] = [
     desc: "特製ダレにじっくり漬け込んだ鶏肉は驚くほど柔らか。タレの旨味がしっかり染み込んでおり、子供から大人まで大満足の一品。",
   },
 ] as const;
+
+export const findProductById = (id: Product["id"]) => {
+  return products.find((product) => product.id === id);
+};
+
+/**
+ * ランダムな商品を取得する関数
+ * 10%: 同じ商品
+ * 40%: 近く（隣あっている）の商品
+ * 50%: 遠く（二つ以上離れている）の商品
+ * @param prevProductId
+ */
+export const randomProduct = (prevProductId?: Product["id"]) => {
+  const prevIndex = products.findIndex(
+    (product) => product.id === prevProductId,
+  );
+
+  const random = Math.random();
+  if (random < 0.1 && prevIndex !== -1) {
+    // 10%の確率で同じ商品を返す
+    return products[prevIndex];
+  } else if (random < 0.5 && prevIndex !== -1) {
+    // 40%の確率で近く（隣あっている）商品を返す
+    const neighborIndices = [
+      prevIndex - 1 >= 0 ? prevIndex - 1 : null,
+      prevIndex + 1 < products.length ? prevIndex + 1 : null,
+    ].filter((index): index is number => index !== null);
+    const randomNeighborIndex =
+      neighborIndices[Math.floor(Math.random() * neighborIndices.length)];
+    return products[randomNeighborIndex];
+  } else {
+    // 50%の確率で遠く（二つ以上離れている）商品を返す
+    const farIndices = products
+      .map((_, index) => index)
+      .filter((index) => prevIndex === -1 || Math.abs(index - prevIndex) > 1);
+    const randomFarIndex =
+      farIndices[Math.floor(Math.random() * farIndices.length)];
+    return products[randomFarIndex];
+  }
+};

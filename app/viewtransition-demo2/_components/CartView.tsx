@@ -12,6 +12,7 @@ import {
 import { useCartStore } from "../_stores/cartStore";
 import { products } from "../_consts/products";
 import { useModalStore } from "../_stores/modalStore";
+import OptionValueChip from "./OptionValueChip";
 
 const CartView = () => {
   const items = useCartStore((s) => s.items);
@@ -29,17 +30,24 @@ const CartView = () => {
     <div className="basis-80 p-2">
       <Stack className="sticky top-20 h-[calc(100dvh-100px)] flex flex-col justify-between overflow-y-auto">
         <List>
-          {rows.map((r) => (
+          {rows.map((r, index) => (
             <ListItem
-              key={r.productId}
+              key={`${r.productId}-${index}`}
               secondaryAction={
-                <Button onClick={() => remove(r.productId)}>削除</Button>
+                <Button onClick={() => remove(index)}>削除</Button>
               }
             >
-              <ListItemText
-                primary={`${r.product.name} x${r.qty}`}
-                secondary={`¥${r.product.price * r.qty}`}
-              />
+              <Stack>
+                <ListItemText primary={`${r.product.name} x${r.qty}`} />
+                <Stack
+                  direction={"row"}
+                  sx={{ flexWrap: "wrap", gap: 1, mt: 1, mr: 3 }}
+                >
+                  {r.options.map((o) => (
+                    <OptionValueChip key={o.id} optionValue={o} size="small" />
+                  ))}
+                </Stack>
+              </Stack>
             </ListItem>
           ))}
         </List>

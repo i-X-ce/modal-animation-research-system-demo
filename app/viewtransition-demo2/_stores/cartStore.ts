@@ -1,8 +1,14 @@
 "use client";
+
 import { create } from "zustand";
 import { products } from "../_consts/products";
+import { ProductOptionValue } from "../_types/product";
 
-export type CartItem = { productId: string; qty: number };
+export type CartItem = {
+  productId: string;
+  options: ProductOptionValue[];
+  qty: number;
+};
 
 type CartStore = {
   items: CartItem[];
@@ -11,11 +17,9 @@ type CartStore = {
 };
 
 type CartAction = {
-  add: (productId: string, qty?: number) => void;
-  remove: (productId: string) => void;
+  add: (productId: string, options: ProductOptionValue[], qty?: number) => void;
+  remove: (targetIndex: number) => void;
   getTotalPrice: () => number;
-  updateQty: (productId: string, qty: number) => void;
-  clear: () => void;
   order: () => Promise<void>;
 };
 
@@ -25,20 +29,17 @@ export const useCartStore = create<CartState>((set, get) => ({
   items: [],
   message: null,
   messageOpen: false,
-  add(productId, qty = 1) {
+  add(productId, options, qty = 1) {
     set((s) => {
-      const exists = s.items.find((i) => i.productId === productId);
-      if (exists)
-        return {
-          items: s.items.map((i) =>
-            i.productId === productId ? { ...i, qty: i.qty + qty } : i,
-          ),
-        };
-      return { items: [...s.items, { productId, qty }] };
+      return {
+        items: [...s.items, { productId, options, qty }],
+      };
     });
   },
-  remove(productId) {
-    set((s) => ({ items: s.items.filter((i) => i.productId !== productId) }));
+  remove(targetIndex) {
+    set((s) => ({
+      items: s.items.filter((_, index) => targetIndex !== index),
+    }));
   },
   getTotalPrice() {
     const { items } = get();
@@ -47,16 +48,6 @@ export const useCartStore = create<CartState>((set, get) => ({
       if (!product) return total;
       return total + product.price * item.qty;
     }, 0);
-  },
-  updateQty(productId, qty) {
-    set((s) => ({
-      items: s.items.map((i) =>
-        i.productId === productId ? { ...i, qty } : i,
-      ),
-    }));
-  },
-  clear() {
-    set(() => ({ items: [] }));
   },
   async order() {
     const { items } = get();
