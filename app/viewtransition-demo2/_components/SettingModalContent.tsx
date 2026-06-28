@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import {
   ANIMATION_TYPES,
+  MAX_NUMBER_OF_CARDS,
   ModalAnimation,
   useModalStore,
 } from "../_stores/modalStore";
@@ -76,6 +77,7 @@ const SettingSlider = ({
   unit = "",
   onChange,
   label,
+  decimalScale = 1,
   ...props
 }: {
   value: number;
@@ -83,13 +85,14 @@ const SettingSlider = ({
   unit?: string;
   onChange: (value: number) => void;
   label: string;
+  decimalScale?: number;
 } & Omit<SliderProps, "onChange">) => {
   return (
     <FormControl>
       <FormLabel>{label}</FormLabel>
       <Stack direction={"row"} spacing={2} sx={{ alignItems: "center" }}>
-        <Typography noWrap sx={{ flexShrink: 0 }}>
-          {value.toFixed(1)} {unit}
+        <Typography noWrap sx={{ flexShrink: 0, width: 100 }}>
+          {value.toFixed(decimalScale)} {unit}
         </Typography>
         <IconButton onClick={() => onChange(Math.max(min, value - step))}>
           <Remove />
@@ -131,8 +134,15 @@ const SettingCheckbox = ({
 
 const SettingModalContent = () => {
   const animation = useModalStore((s) => s.animation);
-  const { type, easing, duration, coverage, cardSize, displayNextOrder } =
-    animation;
+  const {
+    type,
+    easing,
+    duration,
+    coverage,
+    cardSize,
+    displayNextOrder,
+    numberOfCards,
+  } = animation;
   const setAnimation = useModalStore((s) => s.setAnimation);
 
   return (
@@ -181,7 +191,18 @@ const SettingModalContent = () => {
             value={cardSize}
             step={10}
             unit="px"
+            decimalScale={0}
             onChange={(value) => setAnimation({ cardSize: value })}
+          />
+          <SettingSlider
+            label="カード枚数"
+            min={0}
+            max={MAX_NUMBER_OF_CARDS}
+            value={numberOfCards}
+            step={5}
+            unit="枚"
+            decimalScale={0}
+            onChange={(value) => setAnimation({ numberOfCards: value })}
           />
         </Stack>
       </DialogContent>

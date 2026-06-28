@@ -736,31 +736,36 @@ export const findProductById = (id: Product["id"]) => {
  * 50%: 遠く（二つ以上離れている）の商品
  * @param prevProductId
  */
-export const randomProduct = (prevProductId?: Product["id"]) => {
+export const randomProduct = (
+  prevProductId?: Product["id"],
+  length = products.length,
+) => {
   const prevIndex = products.findIndex(
     (product) => product.id === prevProductId,
   );
 
+  const filteredProducts = products.filter((product, index) => index < length);
+
   const random = Math.random();
   if (random < 0.1 && prevIndex !== -1) {
     // 10%の確率で同じ商品を返す
-    return products[prevIndex];
+    return filteredProducts[prevIndex];
   } else if (random < 0.5 && prevIndex !== -1) {
     // 40%の確率で近く（隣あっている）商品を返す
     const neighborIndices = [
       prevIndex - 1 >= 0 ? prevIndex - 1 : null,
-      prevIndex + 1 < products.length ? prevIndex + 1 : null,
+      prevIndex + 1 < filteredProducts.length ? prevIndex + 1 : null,
     ].filter((index): index is number => index !== null);
     const randomNeighborIndex =
       neighborIndices[Math.floor(Math.random() * neighborIndices.length)];
-    return products[randomNeighborIndex];
+    return filteredProducts[randomNeighborIndex];
   } else {
     // 50%の確率で遠く（二つ以上離れている）商品を返す
-    const farIndices = products
+    const farIndices = filteredProducts
       .map((_, index) => index)
       .filter((index) => prevIndex === -1 || Math.abs(index - prevIndex) > 1);
     const randomFarIndex =
       farIndices[Math.floor(Math.random() * farIndices.length)];
-    return products[randomFarIndex];
+    return filteredProducts[randomFarIndex];
   }
 };

@@ -56,6 +56,7 @@ const ProductCardModalContent = ({
   const [isOrdered, setIsOrdered] = useState(false);
   const [nextProduct, setNextProduct] = useState<CartItem | null>(null);
   const displayNextOrder = useModalStore((s) => s.animation.displayNextOrder);
+  const numberOfCards = useModalStore((s) => s.animation.numberOfCards);
 
   const handleAddToCart = () => {
     if (isOrdered) {
@@ -65,7 +66,7 @@ const ProductCardModalContent = ({
 
       if (displayNextOrder) {
         setIsOrdered(true);
-        const _nextProduct = randomProduct(id);
+        const _nextProduct = randomProduct(id, numberOfCards);
         setNextProduct({
           productId: _nextProduct.id,
           options: randomProductOptionValues(),

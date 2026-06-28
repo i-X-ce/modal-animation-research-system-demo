@@ -3,6 +3,7 @@ import { BezierDefinition, EasingDefinition, Transition } from "motion";
 import { ReactNode } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { products } from "../_consts/products";
 
 export const ANIMATION_TYPES = ["view", "classic", "none"] as const;
 
@@ -15,6 +16,7 @@ export type ModalAnimation = {
   coverage: number; // 画面占有率
   cardSize: number; // カードのサイズ（モーダルには関係ないんだけど）
   displayNextOrder: boolean; // 次の注文を表示するか
+  numberOfCards: number; // カードの枚数（モーダルには関係ないんだけど）
 };
 
 export type ModalStore = {
@@ -49,6 +51,8 @@ type ModalAction = {
 
 type ModalState = ModalStore & ModalAction;
 
+export const MAX_NUMBER_OF_CARDS = products.length;
+
 const defaultModalState: ModalStore = {
   open: false,
   name: null,
@@ -60,6 +64,7 @@ const defaultModalState: ModalStore = {
     coverage: 0.2,
     cardSize: 300,
     displayNextOrder: true,
+    numberOfCards: MAX_NUMBER_OF_CARDS,
   },
 } as const;
 

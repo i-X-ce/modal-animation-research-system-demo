@@ -7,6 +7,7 @@ import { useModalStore } from "../_stores/modalStore";
 
 const ProductView = () => {
   const cardSize = useModalStore((s) => s.animation.cardSize);
+  const numberOfCards = useModalStore((s) => s.animation.numberOfCards);
 
   return (
     <div className="flex-1">
@@ -18,7 +19,7 @@ const ProductView = () => {
           padding: "16px",
         }}
       >
-        {products.map((product, index) => (
+        {products.slice(0, numberOfCards).map((product, index) => (
           <ProductCard key={index} {...product} />
         ))}
       </Box>
