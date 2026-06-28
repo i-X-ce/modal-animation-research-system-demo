@@ -2,9 +2,13 @@
 
 import {
   Box,
+  Checkbox,
+  CheckboxProps,
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
+  FormLabel,
   IconButton,
   InputLabel,
   MenuItem,
@@ -19,7 +23,6 @@ import {
   ModalAnimation,
   useModalStore,
 } from "../_stores/modalStore";
-import { ReactNode } from "react";
 import { Add, Remove } from "@mui/icons-material";
 
 const EASINGS: ModalAnimation["easing"][] = [
@@ -36,24 +39,7 @@ const EASINGS: ModalAnimation["easing"][] = [
   "anticipate",
 ] as const;
 
-const SettingItem = ({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) => {
-  return (
-    <Stack spacing={1}>
-      <Typography variant="subtitle1" gutterBottom>
-        {label}
-      </Typography>
-      {children}
-    </Stack>
-  );
-};
-
-const SettingSelector = <T extends number | string>({
+const SettingSelector = <T extends number | string | boolean>({
   label,
   value,
   onChange,
@@ -73,7 +59,7 @@ const SettingSelector = <T extends number | string>({
         onChange={(e) => onChange(e.target.value as T)}
       >
         {options.map((option, index) => (
-          <MenuItem key={index} value={option}>
+          <MenuItem key={index} value={String(option)}>
             {option}
           </MenuItem>
         ))}
@@ -89,92 +75,114 @@ const SettingSlider = ({
   step = 0.1,
   unit = "",
   onChange,
+  label,
   ...props
 }: {
   value: number;
   step: number;
   unit?: string;
   onChange: (value: number) => void;
+  label: string;
 } & Omit<SliderProps, "onChange">) => {
   return (
-    <Stack direction={"row"} spacing={2} sx={{ alignItems: "center" }}>
-      <Typography noWrap sx={{ flexShrink: 0 }}>
-        {value.toFixed(1)} {unit}
-      </Typography>
-      <IconButton onClick={() => onChange(Math.max(min, value - step))}>
-        <Remove />
-      </IconButton>
-      <Slider
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(_, value) => onChange(value as number)}
-        {...props}
-      />
-      <IconButton onClick={() => onChange(Math.min(max, value + step))}>
-        <Add />
-      </IconButton>
-    </Stack>
+    <FormControl>
+      <FormLabel>{label}</FormLabel>
+      <Stack direction={"row"} spacing={2} sx={{ alignItems: "center" }}>
+        <Typography noWrap sx={{ flexShrink: 0 }}>
+          {value.toFixed(1)} {unit}
+        </Typography>
+        <IconButton onClick={() => onChange(Math.max(min, value - step))}>
+          <Remove />
+        </IconButton>
+        <Slider
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={(_, value) => onChange(value as number)}
+          {...props}
+        />
+        <IconButton onClick={() => onChange(Math.min(max, value + step))}>
+          <Add />
+        </IconButton>
+      </Stack>
+    </FormControl>
+  );
+};
+
+const SettingCheckbox = ({
+  label,
+  value,
+  onChange,
+  ...props
+}: { label: string; value: boolean; onChange: (value: boolean) => void } & Omit<
+  CheckboxProps,
+  "value" | "onChange"
+>) => {
+  return (
+    <FormControlLabel
+      label={label}
+      control={
+        <Checkbox checked={value} onChange={(_, v) => onChange(v)} {...props} />
+      }
+    />
   );
 };
 
 const SettingModalContent = () => {
   const animation = useModalStore((s) => s.animation);
-  const { type, easing, duration, coverage, cardSize } = animation;
+  const { type, easing, duration, coverage, cardSize, displayNextOrder } =
+    animation;
   const setAnimation = useModalStore((s) => s.setAnimation);
 
   return (
     <Box>
       <DialogTitle>モーダル設定</DialogTitle>
       <DialogContent>
-        <Stack spacing={3}>
-          <SettingItem label="アニメーションの種類">
-            <SettingSelector
-              label={"種類"}
-              value={type}
-              onChange={(value) => setAnimation({ type: value })}
-              options={ANIMATION_TYPES}
-            />
-          </SettingItem>
-          <SettingItem label="イージング">
-            <SettingSelector
-              label={"ease"}
-              value={easing}
-              onChange={(value) => setAnimation({ easing: value })}
-              options={EASINGS}
-            />
-          </SettingItem>
-          <SettingItem label="アニメーションの時間">
-            <SettingSlider
-              min={0}
-              max={2}
-              value={duration}
-              step={0.1}
-              unit="s"
-              onChange={(value) => setAnimation({ duration: value })}
-            />
-          </SettingItem>
-          <SettingItem label="画面占有率">
-            <SettingSlider
-              min={0.1}
-              max={1}
-              value={coverage}
-              step={0.1}
-              unit="s"
-              onChange={(value) => setAnimation({ coverage: value })}
-            />
-          </SettingItem>
-          <SettingItem label="最小カードサイズ">
-            <SettingSlider
-              min={50}
-              max={500}
-              value={cardSize}
-              step={10}
-              unit="px"
-              onChange={(value) => setAnimation({ cardSize: value })}
-            />
-          </SettingItem>
+        <Stack spacing={3} sx={{ mt: 2 }}>
+          <SettingSelector
+            label={"種類"}
+            value={type}
+            onChange={(value) => setAnimation({ type: value })}
+            options={ANIMATION_TYPES}
+          />
+          <SettingSelector
+            label={"イージング"}
+            value={easing}
+            onChange={(value) => setAnimation({ easing: value })}
+            options={EASINGS}
+          />
+          <SettingCheckbox
+            label="次の注文を表示する"
+            value={displayNextOrder}
+            onChange={(value) => setAnimation({ displayNextOrder: value })}
+          />
+          <SettingSlider
+            label="アニメーションの時間"
+            min={0}
+            max={2}
+            value={duration}
+            step={0.1}
+            unit="s"
+            onChange={(value) => setAnimation({ duration: value })}
+          />
+          <SettingSlider
+            label="画面占有率"
+            min={0.1}
+            max={1}
+            value={coverage}
+            step={0.1}
+            onChange={(value) => setAnimation({ coverage: value })}
+          />
+          <SettingSlider
+            label="最小カードサイズ"
+            min={50}
+            max={500}
+            value={cardSize}
+            step={10}
+            unit="px"
+            onChange={(value) => setAnimation({ cardSize: value })}
+          />
         </Stack>
       </DialogContent>
     </Box>

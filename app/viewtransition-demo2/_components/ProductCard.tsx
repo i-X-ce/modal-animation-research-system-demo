@@ -16,7 +16,10 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { Add, Remove } from "@mui/icons-material";
 import { CartItem, useCartStore } from "../_stores/cartStore";
-import { defaultProductOptionValues, randomProductOptionValues } from "../_consts/productOptions";
+import {
+  defaultProductOptionValues,
+  randomProductOptionValues,
+} from "../_consts/productOptions";
 import ProductOptionsForm from "./ProductOptionsForm";
 import { findProductById, randomProduct } from "../_consts/products";
 import OptionValueChip from "./OptionValueChip";
@@ -52,19 +55,25 @@ const ProductCardModalContent = ({
   );
   const [isOrdered, setIsOrdered] = useState(false);
   const [nextProduct, setNextProduct] = useState<CartItem | null>(null);
+  const displayNextOrder = useModalStore((s) => s.animation.displayNextOrder);
 
   const handleAddToCart = () => {
     if (isOrdered) {
       closeModal();
     } else {
       addItem(id, optionValues, qty);
-      setIsOrdered(true);
-      const _nextProduct = randomProduct(id);
-      setNextProduct({
-        productId: _nextProduct.id,
-        options: randomProductOptionValues(),
-        qty: 1,
-      });
+
+      if (displayNextOrder) {
+        setIsOrdered(true);
+        const _nextProduct = randomProduct(id);
+        setNextProduct({
+          productId: _nextProduct.id,
+          options: randomProductOptionValues(),
+          qty: 1,
+        });
+      } else {
+        closeModal();
+      }
     }
   };
 

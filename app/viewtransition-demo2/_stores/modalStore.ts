@@ -9,11 +9,12 @@ export const ANIMATION_TYPES = ["view", "classic", "none"] as const;
 export type AnimationType = (typeof ANIMATION_TYPES)[number];
 
 export type ModalAnimation = {
-  type: AnimationType;
-  easing: Exclude<EasingDefinition, BezierDefinition>;
-  duration: number;
-  coverage: number;
+  type: AnimationType; // アニメーションの種類（view: ViewTransition風, classic: スライドイン, none: 無し）
+  easing: Exclude<EasingDefinition, BezierDefinition>; // アニメーションのイージング
+  duration: number; // アニメーションの時間（秒）
+  coverage: number; // 画面占有率
   cardSize: number; // カードのサイズ（モーダルには関係ないんだけど）
+  displayNextOrder: boolean; // 次の注文を表示するか
 };
 
 export type ModalStore = {
@@ -58,6 +59,7 @@ const defaultModalState: ModalStore = {
     duration: 0.5,
     coverage: 0.2,
     cardSize: 300,
+    displayNextOrder: true,
   },
 } as const;
 
