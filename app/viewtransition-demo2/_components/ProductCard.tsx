@@ -21,7 +21,7 @@ import {
   randomProductOptionValues,
 } from "../_consts/productOptions";
 import ProductOptionsForm from "./ProductOptionsForm";
-import { findProductById, randomProduct } from "../_consts/products";
+import { findProductNameById, randomProduct } from "../_consts/products";
 import OptionValueChip from "./OptionValueChip";
 
 const MOTION_LAYOUT_ID = {
@@ -58,6 +58,9 @@ const ProductCardModalContent = ({
   const displayNextOrder = useModalStore((s) => s.animation.displayNextOrder);
   const numberOfCards = useModalStore((s) => s.animation.numberOfCards);
   const numberOfOptions = useModalStore((s) => s.animation.numberOfOptions);
+  const displayProductNumber = useModalStore(
+    (s) => s.animation.displayProductNumber,
+  );
 
   const handleAddToCart = () => {
     if (isOrdered) {
@@ -116,7 +119,7 @@ const ProductCardModalContent = ({
           <Stack spacing={1}>
             <motion.div layoutId={lId("NAME")} transition={transition}>
               <Typography variant="h5" gutterBottom>
-                {name}
+                {findProductNameById(id, displayProductNumber)}
               </Typography>
             </motion.div>
           </Stack>
@@ -132,7 +135,10 @@ const ProductCardModalContent = ({
                 <Typography variant="body1" gutterBottom>
                   次の商品:{" "}
                   <Typography component={"span"} variant="h6" color="primary">
-                    {findProductById(nextProduct?.productId || "")?.name}
+                    {findProductNameById(
+                      nextProduct?.productId,
+                      displayProductNumber,
+                    )}
                   </Typography>
                 </Typography>
                 <Stack direction={"row"} sx={{ flexWrap: "wrap", gap: 2 }}>
@@ -216,7 +222,7 @@ const ProductCardModalContent = ({
 };
 
 const ProductCard = ({ ...props }: ProductCardProps) => {
-  const { id, name, price, img } = props;
+  const { id, price, img } = props;
   const openModal = useModalStore((s) => s.openModal);
   const activeName = useModalStore((s) => s.name);
   const open = useModalStore((s) => s.open);
@@ -224,6 +230,9 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
   const isOpenCard = isTarget && open; // 現在このカードが開いているか
   const transition = useModalStore((s) => s.getTransition)();
   const animationType = useModalStore((s) => s.animation.type);
+  const displayProductNumber = useModalStore(
+    (s) => s.animation.displayProductNumber,
+  );
 
   const lId = (type: keyof typeof MOTION_LAYOUT_ID) => {
     return lIdBase(id, type);
@@ -271,7 +280,7 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
           >
             <motion.div layoutId={lId("NAME")} transition={transition}>
               <Typography variant="h6" gutterBottom>
-                {name}
+                {findProductNameById(id, displayProductNumber)}
               </Typography>
             </motion.div>
             <motion.div

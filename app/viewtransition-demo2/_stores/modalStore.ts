@@ -19,6 +19,7 @@ export type ModalAnimation = {
   displayNextOrder: boolean; // 次の注文を表示するか
   numberOfCards: number; // カードの枚数（モーダルには関係ないんだけど）
   numberOfOptions: number; // 商品オプションの数（モーダルには関係ないんだけど）
+  displayProductNumber: boolean; // 商品番号を表示するか（モーダルには関係ないんだけど）
 };
 
 export type ModalStore = {
@@ -70,6 +71,7 @@ const defaultModalState: ModalStore = {
     displayNextOrder: true,
     numberOfCards: MAX_NUMBER_OF_CARDS,
     numberOfOptions: MAX_NUMBER_OF_OPTIONS,
+    displayProductNumber: false,
   },
 } as const;
 

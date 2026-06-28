@@ -447,6 +447,21 @@ export const findProductById = (id: Product["id"]) => {
   return products.find((product) => product.id === id);
 };
 
+export const findProductIndexById = (id: Product["id"]) => {
+  return products.findIndex((product) => product.id === id);
+};
+
+export const findProductNameById = (
+  id: Product["id"] | undefined,
+  displayProductNumber = false,
+) => {
+  if (!id) return "";
+  const product = findProductById(id);
+  if (!product) return "";
+  const index = findProductIndexById(id);
+  return displayProductNumber ? `${index}.${product.name}` : product.name;
+};
+
 /**
  * ランダムな商品を取得する関数
  * 10%: 同じ商品
