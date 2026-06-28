@@ -17,6 +17,15 @@ export const productOptions: ProductOption[] = [
   },
   {
     type: PRODUCT_OPTIONS_TYPES.RADIO,
+    id: "temperature",
+    name: "温度",
+    options: [
+      { id: "hot", label: "ホット" },
+      { id: "ice", label: "アイス" },
+    ],
+  },
+  {
+    type: PRODUCT_OPTIONS_TYPES.RADIO,
     id: "ice",
     name: "氷",
     options: [
@@ -24,15 +33,6 @@ export const productOptions: ProductOption[] = [
       { id: "less_ice", label: "少なめ" },
       { id: "normal_ice", label: "普通" },
       { id: "extra_ice", label: "多め" },
-    ],
-  },
-  {
-    type: PRODUCT_OPTIONS_TYPES.RADIO,
-    id: "temperature",
-    name: "温度",
-    options: [
-      { id: "hot", label: "ホット" },
-      { id: "ice", label: "アイス" },
     ],
   },
   {
