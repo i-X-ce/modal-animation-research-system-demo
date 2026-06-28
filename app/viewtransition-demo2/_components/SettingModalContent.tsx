@@ -21,6 +21,7 @@ import {
 import {
   ANIMATION_TYPES,
   MAX_NUMBER_OF_CARDS,
+  MAX_NUMBER_OF_OPTIONS,
   ModalAnimation,
   useModalStore,
 } from "../_stores/modalStore";
@@ -103,6 +104,7 @@ const SettingSlider = ({
           step={step}
           value={value}
           onChange={(_, value) => onChange(value as number)}
+          marks
           {...props}
         />
         <IconButton onClick={() => onChange(Math.min(max, value + step))}>
@@ -142,6 +144,7 @@ const SettingModalContent = () => {
     cardSize,
     displayNextOrder,
     numberOfCards,
+    numberOfOptions,
   } = animation;
   const setAnimation = useModalStore((s) => s.setAnimation);
 
@@ -203,6 +206,16 @@ const SettingModalContent = () => {
             unit="枚"
             decimalScale={0}
             onChange={(value) => setAnimation({ numberOfCards: value })}
+          />
+          <SettingSlider
+            label="商品オプションの数"
+            min={0}
+            max={MAX_NUMBER_OF_OPTIONS}
+            value={numberOfOptions}
+            step={1}
+            unit="個"
+            decimalScale={0}
+            onChange={(value) => setAnimation({ numberOfOptions: value })}
           />
         </Stack>
       </DialogContent>

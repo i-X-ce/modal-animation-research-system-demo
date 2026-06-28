@@ -57,19 +57,20 @@ const ProductCardModalContent = ({
   const [nextProduct, setNextProduct] = useState<CartItem | null>(null);
   const displayNextOrder = useModalStore((s) => s.animation.displayNextOrder);
   const numberOfCards = useModalStore((s) => s.animation.numberOfCards);
+  const numberOfOptions = useModalStore((s) => s.animation.numberOfOptions);
 
   const handleAddToCart = () => {
     if (isOrdered) {
       closeModal();
     } else {
-      addItem(id, optionValues, qty);
+      addItem(id, optionValues.slice(0, numberOfOptions), qty);
 
       if (displayNextOrder) {
         setIsOrdered(true);
         const _nextProduct = randomProduct(id, numberOfCards);
         setNextProduct({
           productId: _nextProduct.id,
-          options: randomProductOptionValues(),
+          options: randomProductOptionValues(numberOfOptions),
           qty: 1,
         });
       } else {

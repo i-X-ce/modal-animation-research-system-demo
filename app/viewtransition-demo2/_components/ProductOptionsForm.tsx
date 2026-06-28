@@ -19,6 +19,7 @@ import {
   ProductOptionValue,
 } from "../_types/product";
 import { productOptions } from "../_consts/productOptions";
+import { useModalStore } from "../_stores/modalStore";
 
 type OptionCommon<T> = {
   optionValue: Extract<ProductOptionValue, { type: T }>;
@@ -150,11 +151,12 @@ const ProductOptionsForm = ({
     );
     onChange(updatedOptions);
   };
+  const numberOfOptions = useModalStore((s) => s.animation.numberOfOptions);
 
   return (
     <FormGroup>
       <Stack spacing={2}>
-        {productOptions.map((option) => {
+        {productOptions.slice(0, numberOfOptions).map((option) => {
           const optionValue = optionValues.find((o) => o.id === option.id);
           if (!optionValue) return null;
 

@@ -18,7 +18,7 @@ const OptionValueChip = ({
   const optionLabel = getProductOptionLabel(option.id, value);
   if (!optionLabel) return null;
 
-  return <Chip {...props} label={`${option.name} ${optionLabel}`} />;
+  return <Chip {...props} label={`${option.name}: ${optionLabel}`} />;
 };
 
 export default OptionValueChip;

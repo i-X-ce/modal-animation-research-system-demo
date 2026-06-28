@@ -744,7 +744,7 @@ export const randomProduct = (
     (product) => product.id === prevProductId,
   );
 
-  const filteredProducts = products.filter((product, index) => index < length);
+  const filteredProducts = products.slice(0, length);
 
   const random = Math.random();
   if (random < 0.1 && prevIndex !== -1) {

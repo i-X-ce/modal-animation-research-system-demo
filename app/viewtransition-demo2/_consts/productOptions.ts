@@ -100,29 +100,33 @@ export const getProductOptionLabel = (
   }
 };
 
-export const randomProductOptionValues = (): ProductOptionValue[] => {
-  return productOptions.map((options) => {
-    switch (options.type) {
+export const randomProductOptionValues = (
+  length = productOptions.length,
+): ProductOptionValue[] => {
+  const filteredOptions = productOptions.slice(0, length);
+
+  return filteredOptions.map((option) => {
+    switch (option.type) {
       case PRODUCT_OPTIONS_TYPES.CHECKBOX:
         return {
           type: PRODUCT_OPTIONS_TYPES.CHECKBOX,
-          id: options.id,
+          id: option.id,
           value: Math.random() < 0.5,
         };
       case PRODUCT_OPTIONS_TYPES.RADIO:
         return {
           type: PRODUCT_OPTIONS_TYPES.RADIO,
-          id: options.id,
+          id: option.id,
           value:
-            options.options[Math.floor(Math.random() * options.options.length)]
+            option.options[Math.floor(Math.random() * option.options.length)]
               .id,
         };
       case PRODUCT_OPTIONS_TYPES.SELECT:
         return {
           type: PRODUCT_OPTIONS_TYPES.SELECT,
-          id: options.id,
+          id: option.id,
           value:
-            options.options[Math.floor(Math.random() * options.options.length)]
+            option.options[Math.floor(Math.random() * option.options.length)]
               .id,
         };
     }

@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { products } from "../_consts/products";
+import { productOptions } from "../_consts/productOptions";
 
 export const ANIMATION_TYPES = ["view", "classic", "none"] as const;
 
@@ -17,6 +18,7 @@ export type ModalAnimation = {
   cardSize: number; // カードのサイズ（モーダルには関係ないんだけど）
   displayNextOrder: boolean; // 次の注文を表示するか
   numberOfCards: number; // カードの枚数（モーダルには関係ないんだけど）
+  numberOfOptions: number; // 商品オプションの数（モーダルには関係ないんだけど）
 };
 
 export type ModalStore = {
@@ -53,6 +55,8 @@ type ModalState = ModalStore & ModalAction;
 
 export const MAX_NUMBER_OF_CARDS = products.length;
 
+export const MAX_NUMBER_OF_OPTIONS = productOptions.length;
+
 const defaultModalState: ModalStore = {
   open: false,
   name: null,
@@ -65,6 +69,7 @@ const defaultModalState: ModalStore = {
     cardSize: 300,
     displayNextOrder: true,
     numberOfCards: MAX_NUMBER_OF_CARDS,
+    numberOfOptions: MAX_NUMBER_OF_OPTIONS,
   },
 } as const;
 
