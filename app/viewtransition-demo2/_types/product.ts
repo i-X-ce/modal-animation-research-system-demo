@@ -3,7 +3,6 @@ export type Product = {
   name: string;
   price: number;
   img: string;
-  desc: string;
 };
 
 export const PRODUCT_OPTIONS_TYPES = {
