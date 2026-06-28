@@ -9,7 +9,7 @@ export default function Page() {
       <AppBar position="sticky" sx={{ zIndex: 20 }}>
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            YAKINIKU
+            café
           </Typography>
           <SettingButton />
         </Toolbar>
