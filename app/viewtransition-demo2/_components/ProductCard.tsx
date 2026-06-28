@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useModalStore } from "../_stores/modalStore";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Add, Remove } from "@mui/icons-material";
 import { CartItem, useCartStore } from "../_stores/cartStore";
 import {
@@ -233,6 +233,9 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
   const displayProductNumber = useModalStore(
     (s) => s.animation.displayProductNumber,
   );
+  const [cardHeight, setCardHeight] = useState<number | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const cardSize = useModalStore((s) => s.animation.cardSize);
 
   const lId = (type: keyof typeof MOTION_LAYOUT_ID) => {
     return lIdBase(id, type);
@@ -242,12 +245,18 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
     openModal(<ProductCardModalContent {...props} />, id);
   };
 
+  useLayoutEffect(() => {
+    if (cardRef.current) {
+      setCardHeight(cardRef.current.offsetHeight);
+    }
+  }, [setCardHeight, cardSize]);
+
   if (animationType === "view" && isOpenCard) {
-    return <div />;
+    return <div style={{ height: `${cardHeight}px` }} />;
   }
 
   return (
-    <motion.div layoutId={id} transition={transition}>
+    <motion.div layoutId={id} transition={transition} ref={cardRef}>
       <Card sx={{ height: "100%" }}>
         <CardActionArea
           onClick={handleClick}
