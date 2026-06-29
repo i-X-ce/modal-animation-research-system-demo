@@ -4,7 +4,7 @@ import Modal from "./_components/Modal";
 import OrderSnackbar from "./_components/OrderSnackbar";
 
 export const metadata = {
-  title: "ViewTransition Demo",
+  title: "ViewTransition Demo2",
 };
 
 export default function ViewTransitionLayout({

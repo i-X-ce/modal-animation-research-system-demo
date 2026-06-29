@@ -104,7 +104,7 @@ export const useModalStore = create<ModalState>()(
       },
     }),
     {
-      name: "modal-store",
+      name: "modal-store2",
       partialize: (state) => ({
         animation: state.animation,
       }),
