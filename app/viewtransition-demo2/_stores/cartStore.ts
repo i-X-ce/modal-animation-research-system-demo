@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { products } from "../_consts/products";
 import { ProductOptionValue } from "../_types/product";
+import { useSystemStore } from "./systemStore";
 
 export type CartItem = {
   productId: string;
@@ -25,21 +26,32 @@ type CartAction = {
 
 type CartState = CartStore & CartAction;
 
-export const useCartStore = create<CartState>((set, get) => ({
+const defaultCartState: CartStore = {
   items: [],
   message: null,
   messageOpen: false,
+} as const;
+
+export const useCartStore = create<CartState>((set, get) => ({
+  ...defaultCartState,
   add(productId, options, qty = 1) {
     set((s) => {
       return {
         items: [...s.items, { productId, options, qty }],
       };
     });
+
+    useSystemStore.getState().addItem(productId, options, qty);
   },
   remove(targetIndex) {
-    set((s) => ({
-      items: s.items.filter((_, index) => targetIndex !== index),
+    const { items } = get();
+    set(() => ({
+      items: items.filter((_, index) => targetIndex !== index),
     }));
+
+    useSystemStore
+      .getState()
+      .removeItem(items[targetIndex].productId, targetIndex);
   },
   getTotalPrice() {
     const { items } = get();
@@ -57,6 +69,10 @@ export const useCartStore = create<CartState>((set, get) => ({
     await new Promise((resolve) => setTimeout(resolve, 1000)).then(() => {});
     set(() => ({ items: [], message: "注文が完了しました！" }));
     await new Promise((resolve) => setTimeout(resolve, 3000)).then(() => {});
-    set(() => ({ messageOpen: false }));
+    set(() => ({
+      messageOpen: false,
+    }));
+
+    useSystemStore.getState().order();
   },
 }));

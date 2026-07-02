@@ -1,10 +1,12 @@
 "use client";
+
 import { BezierDefinition, EasingDefinition, Transition } from "motion";
 import { ReactNode } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { products } from "../_consts/products";
 import { productOptions } from "../_consts/productOptions";
+import { useSystemStore } from "./systemStore";
 
 export const ANIMATION_TYPES = ["view", "classic", "none"] as const;
 
@@ -85,9 +87,13 @@ export const useModalStore = create<ModalState>()(
           bodyElement.style.overflow = "hidden";
         }
         set(() => ({ open: true, content, name: name || null }));
+
+        useSystemStore.getState().openModal();
       },
       closeModal() {
         set(() => ({ open: false }));
+
+        useSystemStore.getState().closeModal();
       },
       onExitComplete() {
         const bodyElement = document.body;
