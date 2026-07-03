@@ -4,13 +4,13 @@ import { create } from "zustand";
 import { ProductOptionValue } from "../_types/product";
 import { useModalStore } from "./modalStore";
 
-export const CART_STEP = {
+export const SYSTEM_STEP = {
   START: "start",
   ORDERING: "ordering",
   END: "end",
 } as const;
 
-export type SystemStep = (typeof CART_STEP)[keyof typeof CART_STEP];
+export type SystemStep = (typeof SYSTEM_STEP)[keyof typeof SYSTEM_STEP];
 
 export const SYSTEM_LOG_TAG = {
   START: "start",
@@ -40,6 +40,11 @@ type SystemStore = {
   systemLog: SystemLog[];
 };
 
+type LogoFile = {
+  url: string;
+  filename: string;
+};
+
 type SystemAction = {
   addSystemLog: (tag: SystemLogTag, message?: string) => void;
 
@@ -53,12 +58,15 @@ type SystemAction = {
   order: () => void;
   openModal: () => void;
   closeModal: () => void;
+  jsonLink: () => LogoFile;
+  csvLink: () => LogoFile;
+  end: () => void;
 };
 
 type SystemState = SystemStore & SystemAction;
 
 const defaultSystemState: SystemStore = {
-  systemStep: CART_STEP.START,
+  systemStep: SYSTEM_STEP.START,
   systemLog: [],
 };
 
@@ -71,7 +79,7 @@ export const useSystemStore = create<SystemState>((set, get) => ({
   },
 
   startOrdering() {
-    set(() => ({ systemStep: CART_STEP.ORDERING }));
+    set(() => ({ systemStep: SYSTEM_STEP.ORDERING }));
     const { animation } = useModalStore.getState();
     get().addSystemLog(
       SYSTEM_LOG_TAG.START,
@@ -93,7 +101,7 @@ export const useSystemStore = create<SystemState>((set, get) => ({
     );
   },
   order() {
-    set(() => ({ systemStep: CART_STEP.END }));
+    set(() => ({ systemStep: SYSTEM_STEP.END }));
     get().addSystemLog(SYSTEM_LOG_TAG.ORDER);
   },
   openModal() {
@@ -102,4 +110,40 @@ export const useSystemStore = create<SystemState>((set, get) => ({
   closeModal() {
     get().addSystemLog(SYSTEM_LOG_TAG.CLOSE_MODAL);
   },
+  jsonLink() {
+    const json = JSON.stringify(get().systemLog, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    return {
+      url: URL.createObjectURL(blob),
+      filename: fileName("json"),
+    };
+  },
+  csvLink() {
+    const csv = get()
+      .systemLog.map(
+        (log) => `${log.timestamp},${log.tag},${log.message ?? ""}`,
+      )
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    return {
+      url: URL.createObjectURL(blob),
+      filename: fileName("csv"),
+    };
+  },
+  end() {
+    set(() => ({ systemStep: SYSTEM_STEP.START, systemLog: [] }));
+  },
 }));
+
+const fileName = (extension: "json" | "csv") =>
+  `system_log_${Temporal.Now.plainDateTimeISO()
+    .toLocaleString("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
+    .toString()
+    .replace(/\D/g, "")}.${extension}`;

@@ -1,6 +1,4 @@
 import { AppBar, Toolbar, Typography } from "@mui/material";
-import ProductView from "./_components/ProductView";
-import CartView from "./_components/CartView";
 import SettingButton from "./_components/SettingButton";
 
 export default function Page() {
@@ -14,10 +12,6 @@ export default function Page() {
           <SettingButton />
         </Toolbar>
       </AppBar>
-      <div className="flex">
-        <ProductView />
-        <CartView />
-      </div>
     </>
   );
 }

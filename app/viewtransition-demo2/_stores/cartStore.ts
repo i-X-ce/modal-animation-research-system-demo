@@ -68,11 +68,10 @@ export const useCartStore = create<CartState>((set, get) => ({
     set(() => ({ message: "注文中...", messageOpen: true }));
     await new Promise((resolve) => setTimeout(resolve, 1000)).then(() => {});
     set(() => ({ items: [], message: "注文が完了しました！" }));
+    useSystemStore.getState().order();
     await new Promise((resolve) => setTimeout(resolve, 3000)).then(() => {});
     set(() => ({
       messageOpen: false,
     }));
-
-    useSystemStore.getState().order();
   },
 }));
