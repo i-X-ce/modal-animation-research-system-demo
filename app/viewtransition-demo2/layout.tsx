@@ -3,6 +3,7 @@ import { CssBaseline } from "@mui/material";
 import Modal from "./_components/Modal";
 import OrderSnackbar from "./_components/OrderSnackbar";
 import StepPanel from "./_components/StepPanel";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 
 export const metadata = {
   title: "ViewTransition Demo2",
@@ -15,7 +16,9 @@ export default function ViewTransitionLayout({
 }) {
   return (
     <>
-      {children}
+      <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+        {children}
+      </AppRouterCacheProvider>
       <StepPanel />
       <Modal />
       <OrderSnackbar />
