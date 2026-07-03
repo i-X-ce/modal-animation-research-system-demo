@@ -5,15 +5,21 @@ import { IconButton } from "@mui/material";
 import { useModalStore } from "../_stores/modalStore";
 import SettingModalContent from "./SettingModalContent";
 import { motion } from "motion/react";
+import { SYSTEM_STEP, useSystemStore } from "../_stores/systemStore";
 
 const SettingButton = () => {
   const openModal = useModalStore((s) => s.openModal);
   const transition = useModalStore((s) => s.getTransition)();
   const layoutId = "setting";
+  const systemStep = useSystemStore((state) => state.systemStep);
 
   const handleOpenSettings = () => {
     openModal(<SettingModalContent />, layoutId);
   };
+
+  if (systemStep === SYSTEM_STEP.ORDERING) {
+    return null;
+  }
 
   return (
     <motion.div transition={transition} layoutId={layoutId}>
