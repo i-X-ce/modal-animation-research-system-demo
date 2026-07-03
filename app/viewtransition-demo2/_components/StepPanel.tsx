@@ -1,9 +1,20 @@
 "use client";
 
-import { Box, Button, Stack, SxProps } from "@mui/material";
+import {
+  Box,
+  Button,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  SxProps,
+  Typography,
+} from "@mui/material";
 import { SYSTEM_STEP, useSystemStore } from "../_stores/systemStore";
 import CartView from "./CartView";
 import ProductView from "./ProductView";
+import { useModalStore } from "../_stores/modalStore";
+import { motion } from "motion/react";
 
 const StepPanel = () => {
   const step = useSystemStore((state) => state.systemStep);
@@ -14,6 +25,38 @@ const StepPanel = () => {
   const jsonLink = useSystemStore((state) => state.jsonLink);
   const csvLink = useSystemStore((state) => state.csvLink);
   const end = useSystemStore((state) => state.end);
+  const openModal = useModalStore((s) => s.openModal);
+  const closeModal = useModalStore((s) => s.closeModal);
+
+  const handleOpenEndModal = () => {
+    const endModalContent = (
+      <Box>
+        <DialogTitle>終了確認</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" gutterBottom>
+            本当に終了しますか？
+          </Typography>
+          <DialogActions>
+            <Button onClick={closeModal} variant="outlined">
+              キャンセル
+            </Button>
+            <Button
+              onClick={() => {
+                closeModal();
+                end();
+              }}
+              variant="contained"
+              color="error"
+            >
+              終了する
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Box>
+    );
+
+    openModal(endModalContent, "end-modal");
+  };
 
   if (step === SYSTEM_STEP.START) {
     return (
@@ -52,9 +95,16 @@ const StepPanel = () => {
               JSONでログをダウンロード
             </Button>
           </Stack>
-          <Button size="large" variant="contained" color="error" onClick={end}>
-            終了
-          </Button>
+          <motion.div>
+            <Button
+              size="large"
+              variant="contained"
+              color="error"
+              onClick={handleOpenEndModal}
+            >
+              終了
+            </Button>
+          </motion.div>
         </Stack>
       </Box>
     );
