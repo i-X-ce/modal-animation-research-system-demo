@@ -146,6 +146,7 @@ const SettingModalContent = () => {
     numberOfCards,
     numberOfOptions,
     displayProductNumber,
+    displaySettings,
   } = animation;
   const setAnimation = useModalStore((s) => s.setAnimation);
 
@@ -175,6 +176,11 @@ const SettingModalContent = () => {
             label="商品番号を表示する"
             value={displayProductNumber}
             onChange={(value) => setAnimation({ displayProductNumber: value })}
+          />
+          <SettingCheckbox
+            label="注文時に設定ボタンを表示する"
+            value={displaySettings}
+            onChange={(value) => setAnimation({ displaySettings: value })}
           />
           <SettingSlider
             label="アニメーションの時間"

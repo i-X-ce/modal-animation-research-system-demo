@@ -12,12 +12,13 @@ const SettingButton = () => {
   const transition = useModalStore((s) => s.getTransition)();
   const layoutId = "setting";
   const systemStep = useSystemStore((state) => state.systemStep);
+  const displaySettings = useModalStore((s) => s.animation.displaySettings);
 
   const handleOpenSettings = () => {
     openModal(<SettingModalContent />, layoutId);
   };
 
-  if (systemStep === SYSTEM_STEP.ORDERING) {
+  if (!displaySettings && systemStep === SYSTEM_STEP.ORDERING) {
     return null;
   }
 
