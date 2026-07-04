@@ -224,10 +224,8 @@ const ProductCardModalContent = ({
 const ProductCard = ({ ...props }: ProductCardProps) => {
   const { id, price, img } = props;
   const openModal = useModalStore((s) => s.openModal);
-  const activeName = useModalStore((s) => s.name);
-  const open = useModalStore((s) => s.open);
-  const isTarget = activeName === id; // モーダルの内容がこのカードの商品か
-  const isOpenCard = isTarget && open; // 現在このカードが開いているか
+  const isTarget = useModalStore((s) => s.name === id); // モーダルの内容がこのカードの商品か
+  const isOpenCard = useModalStore((s) => isTarget && s.open); // 現在このカードが開いているか
   const transition = useModalStore((s) => s.getTransition)();
   const animationType = useModalStore((s) => s.animation.type);
   const displayProductNumber = useModalStore(
