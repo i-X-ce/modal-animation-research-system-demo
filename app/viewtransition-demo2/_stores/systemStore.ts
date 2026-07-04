@@ -41,7 +41,7 @@ export type MouseLog = {
 const generateSystemLog = (tag: LogTag, message?: string): SystemLog => ({
   _type: "system_log",
   tag,
-  timestamp: Temporal.Now.instant().epochMilliseconds,
+  timestamp: Date.now(),
   message: message || "",
 });
 
@@ -214,7 +214,7 @@ export const useSystemStore = create<SystemState>((set, get) => ({
           _type: "mouse_log",
           x,
           y,
-          timestamp: Temporal.Now.instant().epochMilliseconds,
+          timestamp: Date.now(),
         },
       ],
     }));
@@ -222,14 +222,15 @@ export const useSystemStore = create<SystemState>((set, get) => ({
 }));
 
 const fileName = (extension: "json" | "csv") =>
-  `system_log_${Temporal.Now.plainDateTimeISO()
-    .toLocaleString("ja-JP", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    })
-    .toString()
-    .replace(/\D/g, "")}.${extension}`;
+  `system_log_${
+    new Date()
+      .toLocaleString("ja-JP", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+      .replace(/\D/g, "") + `.${extension}`
+  }.${extension}`;
