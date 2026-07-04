@@ -177,14 +177,25 @@ export const useSystemStore = create<SystemState>((set, get) => ({
     const { systemLog, mouseLog } = get();
     const combinedLogs = combineLogs(systemLog, mouseLog);
 
-    const csv = [Object.keys(combinedLogs[0] || {}), ...combinedLogs]
-      .map((log) =>
-        Object.values(log)
-          .map((value) => `"${value}"`)
-          .join(","),
-      )
-      .join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    const escapeCSV = (value: string | number) => {
+      if (value === null || value === undefined) return '""';
+      const str = String(value);
+      return `"${str.replace(/"/g, '""')}"`;
+    };
+
+    const headers = Object.keys(combinedLogs[0] || {})
+      .map(escapeCSV)
+      .join(",");
+
+    const rows = combinedLogs.map((log) =>
+      Object.values(log).map(escapeCSV).join(","),
+    );
+
+    const csv = [headers, ...rows].join("\n");
+
+    const bom = new Uint8Array([0xef, 0xbb, 0xbf]);
+    const blob = new Blob([bom, csv], { type: "text/csv;charset=utf-8;" });
+
     return {
       url: URL.createObjectURL(blob),
       filename: fileName("csv"),
