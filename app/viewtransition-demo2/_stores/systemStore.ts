@@ -12,32 +12,43 @@ export const SYSTEM_STEP = {
 
 export type SystemStep = (typeof SYSTEM_STEP)[keyof typeof SYSTEM_STEP];
 
-export const SYSTEM_LOG_TAG = {
+export const LOG_TAG = {
   START: "start",
   ADD: "add",
   REMOVE: "remove",
   ORDER: "order",
   OPEN_MODAL: "open_modal",
   CLOSE_MODAL: "close_modal",
+  MOUSE_MOVE: "mouse_move",
 } as const;
 
-export type SystemLogTag = (typeof SYSTEM_LOG_TAG)[keyof typeof SYSTEM_LOG_TAG];
+export type LogTag = (typeof LOG_TAG)[keyof typeof LOG_TAG];
 
 export type SystemLog = {
-  tag: (typeof SYSTEM_LOG_TAG)[keyof typeof SYSTEM_LOG_TAG];
+  _type: "system_log";
+  tag: (typeof LOG_TAG)[keyof typeof LOG_TAG];
   timestamp: number;
-  message?: string;
+  message: string;
 };
 
-const generateLog = (tag: SystemLogTag, message?: string): SystemLog => ({
+export type MouseLog = {
+  _type: "mouse_log";
+  timestamp: number;
+  x: number;
+  y: number;
+};
+
+const generateSystemLog = (tag: LogTag, message?: string): SystemLog => ({
+  _type: "system_log",
   tag,
   timestamp: Temporal.Now.instant().epochMilliseconds,
-  message,
+  message: message || "",
 });
 
 type SystemStore = {
   systemStep: SystemStep;
   systemLog: SystemLog[];
+  mouseLog: MouseLog[];
 };
 
 type LogoFile = {
@@ -46,8 +57,7 @@ type LogoFile = {
 };
 
 type SystemAction = {
-  addSystemLog: (tag: SystemLogTag, message?: string) => void;
-
+  addSystemLog: (tag: LogTag, message?: string) => void;
   startOrdering: () => void;
   addItem: (
     productId: string,
@@ -61,6 +71,7 @@ type SystemAction = {
   jsonLink: () => LogoFile;
   csvLink: () => LogoFile;
   end: () => void;
+  mouseMove: (x: number, y: number) => void;
 };
 
 type SystemState = SystemStore & SystemAction;
@@ -68,13 +79,54 @@ type SystemState = SystemStore & SystemAction;
 const defaultSystemState: SystemStore = {
   systemStep: SYSTEM_STEP.START,
   systemLog: [],
+  mouseLog: [],
+};
+
+type OutputLog = {
+  tag: LogTag;
+  timestamp: number;
+  x: number;
+  y: number;
+  message: string;
+};
+
+const combineLogs = (
+  systemLog: SystemLog[],
+  mouseLog: MouseLog[],
+): OutputLog[] => {
+  const combinedLog: OutputLog[] = [...systemLog, ...mouseLog]
+    .sort((a, b) => a.timestamp - b.timestamp)
+    .reduce((acc, log) => {
+      const lastLog = acc[acc.length - 1];
+      const newLog: OutputLog = (() => {
+        if (log._type === "system_log") {
+          return {
+            tag: log.tag,
+            timestamp: log.timestamp,
+            x: lastLog?.x ?? 0,
+            y: lastLog?.y ?? 0,
+            message: log.message,
+          };
+        } else {
+          return {
+            tag: LOG_TAG.MOUSE_MOVE,
+            timestamp: log.timestamp,
+            x: log.x,
+            y: log.y,
+            message: "",
+          };
+        }
+      })();
+      return [...acc, newLog];
+    }, [] as OutputLog[]);
+  return combinedLog;
 };
 
 export const useSystemStore = create<SystemState>((set, get) => ({
   ...defaultSystemState,
   addSystemLog(tag, message) {
     set((s) => ({
-      systemLog: [...s.systemLog, generateLog(tag, message)],
+      systemLog: [...s.systemLog, generateSystemLog(tag, message)],
     }));
   },
 
@@ -82,7 +134,7 @@ export const useSystemStore = create<SystemState>((set, get) => ({
     set(() => ({ systemStep: SYSTEM_STEP.ORDERING }));
     const { animation } = useModalStore.getState();
     get().addSystemLog(
-      SYSTEM_LOG_TAG.START,
+      LOG_TAG.START,
       `${Object.entries(animation)
         .map(([key, value]) => `${key}=${value}`)
         .join(" | ")}`,
@@ -90,28 +142,31 @@ export const useSystemStore = create<SystemState>((set, get) => ({
   },
   addItem(productId, options, qty) {
     get().addSystemLog(
-      SYSTEM_LOG_TAG.ADD,
+      LOG_TAG.ADD,
       `productId=${productId} | qty=${qty} | ${options.map((o) => `${o.id}=${o.value}`).join(" | ")}`,
     );
   },
   removeItem(productId, index) {
     get().addSystemLog(
-      SYSTEM_LOG_TAG.REMOVE,
+      LOG_TAG.REMOVE,
       `productId=${productId} | index=${index}`,
     );
   },
   order() {
     set(() => ({ systemStep: SYSTEM_STEP.END }));
-    get().addSystemLog(SYSTEM_LOG_TAG.ORDER);
+    get().addSystemLog(LOG_TAG.ORDER);
   },
   openModal() {
-    get().addSystemLog(SYSTEM_LOG_TAG.OPEN_MODAL);
+    get().addSystemLog(LOG_TAG.OPEN_MODAL);
   },
   closeModal() {
-    get().addSystemLog(SYSTEM_LOG_TAG.CLOSE_MODAL);
+    get().addSystemLog(LOG_TAG.CLOSE_MODAL);
   },
   jsonLink() {
-    const json = JSON.stringify(get().systemLog, null, 2);
+    const { systemLog, mouseLog } = get();
+    const combinedLogs = combineLogs(systemLog, mouseLog);
+
+    const json = JSON.stringify(combinedLogs, null, 2);
     const blob = new Blob([json], { type: "application/json" });
     return {
       url: URL.createObjectURL(blob),
@@ -119,9 +174,14 @@ export const useSystemStore = create<SystemState>((set, get) => ({
     };
   },
   csvLink() {
-    const csv = get()
-      .systemLog.map(
-        (log) => `${log.timestamp},${log.tag},${log.message ?? ""}`,
+    const { systemLog, mouseLog } = get();
+    const combinedLogs = combineLogs(systemLog, mouseLog);
+
+    const csv = [Object.keys(combinedLogs[0] || {}), ...combinedLogs]
+      .map((log) =>
+        Object.values(log)
+          .map((value) => `"${value}"`)
+          .join(","),
       )
       .join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -131,7 +191,22 @@ export const useSystemStore = create<SystemState>((set, get) => ({
     };
   },
   end() {
-    set(() => ({ systemStep: SYSTEM_STEP.START, systemLog: [] }));
+    set(() => ({ systemStep: SYSTEM_STEP.START, systemLog: [], mouseLog: [] }));
+  },
+  mouseMove(x, y) {
+    if (get().systemStep !== SYSTEM_STEP.ORDERING) return;
+
+    set((s) => ({
+      mouseLog: [
+        ...s.mouseLog,
+        {
+          _type: "mouse_log",
+          x,
+          y,
+          timestamp: Temporal.Now.instant().epochMilliseconds,
+        },
+      ],
+    }));
   },
 }));
 
