@@ -36,10 +36,11 @@ const StepPanel = () => {
           <Typography variant="body1" gutterBottom>
             本当に終了しますか？
           </Typography>
+          <Typography variant="body1" gutterBottom>
+            直前に計測したログファイルのダウンロードができなくなります。
+          </Typography>
           <DialogActions>
-            <Button onClick={closeModal} variant="outlined">
-              キャンセル
-            </Button>
+            <Button onClick={closeModal}>キャンセル</Button>
             <Button
               onClick={() => {
                 closeModal();
