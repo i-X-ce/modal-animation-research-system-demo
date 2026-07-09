@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useModalStore } from "../_stores/modalStore";
 import { motion } from "motion/react";
-import { useLayoutEffect, useRef, useState } from "react";
+import { RefObject, useLayoutEffect, useRef, useState } from "react";
 import { Add, Remove } from "@mui/icons-material";
 import { CartItem, useCartStore } from "../_stores/cartStore";
 import {
@@ -37,12 +37,17 @@ const MIN_QTY = 1;
 
 interface ProductCardProps extends Product {}
 
+interface ProductCardModalContentProps extends ProductCardProps {
+  cardRef: HTMLDivElement | null;
+}
+
 const ProductCardModalContent = ({
   id,
   name,
   price,
   img,
-}: ProductCardProps) => {
+  cardRef,
+}: ProductCardModalContentProps) => {
   const [qty, setQty] = useState(1);
   const addItem = useCartStore((s) => s.add);
   const closeModal = useModalStore((s) => s.closeModal);
@@ -64,8 +69,13 @@ const ProductCardModalContent = ({
     if (isOrdered) {
       closeModal();
     } else {
-      addItem(id, optionValues.slice(0, numberOfOptions), qty);
-
+      const rect = cardRef?.getBoundingClientRect();
+      addItem(id, optionValues.slice(0, numberOfOptions), qty, {
+        x: rect?.x || 0,
+        y: rect?.y || 0,
+        w: rect?.width || 0,
+        h: rect?.height || 0,
+      });
       if (displayNextOrder) {
         setIsOrdered(true);
         const _nextProduct = randomProduct(id, numberOfCards);
@@ -234,7 +244,10 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
   };
 
   const handleClick = () => {
-    openModal(<ProductCardModalContent {...props} />, id);
+    openModal(
+      <ProductCardModalContent {...props} cardRef={cardRef.current} />,
+      id,
+    );
   };
 
   useLayoutEffect(() => {
@@ -243,52 +256,58 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
     }
   }, [setCardHeight, cardSize]);
 
-  if (animationType === "view" && isOpenCard) {
-    return <div style={{ height: `${cardHeight}px` }} />;
-  }
-
   return (
-    <motion.div layoutId={id} transition={transition} ref={cardRef}>
-      <Card sx={{ height: "100%" }}>
-        <CardActionArea
-          onClick={handleClick}
-          sx={{
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "stretch",
-          }}
-        >
-          <motion.div
-            layoutId={lId("IMAGE")}
-            transition={transition}
-            className="w-full"
-          >
-            <CardMedia
-              sx={{
-                height: 200,
-              }}
-              image={img}
-            />
+    <div ref={cardRef}>
+      {(() => {
+        if (animationType === "view" && isOpenCard) {
+          return <div style={{ height: `${cardHeight}px` }} />;
+        }
+
+        return (
+          <motion.div layoutId={id} transition={transition}>
+            <Card sx={{ height: "100%" }}>
+              <CardActionArea
+                onClick={handleClick}
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "stretch",
+                }}
+              >
+                <motion.div
+                  layoutId={lId("IMAGE")}
+                  transition={transition}
+                  className="w-full"
+                >
+                  <CardMedia
+                    sx={{
+                      height: 200,
+                    }}
+                    image={img}
+                  />
+                </motion.div>
+                <CardContent
+                  sx={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography variant="h6" gutterBottom>
+                    {findProductNameById(id, displayProductNumber)}
+                  </Typography>
+                  <Typography variant="h6" color="primary">
+                    ￥{price}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Card>
           </motion.div>
-          <CardContent
-            sx={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              {findProductNameById(id, displayProductNumber)}
-            </Typography>
-            <Typography variant="h6" color="primary">
-              ￥{price}
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    </motion.div>
+        );
+      })()}
+    </div>
   );
 };
 

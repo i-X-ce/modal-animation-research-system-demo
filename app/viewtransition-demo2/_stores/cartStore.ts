@@ -18,7 +18,17 @@ type CartStore = {
 };
 
 type CartAction = {
-  add: (productId: string, options: ProductOptionValue[], qty?: number) => void;
+  add: (
+    productId: string,
+    options: ProductOptionValue[],
+    qty: number,
+    cardPosition: {
+      x: number;
+      y: number;
+      w: number;
+      h: number;
+    },
+  ) => void;
   remove: (targetIndex: number) => void;
   getTotalPrice: () => number;
   order: () => Promise<void>;
@@ -34,14 +44,14 @@ const defaultCartState: CartStore = {
 
 export const useCartStore = create<CartState>((set, get) => ({
   ...defaultCartState,
-  add(productId, options, qty = 1) {
+  add(productId, options, qty, cardPosition) {
     set((s) => {
       return {
         items: [...s.items, { productId, options, qty }],
       };
     });
 
-    useSystemStore.getState().addItem(productId, options, qty);
+    useSystemStore.getState().addItem(productId, options, qty, cardPosition);
   },
   remove(targetIndex) {
     const { items } = get();

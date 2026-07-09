@@ -63,6 +63,12 @@ type SystemAction = {
     productId: string,
     options: ProductOptionValue[],
     qty: number,
+    cardPosition: {
+      x: number;
+      y: number;
+      w: number;
+      h: number;
+    },
   ) => void;
   removeItem: (productId: string, index: number) => void;
   order: () => void;
@@ -129,7 +135,6 @@ export const useSystemStore = create<SystemState>((set, get) => ({
       systemLog: [...s.systemLog, generateSystemLog(tag, message)],
     }));
   },
-
   startOrdering() {
     set(() => ({ systemStep: SYSTEM_STEP.ORDERING }));
     const { animation } = useModalStore.getState();
@@ -140,10 +145,10 @@ export const useSystemStore = create<SystemState>((set, get) => ({
         .join(" | ")}`,
     );
   },
-  addItem(productId, options, qty) {
+  addItem(productId, options, qty, {x, y, w, h}) {
     get().addSystemLog(
       LOG_TAG.ADD,
-      `productId=${productId} | qty=${qty} | ${options.map((o) => `${o.id}=${o.value}`).join(" | ")}`,
+      `productId=${productId} | qty=${qty} | cardX=${x} | cardY=${y} | cardW=${w} | cardH=${h} | ${options.map((o) => `${o.id}=${o.value}`).join(" | ")}`,
     );
   },
   removeItem(productId, index) {
