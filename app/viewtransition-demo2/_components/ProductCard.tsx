@@ -26,8 +26,6 @@ import OptionValueChip from "./OptionValueChip";
 
 const MOTION_LAYOUT_ID = {
   IMAGE: "image",
-  NAME: "name",
-  PRICE: "price",
 } as const satisfies Record<string, string>;
 
 const lIdBase = (productId: string, type: keyof typeof MOTION_LAYOUT_ID) => {
@@ -117,11 +115,9 @@ const ProductCardModalContent = ({
       >
         <Stack spacing={4} sx={{ flex: 1, py: 2 }}>
           <Stack spacing={1}>
-            <motion.div layoutId={lId("NAME")} transition={transition}>
-              <Typography variant="h5" gutterBottom>
-                {findProductNameById(id, displayProductNumber)}
-              </Typography>
-            </motion.div>
+            <Typography variant="h5" gutterBottom>
+              {findProductNameById(id, displayProductNumber)}
+            </Typography>
           </Stack>
 
           <motion.div
@@ -198,11 +194,9 @@ const ProductCardModalContent = ({
                   </Button>
                 </Stack>
               </motion.div>
-              <motion.div layoutId={lId("PRICE")} transition={transition}>
-                <Typography variant="h5" color="primary" align="right">
-                  ￥{price * qty}
-                </Typography>
-              </motion.div>
+              <Typography variant="h5" color="primary" align="right">
+                ￥{price * qty}
+              </Typography>
             </Box>
           )}
           <motion.div
@@ -285,20 +279,12 @@ const ProductCard = ({ ...props }: ProductCardProps) => {
               justifyContent: "space-between",
             }}
           >
-            <motion.div layoutId={lId("NAME")} transition={transition}>
-              <Typography variant="h6" gutterBottom>
-                {findProductNameById(id, displayProductNumber)}
-              </Typography>
-            </motion.div>
-            <motion.div
-              layoutId={lId("PRICE")}
-              transition={transition}
-              className="w-fit ml-auto"
-            >
-              <Typography variant="h6" color="primary" align="right">
-                ￥{price}
-              </Typography>
-            </motion.div>
+            <Typography variant="h6" gutterBottom>
+              {findProductNameById(id, displayProductNumber)}
+            </Typography>
+            <Typography variant="h6" color="primary">
+              ￥{price}
+            </Typography>
           </CardContent>
         </CardActionArea>
       </Card>
