@@ -15,6 +15,10 @@ export const PATH = {
     url: "/viewtransition-demo2",
     label: "View Transition モーダルデモ2 （カフェ）",
   },
+  viewTransitionDemo3: {
+    url: "/viewtransition-demo3",
+    label: "View Transition モーダルデモ3 （ワイン）",
+  },
 } satisfies Record<string, PathItem>;
 
 /**
