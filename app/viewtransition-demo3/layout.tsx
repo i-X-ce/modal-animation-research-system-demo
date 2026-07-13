@@ -1,13 +1,9 @@
 import React from "react";
-import { CssBaseline } from "@mui/material";
 import Modal from "./_components/Modal";
 import OrderSnackbar from "./_components/OrderSnackbar";
-import StepPanel from "./_components/StepPanel";
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import MouseTracker from "./_components/MouseTracker";
 
 export const metadata = {
-  title: "ViewTransition Demo2",
+  title: "Vintage Selection",
 };
 
 export default function ViewTransitionLayout({
@@ -17,14 +13,9 @@ export default function ViewTransitionLayout({
 }) {
   return (
     <>
-      <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-        {children}
-      </AppRouterCacheProvider>
-      <StepPanel />
+      {children}
       <Modal />
       <OrderSnackbar />
-      <MouseTracker />
-      <CssBaseline />
     </>
   );
 }

@@ -1,314 +1,76 @@
 "use client";
 
-import { Product, ProductOptionValue } from "../_types/product";
-import {
-  Box,
-  Button,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  Stack,
-  Typography,
-} from "@mui/material";
 import { useModalStore } from "../_stores/modalStore";
-import { motion } from "motion/react";
-import { RefObject, useLayoutEffect, useRef, useState } from "react";
-import { Add, Remove } from "@mui/icons-material";
-import { CartItem, useCartStore } from "../_stores/cartStore";
-import {
-  defaultProductOptionValues,
-  randomProductOptionValues,
-} from "../_consts/productOptions";
-import ProductOptionsForm from "./ProductOptionsForm";
-import { findProductNameById, randomProduct } from "../_consts/products";
-import OptionValueChip from "./OptionValueChip";
+import { Product } from "../_types/product";
+import ProductModalContent from "./ProductModalContent";
 
-const MOTION_LAYOUT_ID = {
-  IMAGE: "image",
-} as const satisfies Record<string, string>;
-
-const lIdBase = (productId: string, type: keyof typeof MOTION_LAYOUT_ID) => {
-  return `${productId}-${MOTION_LAYOUT_ID[type]}`;
-};
-
-const MAX_QTY = 10;
-const MIN_QTY = 1;
-
-interface ProductCardProps extends Product {}
-
-interface ProductCardModalContentProps extends ProductCardProps {
-  cardRef: HTMLDivElement | null;
-}
-
-const ProductCardModalContent = ({
+export default function ProductCard({
   id,
+  number,
   name,
+  origin,
+  description,
   price,
   img,
-  cardRef,
-}: ProductCardModalContentProps) => {
-  const [qty, setQty] = useState(1);
-  const addItem = useCartStore((s) => s.add);
-  const closeModal = useModalStore((s) => s.closeModal);
-  const transition = useModalStore((s) => s.getTransition)();
-  const animationType = useModalStore((s) => s.animation.type);
-  const [optionValues, setOptionValues] = useState<ProductOptionValue[]>(
-    defaultProductOptionValues,
-  );
-  const [isOrdered, setIsOrdered] = useState(false);
-  const [nextProduct, setNextProduct] = useState<CartItem | null>(null);
-  const displayNextOrder = useModalStore((s) => s.animation.displayNextOrder);
-  const numberOfCards = useModalStore((s) => s.animation.numberOfCards);
-  const numberOfOptions = useModalStore((s) => s.animation.numberOfOptions);
-  const displayProductNumber = useModalStore(
-    (s) => s.animation.displayProductNumber,
-  );
-
-  const handleAddToCart = () => {
-    if (isOrdered) {
-      closeModal();
-    } else {
-      const rect = cardRef?.getBoundingClientRect();
-      addItem(id, optionValues.slice(0, numberOfOptions), qty, {
-        x: rect?.x || 0,
-        y: rect?.y || 0,
-        w: rect?.width || 0,
-        h: rect?.height || 0,
-      });
-      if (displayNextOrder) {
-        setIsOrdered(true);
-        const _nextProduct = randomProduct(id, numberOfCards);
-        setNextProduct({
-          productId: _nextProduct.id,
-          options: randomProductOptionValues(numberOfOptions),
-          qty: 1,
-        });
-      } else {
-        closeModal();
-      }
-    }
-  };
-
-  const lId = (type: keyof typeof MOTION_LAYOUT_ID) => {
-    return animationType === "view" ? lIdBase(id, type) : undefined;
-  };
-
-  const handleAdd = () => {
-    setQty((q) => Math.min(q + 1, MAX_QTY));
-  };
-
-  const handleRemove = () => {
-    setQty((q) => Math.max(q - 1, MIN_QTY));
-  };
-
-  return (
-    <div className="relative flex h-full">
-      <motion.div
-        layoutId={lId("IMAGE")}
-        transition={transition}
-        className="flex-2"
-      >
-        <CardMedia
-          component={"img"}
-          src={img}
-          sx={{ height: "100%" }}
-          alt={name}
-        />
-      </motion.div>
-      <CardContent
-        sx={{
-          flex: 3,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <Stack spacing={4} sx={{ flex: 1, py: 2 }}>
-          <Stack spacing={1}>
-            <Typography variant="h5" gutterBottom>
-              {findProductNameById(id, displayProductNumber)}
-            </Typography>
-          </Stack>
-
-          <motion.div
-            transition={transition}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            {isOrdered ? (
-              <Box>
-                <Typography variant="body1" gutterBottom>
-                  次の商品:{" "}
-                  <Typography component={"span"} variant="h6" color="primary">
-                    {findProductNameById(
-                      nextProduct?.productId,
-                      displayProductNumber,
-                    )}
-                  </Typography>
-                </Typography>
-                <Stack direction={"row"} sx={{ flexWrap: "wrap", gap: 2 }}>
-                  {nextProduct?.options?.map((o) => (
-                    <OptionValueChip key={o.id} optionValue={o} />
-                  ))}
-                </Stack>
-              </Box>
-            ) : (
-              <ProductOptionsForm
-                optionValues={optionValues}
-                onChange={setOptionValues}
-              />
-            )}
-          </motion.div>
-        </Stack>
-
-        <Stack spacing={2}>
-          {!isOrdered && (
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <motion.div
-                transition={transition}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <Stack direction={"row"}>
-                  <Button
-                    onClick={handleRemove}
-                    disabled={qty <= MIN_QTY}
-                    variant="outlined"
-                    size="small"
-                    sx={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
-                  >
-                    <Remove />
-                  </Button>
-                  <Box
-                    className="flex items-center justify-center select-none"
-                    sx={{
-                      px: 3,
-                      borderTop: (theme) =>
-                        `1px ${theme.palette.primary.light} solid`,
-                      borderBottom: (theme) =>
-                        `1px ${theme.palette.primary.light} solid`,
-                    }}
-                  >
-                    {qty}
-                  </Box>
-                  <Button
-                    onClick={handleAdd}
-                    disabled={qty >= MAX_QTY}
-                    variant="outlined"
-                    size="small"
-                    sx={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
-                  >
-                    <Add />
-                  </Button>
-                </Stack>
-              </motion.div>
-              <Typography variant="h5" color="primary" align="right">
-                ￥{price * qty}
-              </Typography>
-            </Box>
-          )}
-          <motion.div
-            transition={transition}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <Button onClick={handleAddToCart} variant="contained" fullWidth>
-              {isOrdered ? "閉じる" : "カートに追加"}
-            </Button>
-          </motion.div>
-        </Stack>
-      </CardContent>
-    </div>
-  );
-};
-
-const ProductCard = ({ ...props }: ProductCardProps) => {
-  const { id, price, img } = props;
+  category,
+}: Product) {
   const openModal = useModalStore((s) => s.openModal);
-  const isTarget = useModalStore((s) => s.name === id); // モーダルの内容がこのカードの商品か
-  const isOpenCard = useModalStore((s) => isTarget && s.open); // 現在このカードが開いているか
-  const transition = useModalStore((s) => s.getTransition)();
-  const animationType = useModalStore((s) => s.animation.type);
-  const displayProductNumber = useModalStore(
-    (s) => s.animation.displayProductNumber,
-  );
-  const [cardHeight, setCardHeight] = useState<number | null>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const cardSize = useModalStore((s) => s.animation.cardSize);
-
-  const lId = (type: keyof typeof MOTION_LAYOUT_ID) => {
-    return lIdBase(id, type);
-  };
 
   const handleClick = () => {
     openModal(
-      <ProductCardModalContent {...props} cardRef={cardRef.current} />,
+      <ProductModalContent
+        product={{
+          id,
+          number,
+          name,
+          origin,
+          category,
+          description,
+          price,
+          img,
+        }}
+      />,
       id,
     );
   };
 
-  useLayoutEffect(() => {
-    if (cardRef.current) {
-      setCardHeight(cardRef.current.offsetHeight);
-    }
-  }, [setCardHeight, cardSize]);
-
   return (
-    <div ref={cardRef}>
-      {(() => {
-        if (animationType === "view" && isOpenCard) {
-          return <div style={{ height: `${cardHeight}px` }} />;
-        }
+    <button
+      type="button"
+      onClick={handleClick}
+      className="group flex h-full flex-col overflow-hidden bg-[#171717] text-left transition-transform duration-200 hover:-translate-y-1"
+    >
+      <div className="relative h-[240px] overflow-hidden">
+        <img
+          alt={name}
+          src={img}
+          className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent" />
+      </div>
 
-        return (
-          <motion.div layoutId={id} transition={transition}>
-            <Card sx={{ height: "100%" }}>
-              <CardActionArea
-                onClick={handleClick}
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "stretch",
-                }}
-              >
-                <motion.div
-                  layoutId={lId("IMAGE")}
-                  transition={transition}
-                  className="w-full"
-                >
-                  <CardMedia
-                    sx={{
-                      height: 200,
-                    }}
-                    image={img}
-                  />
-                </motion.div>
-                <CardContent
-                  sx={{
-                    flex: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Typography variant="h6" gutterBottom>
-                    {findProductNameById(id, displayProductNumber)}
-                  </Typography>
-                  <Typography variant="h6" color="primary">
-                    ￥{price}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          </motion.div>
-        );
-      })()}
-    </div>
+      <div className="flex flex-1 flex-col justify-between px-6 pb-6 pt-5">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 text-[14px] leading-none text-[#a3b3ff]">
+            <span className="font-serif">#</span>
+            <span>{number}</span>
+            <span>・</span>
+            <span>{origin}</span>
+          </div>
+          <h3 className="font-wine-serif text-[24px] font-normal leading-[1.2] text-white">
+            {name}
+          </h3>
+          <p className="text-[14px] leading-7 text-white/80">{description}</p>
+        </div>
+
+        <div className="mt-10 flex items-baseline gap-2 whitespace-nowrap text-white">
+          <span className="font-wine-serif text-[14px]">￥</span>
+          <span className="font-wine-serif text-[24px] font-normal">
+            {price.toLocaleString()}
+          </span>
+          <span className="text-[14px] text-[#737373]">/ glass</span>
+        </div>
+      </div>
+    </button>
   );
-};
-
-export default ProductCard;
+}
