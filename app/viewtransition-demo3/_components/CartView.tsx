@@ -32,7 +32,7 @@ const CartView = () => {
           style={{ maxHeight: "calc(100dvh - 320px)" }}
         >
           {rows.length === 0 ? (
-            <div className="rounded-[4px] border border-white/10 bg-[#0a0a0a] p-4 text-sm text-white/60">
+            <div className="rounded-sm border border-white/10 bg-[#0a0a0a] p-4 text-sm text-white/60">
               まだ注文はありません。
             </div>
           ) : (
@@ -41,7 +41,7 @@ const CartView = () => {
                 key={`${row.productId}-${index}`}
                 className="relative flex gap-4 bg-[#0a0a0a] p-4"
               >
-                <div className="h-[80px] w-[50px] shrink-0 overflow-hidden bg-white/5">
+                <div className="h-20 w-12.5 shrink-0 overflow-hidden bg-white/5">
                   <img
                     alt={row.product.name}
                     src={row.product.img}
@@ -72,7 +72,7 @@ const CartView = () => {
                 </div>
                 <button
                   type="button"
-                  className="absolute right-2 top-2 text-white/60 transition hover:text-white"
+                  className="absolute right-2 top-2 text-white/60"
                   onClick={() => remove(index)}
                   aria-label="注文から削除"
                 >
@@ -104,7 +104,7 @@ const CartView = () => {
 
         <button
           type="button"
-          className="flex h-[55px] w-full items-center justify-center gap-2 bg-[#615fff] px-4 text-[16px] font-medium text-white transition hover:bg-[#7370ff] disabled:cursor-not-allowed disabled:bg-white/10"
+          className="flex h-13.75 w-full items-center justify-center gap-2 bg-[#615fff] px-4 text-[16px] font-medium text-white disabled:cursor-not-allowed disabled:bg-white/10"
           onClick={() => {
             order();
             closeModal();

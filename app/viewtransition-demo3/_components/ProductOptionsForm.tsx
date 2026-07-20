@@ -1,144 +1,29 @@
 "use client";
 
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  FormLabel,
-  InputLabel,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-  Stack,
-} from "@mui/material";
-import {
-  PRODUCT_OPTIONS_TYPES,
-  ProductOption,
-  ProductOptionValue,
-} from "../_types/product";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import { PRODUCT_OPTIONS_TYPES, ProductOptionValue } from "../_types/product";
 import { productOptions } from "../_consts/productOptions";
-import { useModalStore } from "../_stores/modalStore";
-
-type OptionCommon<T> = {
-  optionValue: Extract<ProductOptionValue, { type: T }>;
-  onChange: (option: ProductOptionValue) => void;
-};
-
-const ProductOptionCheckbox = ({
-  id,
-  name,
-  trueLabel,
-  falseLabel,
-  optionValue,
-  onChange,
-}: Extract<
-  ProductOption,
-  { type: (typeof PRODUCT_OPTIONS_TYPES)["CHECKBOX"] }
-> &
-  OptionCommon<"checkbox">) => {
-  const { value } = optionValue;
-
-  const handleChange = (newValue: boolean) => {
-    onChange({
-      type: PRODUCT_OPTIONS_TYPES.CHECKBOX,
-      id,
-      value: newValue,
-    });
-  };
-
-  return (
-    <FormControl>
-      <FormLabel>{name}</FormLabel>
-      <FormControlLabel
-        control={
-          <Checkbox checked={value} onChange={(_, v) => handleChange(v)} />
-        }
-        label={value ? trueLabel : falseLabel}
-      />
-    </FormControl>
-  );
-};
-
-const ProductOptionRadioGroup = ({
-  id,
-  name,
-  options,
-  optionValue,
-  onChange,
-}: Extract<ProductOption, { type: (typeof PRODUCT_OPTIONS_TYPES)["RADIO"] }> &
-  OptionCommon<"radio">) => {
-  const { value } = optionValue;
-  const handleChange = (newValue: string) => {
-    onChange({
-      type: PRODUCT_OPTIONS_TYPES.RADIO,
-      id,
-      value: newValue,
-    });
-  };
-
-  return (
-    <FormControl>
-      <FormLabel>{name}</FormLabel>
-      <FormGroup>
-        <RadioGroup
-          value={value}
-          onChange={(e) => handleChange(e.target.value)}
-          row
-        >
-          {options.map(({ id: optionId, label }) => (
-            <FormControlLabel
-              key={optionId}
-              value={optionId}
-              control={<Radio />}
-              label={label}
-            />
-          ))}
-        </RadioGroup>
-      </FormGroup>
-    </FormControl>
-  );
-};
-
-const ProductOptionSelect = ({
-  id,
-  name,
-  options,
-  optionValue,
-  onChange,
-}: Extract<ProductOption, { type: (typeof PRODUCT_OPTIONS_TYPES)["SELECT"] }> &
-  OptionCommon<"select">) => {
-  const { value } = optionValue;
-  const handleChange = (newValue: string) => {
-    onChange({
-      type: PRODUCT_OPTIONS_TYPES.SELECT,
-      id,
-      value: newValue,
-    });
-  };
-
-  return (
-    <FormControl>
-      <InputLabel>{name}</InputLabel>
-      <Select
-        value={value}
-        label={name}
-        onChange={(e) => handleChange(e.target.value)}
-      >
-        {options.map(({ id: optionId, label }) => (
-          <MenuItem key={optionId} value={optionId}>
-            {label}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  );
-};
 
 type ProductOptionsFormProps = {
   optionValues: ProductOptionValue[];
   onChange: (options: ProductOptionValue[]) => void;
+};
+
+const optionButtonSx = {
+  flex: 1,
+  minHeight: 44,
+  borderRadius: 999,
+  borderWidth: 1,
+  textTransform: "none",
+  fontSize: 14,
+  letterSpacing: 0,
+  boxShadow: "none",
+  transition: "none",
+  px: 2,
+  whiteSpace: "nowrap",
+  "&:hover": {
+    boxShadow: "none",
+  },
 };
 
 const ProductOptionsForm = ({
@@ -151,56 +36,119 @@ const ProductOptionsForm = ({
     );
     onChange(updatedOptions);
   };
-  const numberOfOptions = useModalStore((s) => s.animation.numberOfOptions);
 
   return (
-    <FormGroup>
-      <Stack spacing={2}>
-        {productOptions.slice(0, numberOfOptions).map((option) => {
-          const optionValue = optionValues.find((o) => o.id === option.id);
-          if (!optionValue) return null;
+    <Stack spacing={3}>
+      {productOptions.map((option) => {
+        const optionValue = optionValues.find(
+          (value) => value.id === option.id,
+        );
+        if (!optionValue) return null;
 
-          if (
-            option.type === PRODUCT_OPTIONS_TYPES.CHECKBOX &&
-            optionValue.type === PRODUCT_OPTIONS_TYPES.CHECKBOX
-          ) {
-            return (
-              <ProductOptionCheckbox
-                {...option}
-                key={option.id}
-                optionValue={optionValue}
-                onChange={handleOptionChange}
-              />
-            );
-          } else if (
-            option.type === PRODUCT_OPTIONS_TYPES.RADIO &&
-            optionValue.type === PRODUCT_OPTIONS_TYPES.RADIO
-          ) {
-            return (
-              <ProductOptionRadioGroup
-                {...option}
-                key={option.id}
-                optionValue={optionValue}
-                onChange={handleOptionChange}
-              />
-            );
-          } else if (
-            option.type === PRODUCT_OPTIONS_TYPES.SELECT &&
-            optionValue.type === PRODUCT_OPTIONS_TYPES.SELECT
-          ) {
-            return (
-              <ProductOptionSelect
-                {...option}
-                key={option.id}
-                optionValue={optionValue}
-                onChange={handleOptionChange}
-              />
-            );
-          }
-          return null;
-        })}
-      </Stack>
-    </FormGroup>
+        if (
+          option.type === PRODUCT_OPTIONS_TYPES.RADIO &&
+          optionValue.type === PRODUCT_OPTIONS_TYPES.RADIO
+        ) {
+          const radioOptionValue = optionValue as Extract<
+            ProductOptionValue,
+            { type: typeof PRODUCT_OPTIONS_TYPES.RADIO }
+          >;
+          return (
+            <Stack key={option.id} spacing={1.5}>
+              <Typography
+                variant="body2"
+                sx={{ color: "#e8e8e8", fontWeight: 600 }}
+              >
+                {option.name}
+              </Typography>
+              <Stack direction="row" spacing={1.5} sx={{ flexWrap: "wrap" }}>
+                {option.options.map((choice) => {
+                  const selected = radioOptionValue.value === choice.id;
+                  return (
+                    <Button
+                      key={choice.id}
+                      disableRipple
+                      onClick={() =>
+                        handleOptionChange({
+                          type: PRODUCT_OPTIONS_TYPES.RADIO,
+                          id: option.id,
+                          value: choice.id,
+                        })
+                      }
+                      variant="outlined"
+                      sx={{
+                        ...optionButtonSx,
+                        borderColor: selected
+                          ? "#8797ff"
+                          : "rgba(255,255,255,0.16)",
+                        color: selected ? "#a8b6ff" : "rgba(255,255,255,0.5)",
+                        backgroundColor: selected
+                          ? "rgba(135,151,255,0.06)"
+                          : "transparent",
+                        minWidth: choice.label.length > 6 ? 132 : 110,
+                        flex:
+                          option.options.length > 2 ? "1 1 150px" : "1 1 210px",
+                      }}
+                    >
+                      {choice.label}
+                    </Button>
+                  );
+                })}
+              </Stack>
+            </Stack>
+          );
+        }
+
+        if (
+          option.type === PRODUCT_OPTIONS_TYPES.CHECKBOX &&
+          optionValue.type === PRODUCT_OPTIONS_TYPES.CHECKBOX
+        ) {
+          const checkboxOptionValue = optionValue as Extract<
+            ProductOptionValue,
+            { type: typeof PRODUCT_OPTIONS_TYPES.CHECKBOX }
+          >;
+          return (
+            <Box key={option.id}>
+              <Typography
+                variant="body2"
+                sx={{ color: "#e8e8e8", fontWeight: 600 }}
+              >
+                {option.name}
+              </Typography>
+              <Button
+                disableRipple
+                onClick={() =>
+                  handleOptionChange({
+                    type: PRODUCT_OPTIONS_TYPES.CHECKBOX,
+                    id: option.id,
+                    value: !checkboxOptionValue.value,
+                  })
+                }
+                variant="outlined"
+                sx={{
+                  ...optionButtonSx,
+                  mt: 1.5,
+                  flex: "0 0 auto",
+                  minWidth: 160,
+                  borderColor: checkboxOptionValue.value
+                    ? "#8797ff"
+                    : "rgba(255,255,255,0.16)",
+                  color: checkboxOptionValue.value
+                    ? "#a8b6ff"
+                    : "rgba(255,255,255,0.5)",
+                }}
+              >
+                {checkboxOptionValue.value
+                  ? option.trueLabel
+                  : option.falseLabel}
+              </Button>
+            </Box>
+          );
+        }
+
+        return null;
+      })}
+    </Stack>
   );
 };
 

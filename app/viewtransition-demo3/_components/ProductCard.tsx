@@ -38,13 +38,14 @@ export default function ProductCard({
     <button
       type="button"
       onClick={handleClick}
-      className="group flex h-full flex-col overflow-hidden bg-[#171717] text-left transition-transform duration-200 hover:-translate-y-1"
+      className="group flex h-full flex-col overflow-hidden bg-[#171717] text-left"
+      style={{ viewTransitionName: id }}
     >
-      <div className="relative h-[240px] overflow-hidden">
+      <div className="relative h-60 overflow-hidden">
         <img
           alt={name}
           src={img}
-          className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent" />
       </div>

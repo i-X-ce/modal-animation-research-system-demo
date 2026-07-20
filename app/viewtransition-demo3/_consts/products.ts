@@ -82,3 +82,15 @@ export const products: Product[] = [
     img: heroImage,
   },
 ];
+
+export const categories: {
+  number: string;
+  label: string;
+  selected?: boolean;
+}[] = [
+  { number: "01.", label: "赤ワイン", selected: true },
+  { number: "02.", label: "白ワイン" },
+  { number: "03.", label: "ロゼ" },
+  { number: "04.", label: "スパークリングワイン" },
+  { number: "05.", label: "デザートワイン" },
+];

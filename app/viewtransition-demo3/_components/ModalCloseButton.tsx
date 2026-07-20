@@ -9,7 +9,7 @@ const ModalCloseButton = () => {
     <button
       type="button"
       onClick={closeModal}
-      className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/30 text-xl text-white/80 transition hover:border-white/25 hover:text-white"
+      className="absolute right-4 top-4 inline-flex h-8 w-8 items-center justify-center rounded-md border border-white/20 bg-black/20 text-[18px] text-white/80"
       aria-label="モーダルを閉じる"
     >
       ×

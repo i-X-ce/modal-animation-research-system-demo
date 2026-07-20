@@ -68,8 +68,8 @@ const defaultModalState: ModalStore = {
   animation: {
     type: "view",
     easing: "easeInOut",
-    duration: 0.5,
-    coverage: 0.2,
+    duration: 0.35,
+    coverage: 0.88,
     cardSize: 300,
     displayNextOrder: true,
     numberOfCards: MAX_NUMBER_OF_CARDS,
@@ -84,18 +84,42 @@ export const useModalStore = create<ModalState>()(
     (set, get) => ({
       ...defaultModalState,
       openModal(content: ReactNode, name?: string) {
-        const bodyElement = document.body;
-        if (bodyElement) {
-          bodyElement.style.overflow = "hidden";
-        }
-        set(() => ({ open: true, content, name: name || null }));
+        const commit = () => {
+          const bodyElement = document.body;
+          if (bodyElement) {
+            bodyElement.style.overflow = "hidden";
+          }
+          set(() => ({ open: true, content, name: name || null }));
+          useSystemStore.getState().openModal();
+        };
 
-        useSystemStore.getState().openModal();
+        if (
+          get().animation.type === "view" &&
+          typeof document !== "undefined" &&
+          "startViewTransition" in document
+        ) {
+          document.startViewTransition(commit);
+          return;
+        }
+
+        commit();
       },
       closeModal() {
-        set(() => ({ open: false }));
+        const commit = () => {
+          set(() => ({ open: false }));
+          useSystemStore.getState().closeModal();
+        };
 
-        useSystemStore.getState().closeModal();
+        if (
+          get().animation.type === "view" &&
+          typeof document !== "undefined" &&
+          "startViewTransition" in document
+        ) {
+          document.startViewTransition(commit);
+          return;
+        }
+
+        commit();
       },
       onExitComplete() {
         const bodyElement = document.body;

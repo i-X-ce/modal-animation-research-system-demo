@@ -7,86 +7,105 @@ import {
 export const productOptions: ProductOption[] = [
   {
     type: PRODUCT_OPTIONS_TYPES.RADIO,
-    id: "size",
-    name: "サイズ",
+    id: "timing",
+    name: "提供タイミング",
     options: [
-      { id: "s", label: "S" },
-      { id: "m", label: "M" },
-      { id: "l", label: "L" },
+      { id: "before", label: "食前" },
+      { id: "during", label: "食中" },
+      { id: "after", label: "食後" },
     ],
   },
   {
     type: PRODUCT_OPTIONS_TYPES.RADIO,
-    id: "temperature",
-    name: "温度",
+    id: "glass",
+    name: "グラスの選択",
     options: [
-      { id: "hot", label: "ホット" },
-      { id: "ice", label: "アイス" },
+      { id: "standard", label: "標準" },
+      { id: "premium", label: "プレミアム" },
     ],
   },
   {
     type: PRODUCT_OPTIONS_TYPES.RADIO,
-    id: "ice",
-    name: "氷",
+    id: "decantation",
+    name: "デキャンタージュ",
     options: [
-      { id: "no_ice", label: "無し" },
-      { id: "less_ice", label: "少なめ" },
-      { id: "normal_ice", label: "普通" },
-      { id: "extra_ice", label: "多め" },
+      { id: "required", label: "必要" },
+      { id: "not_required", label: "不要" },
     ],
   },
   {
     type: PRODUCT_OPTIONS_TYPES.RADIO,
-    id: "syrup",
-    name: "甘さ",
+    id: "snack",
+    name: "おつまみ追加",
     options: [
-      { id: "no_sugar", label: "無糖" },
-      { id: "less_sugar", label: "微糖" },
-      { id: "normal_sugar", label: "加糖" },
-    ],
-  },
-  {
-    type: PRODUCT_OPTIONS_TYPES.SELECT,
-    id: "topping",
-    name: "トッピング",
-    options: [
-      { id: "none", label: "無し" },
-      { id: "whipped_cream", label: "ホイップクリーム" },
-      { id: "chocolate_sauce", label: "チョコレートソース" },
-      { id: "caramel_sauce", label: "キャラメルソース" },
-      { id: "strawberry_sauce", label: "いちごソース" },
-      { id: "tapioca", label: "タピオカ" },
+      { id: "none", label: "なし" },
+      { id: "cheese", label: "チーズ盛り合わせ" },
+      { id: "olive", label: "オリーブ" },
     ],
   },
 ] as const;
 
-export const defaultProductOptionValues: ProductOptionValue[] =
-  productOptions.map((options) => {
-    switch (options.type) {
-      case PRODUCT_OPTIONS_TYPES.CHECKBOX:
-        return {
-          type: PRODUCT_OPTIONS_TYPES.CHECKBOX,
-          id: options.id,
-          value: false,
-        };
-      case PRODUCT_OPTIONS_TYPES.RADIO:
-        return {
+const toProductOptionValue = (value: unknown): ProductOptionValue =>
+  value as ProductOptionValue;
+
+const getDefaultProductOptionValue = (option: ProductOption) => {
+  switch (option.type) {
+    case PRODUCT_OPTIONS_TYPES.CHECKBOX:
+      return toProductOptionValue({
+        type: PRODUCT_OPTIONS_TYPES.CHECKBOX,
+        id: option.id,
+        value: false,
+      });
+    case PRODUCT_OPTIONS_TYPES.RADIO:
+      if (option.id === "timing") {
+        return toProductOptionValue({
           type: PRODUCT_OPTIONS_TYPES.RADIO,
-          id: options.id,
-          value: options.options[0].id,
-        };
-      case PRODUCT_OPTIONS_TYPES.SELECT:
-        return {
-          type: PRODUCT_OPTIONS_TYPES.SELECT,
-          id: options.id,
-          value: options.options[0].id,
-        };
-    }
-  });
+          id: option.id,
+          value: "during",
+        });
+      }
+      if (option.id === "glass") {
+        return toProductOptionValue({
+          type: PRODUCT_OPTIONS_TYPES.RADIO,
+          id: option.id,
+          value: "premium",
+        });
+      }
+      if (option.id === "decantation") {
+        return toProductOptionValue({
+          type: PRODUCT_OPTIONS_TYPES.RADIO,
+          id: option.id,
+          value: "required",
+        });
+      }
+      if (option.id === "snack") {
+        return toProductOptionValue({
+          type: PRODUCT_OPTIONS_TYPES.RADIO,
+          id: option.id,
+          value: "none",
+        });
+      }
+      return toProductOptionValue({
+        type: PRODUCT_OPTIONS_TYPES.RADIO,
+        id: option.id,
+        value: option.options[0].id,
+      });
+    case PRODUCT_OPTIONS_TYPES.SELECT:
+      return toProductOptionValue({
+        type: PRODUCT_OPTIONS_TYPES.SELECT,
+        id: option.id,
+        value: option.options[0].id,
+      });
+  }
+};
+
+export const defaultProductOptionValues = productOptions.map(
+  getDefaultProductOptionValue,
+) as ProductOptionValue[];
 
 export const getProductOptionLabel = (
   optionId: ProductOption["id"],
-  optionValue: ProductOptionValue["value"],
+  optionValue: string | boolean,
 ): string | undefined => {
   const option = productOptions.find((opt) => opt.id === optionId);
   if (!option) return undefined;
@@ -108,27 +127,27 @@ export const randomProductOptionValues = (
   return filteredOptions.map((option) => {
     switch (option.type) {
       case PRODUCT_OPTIONS_TYPES.CHECKBOX:
-        return {
+        return toProductOptionValue({
           type: PRODUCT_OPTIONS_TYPES.CHECKBOX,
           id: option.id,
           value: Math.random() < 0.5,
-        };
+        });
       case PRODUCT_OPTIONS_TYPES.RADIO:
-        return {
+        return toProductOptionValue({
           type: PRODUCT_OPTIONS_TYPES.RADIO,
           id: option.id,
           value:
             option.options[Math.floor(Math.random() * option.options.length)]
               .id,
-        };
+        });
       case PRODUCT_OPTIONS_TYPES.SELECT:
-        return {
+        return toProductOptionValue({
           type: PRODUCT_OPTIONS_TYPES.SELECT,
           id: option.id,
           value:
             option.options[Math.floor(Math.random() * option.options.length)]
               .id,
-        };
+        });
     }
-  });
+  }) as ProductOptionValue[];
 };
