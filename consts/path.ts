@@ -23,6 +23,10 @@ export const PATH = {
     url: "/viewtransition-demo4",
     label: "View Transition モーダルデモ4 （アルバム）",
   },
+  buttonAnimationDemo: {
+    url: "/button-animation-demo",
+    label: "ボタンアニメーションデモ",
+  },
 } satisfies Record<string, PathItem>;
 
 /**
