@@ -186,7 +186,7 @@ const ModalSettingModalContent = () => {
             min={0}
             max={MAX_NUMBER_OF_CARDS}
             value={numberOfCards}
-            step={5}
+            step={1}
             unit="枚"
             decimalScale={0}
             onChange={(value) => setSystemSettings({ numberOfCards: value })}
