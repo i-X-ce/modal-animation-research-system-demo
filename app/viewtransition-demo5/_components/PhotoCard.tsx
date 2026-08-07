@@ -7,6 +7,7 @@ import clsx from "clsx";
 import { useAlbumStore } from "../_stores/albumStore";
 import { useModalStore } from "../_stores/modalStore";
 import PhotoModalContent from "./PhotoModalContent";
+import Image from "next/image";
 
 interface PhotoCardProps extends Photo {
   isOverlay?: boolean;
@@ -43,12 +44,17 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
       className={clsx(
         "w-full aspect-square",
         isOverlay ? "cursor-grabbing" : "cursor-grab",
-        isDragging && !isOverlay ? "opacity-0" : "opacity-100",
       )}
       transition={transition}
     >
       <motion.div>
-        <img src={imageUrl} alt={id} className="w-full h-full object-cover" />
+        <Image
+          width={100}
+          height={100}
+          src={imageUrl}
+          alt={id}
+          className="w-full h-full object-cover"
+        />
       </motion.div>
     </motion.div>
   );

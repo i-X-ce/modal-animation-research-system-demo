@@ -1,10 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import { Photo } from "../_types/photo";
 
 interface PhotoModalContentProps extends Photo {}
 
-const PhotoModalContent = ({ imageUrl, datetime }: PhotoModalContentProps) => {
+const PhotoModalContent = ({
+  id,
+  imageUrl,
+  datetime,
+}: PhotoModalContentProps) => {
   const date = new Date(datetime);
   const formattedDate = date.toLocaleString("us-US", {
     year: "numeric",
@@ -16,9 +21,12 @@ const PhotoModalContent = ({ imageUrl, datetime }: PhotoModalContentProps) => {
 
   return (
     <div className="relative w-full h-full">
-      <img
+      <Image
+        width={100}
+        height={100}
         src={imageUrl}
         className="absolute w-full h-full object-cover bg-center"
+        alt={id}
       />
       <div className="absolute inset-x-0 h-25 bg-linear-to-t from-transparent to-black/30" />
       <div className="absolute p-4">
