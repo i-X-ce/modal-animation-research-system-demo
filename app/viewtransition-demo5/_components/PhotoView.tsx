@@ -1,21 +1,37 @@
 "use client";
 
 import {
-  closestCenter,
   DndContext,
   DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
   PointerSensor,
+  pointerWithin,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import PhotoCard from "./PhotoCard";
 import { useAlbumStore } from "../_stores/albumStore";
 import { rectSortingStrategy, SortableContext } from "@dnd-kit/sortable";
+import { useSystemStore } from "../_stores/systemStore";
 
 const PhotoView = () => {
   const photos = useAlbumStore((state) => state.photos);
   const movePhoto = useAlbumStore((state) => state.movePhoto);
-  const sensors = useSensors(useSensor(PointerSensor));
+  const activeId = useAlbumStore((state) => state.activeId);
+  const setActiveId = useAlbumStore((state) => state.setActiveId);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+  );
+  const numberOfCards = useSystemStore((state) => state.settings.numberOfCards);
+  const columns = useSystemStore((state) => state.settings.columns);
+
+  const activePhoto = photos.find((photo) => photo.id === activeId);
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    setActiveId(active.id);
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -23,21 +39,32 @@ const PhotoView = () => {
     if (over && active.id !== over.id) {
       movePhoto(String(active.id), String(over.id));
     }
+    setActiveId(null);
   };
 
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragMove={handleDragEnd}
+      collisionDetection={pointerWithin}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
     >
       <SortableContext items={photos} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-8">
-          {photos.map((photo) => (
+        <div
+          className="grid grid-cols-8 overflow-x-clip"
+          style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+        >
+          {photos.slice(0, numberOfCards).map((photo) => (
             <PhotoCard key={photo.id} {...photo} />
           ))}
         </div>
       </SortableContext>
+
+      <DragOverlay dropAnimation={null}>
+        {activeId && activePhoto ? (
+          <PhotoCard {...activePhoto} isOverlay />
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 };
