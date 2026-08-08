@@ -1,13 +1,13 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { useModalStore } from "../_stores/modalStore";
+import { useModalStore, useModalTransition } from "../_stores/modalStore";
 import clsx from "clsx";
 import { Paper } from "@mui/material";
 
 const Modal = () => {
   const open = useModalStore((s) => s.open);
-  const transition = useModalStore((s) => s.getTransition)();
+  const transition = useModalTransition();
   const closeModal = useModalStore((s) => s.closeModal);
   const onExitComplete = useModalStore((s) => s.onExitComplete);
   const name = useModalStore((s) => s.name);

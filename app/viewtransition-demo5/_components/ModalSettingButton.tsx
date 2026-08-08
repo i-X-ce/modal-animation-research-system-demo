@@ -3,12 +3,12 @@
 import { Settings } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import { motion } from "motion/react";
-import { useModalStore } from "../_stores/modalStore";
+import { useModalStore, useModalTransition } from "../_stores/modalStore";
 import ModalSettingModalContent from "./ModalSettingModalContent";
 
 const ModalSettingButton = () => {
   const openModal = useModalStore((s) => s.openModal);
-  const transition = useModalStore((s) => s.getTransition)();
+  const transition = useModalTransition();
   const layoutId = "setting";
 
   const handleOpenSettings = () => {

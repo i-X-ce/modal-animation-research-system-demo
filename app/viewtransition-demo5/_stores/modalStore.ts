@@ -30,7 +30,6 @@ type ModalAction = {
   onExitComplete: () => void;
   setSettings: (settings: Partial<ModalState["settings"]>) => void;
   resetSettings: () => void;
-  getTransition: () => Transition;
   setIsAnimation: (isAnimation: boolean) => void;
 };
 
@@ -70,25 +69,6 @@ export const useModalStore = create<ModalStore>()(
       resetSettings() {
         set({ settings: defaultModalState.settings });
       },
-      getTransition() {
-        const { settings } = get();
-        switch (settings.type) {
-          case "none":
-            return { duration: 0 };
-          case "classic":
-            return {
-              ease: settings.easing,
-              duration: settings.duration,
-            };
-          case "view":
-            return {
-              ease: settings.easing,
-              duration: settings.duration,
-            };
-          default:
-            return { duration: 0 };
-        }
-      },
       setIsAnimation(isAnimation) {
         set({ isAnimation });
       },
@@ -96,8 +76,28 @@ export const useModalStore = create<ModalStore>()(
     {
       name: "modal-store5",
       partialize: (state) => ({
-        animation: state.settings,
+        settings: state.settings,
       }),
     },
   ),
 );
+
+export const useModalTransition = (): Transition => {
+  const { settings } = useModalStore();
+  switch (settings.type) {
+    case "none":
+      return { duration: 0 };
+    case "classic":
+      return {
+        ease: settings.easing,
+        duration: settings.duration,
+      };
+    case "view":
+      return {
+        ease: settings.easing,
+        duration: settings.duration,
+      };
+    default:
+      return { duration: 0 };
+  }
+};

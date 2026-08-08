@@ -5,7 +5,7 @@ import { Photo } from "../_types/photo";
 import { motion } from "motion/react";
 import clsx from "clsx";
 import { useAlbumStore } from "../_stores/albumStore";
-import { useModalStore } from "../_stores/modalStore";
+import { useModalStore, useModalTransition } from "../_stores/modalStore";
 import PhotoModalContent from "./PhotoModalContent";
 import Image from "next/image";
 
@@ -18,14 +18,16 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
   const openModal = useModalStore((s) => s.openModal);
   const { attributes, listeners, setNodeRef } = useSortable({ id });
   const isDragging = useAlbumStore((s) => s.activeId === id);
-  const modalTransition = useModalStore((s) => s.getTransition)();
-  
+  const modalTransition = useModalTransition();
+
   const imageLayoutId = `photo-card-${id}`;
   const containerLayoutId = `photo-card-container-${id}`;
 
   const handleClick = () => {
     openModal(<PhotoModalContent {...photoProps} />, imageLayoutId);
   };
+
+  console.log(modalTransition);
 
   const imageContent = (
     <Image
