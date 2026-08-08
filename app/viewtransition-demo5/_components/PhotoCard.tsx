@@ -23,11 +23,13 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
   const imageLayoutId = `photo-card-${id}`;
   const containerLayoutId = `photo-card-container-${id}`;
 
+  const isAnimation = useModalStore(
+    (s) => s.isAnimation && s.name === imageLayoutId,
+  );
+
   const handleClick = () => {
     openModal(<PhotoModalContent {...photoProps} />, imageLayoutId);
   };
-
-  console.log(modalTransition);
 
   const imageContent = (
     <Image
@@ -36,6 +38,7 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
       src={imageUrl}
       alt={id}
       className="w-full h-full object-cover"
+      loading="eager"
     />
   );
 
@@ -56,15 +59,14 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
       )}
       transition={{ type: "spring", bounce: 0.3, duration: 0.3 }}
     >
+      <div className="absolute inset-0">{imageContent}</div>
       <motion.div
-        className="absolute inset-0"
+        className={clsx("absolute inset-0", isAnimation && "z-100")}
         layoutId={imageLayoutId}
         transition={modalTransition}
       >
         {imageContent}
       </motion.div>
-
-      <div>{imageContent}</div>
     </motion.div>
   );
 };

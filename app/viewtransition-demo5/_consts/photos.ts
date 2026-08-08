@@ -7,7 +7,7 @@ const generateId = () => {
 };
 
 const generateImgPath = (num: number) => {
-  return `https://placehold.jp/150x150.png?text=${num}`;
+  return `https://picsum.photos/seed/${num + 1}/500/500`;
 };
 
 const generateDatetime = () => {
