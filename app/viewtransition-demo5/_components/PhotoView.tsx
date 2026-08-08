@@ -21,7 +21,7 @@ const PhotoView = () => {
   const activeId = useAlbumStore((state) => state.activeId);
   const setActiveId = useAlbumStore((state) => state.setActiveId);
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 3 } }),
   );
   const numberOfCards = useSystemStore((state) => state.settings.numberOfCards);
   const columns = useSystemStore((state) => state.settings.columns);
