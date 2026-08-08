@@ -23,9 +23,10 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
   const imageLayoutId = `photo-card-${id}`;
   const containerLayoutId = `photo-card-container-${id}`;
 
-  const isAnimation = useModalStore(
+  const isActiveAnimation = useModalStore(
     (s) => s.isAnimation && s.name === imageLayoutId,
   );
+  const isAnimation = useModalStore((s) => s.isAnimation);
 
   const handleClick = () => {
     openModal(<PhotoModalContent {...photoProps} />, imageLayoutId);
@@ -61,9 +62,9 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
     >
       <div className="absolute inset-0">{imageContent}</div>
       <motion.div
-        className={clsx("absolute inset-0", isAnimation && "z-100")}
+        className={clsx("absolute inset-0", isActiveAnimation && "z-100")}
         layoutId={imageLayoutId}
-        transition={modalTransition}
+        transition={isAnimation ? modalTransition : { duration: 0 }}
       >
         {imageContent}
       </motion.div>
