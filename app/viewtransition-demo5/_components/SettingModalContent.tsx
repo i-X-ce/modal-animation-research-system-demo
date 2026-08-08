@@ -23,7 +23,11 @@ import {
   useModalStore,
 } from "../_stores/modalStore";
 import { Add, Remove } from "@mui/icons-material";
-import { MAX_NUMBER_OF_CARDS, useSystemStore } from "../_stores/systemStore";
+import {
+  INDEX_TYPES,
+  MAX_NUMBER_OF_CARDS,
+  useSystemStore,
+} from "../_stores/systemStore";
 
 const EASINGS: ModalSettings["easing"][] = [
   "linear",
@@ -132,11 +136,11 @@ const SettingSlider = ({
 //   );
 // };
 
-const ModalSettingModalContent = () => {
+const SettingModalContent = () => {
   const modalSettings = useModalStore((s) => s.settings);
   const { type, easing, duration, coverage } = modalSettings;
   const systemSettings = useSystemStore((s) => s.settings);
-  const { numberOfCards, columns } = systemSettings;
+  const { numberOfCards, columns, indexType } = systemSettings;
   const setModalSettings = useModalStore((s) => s.setSettings);
   const setSystemSettings = useSystemStore((s) => s.setSettings);
   const resetModalSettings = useModalStore((s) => s.resetSettings);
@@ -152,6 +156,12 @@ const ModalSettingModalContent = () => {
       <DialogTitle>モーダル設定</DialogTitle>
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 2 }}>
+          <SettingSelector
+            label="インデックスの種類"
+            value={indexType}
+            onChange={(value) => setSystemSettings({ indexType: value })}
+            options={INDEX_TYPES}
+          />
           <SettingSelector
             label={"種類"}
             value={type}
@@ -212,4 +222,4 @@ const ModalSettingModalContent = () => {
   );
 };
 
-export default ModalSettingModalContent;
+export default SettingModalContent;

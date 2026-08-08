@@ -1,5 +1,5 @@
 import { AppBar, Toolbar, Typography } from "@mui/material";
-import ModalSettingButton from "./ModalSettingButton";
+import SettingButton from "./SettingButton";
 
 const AlbumAppBar = () => {
   return (
@@ -8,7 +8,7 @@ const AlbumAppBar = () => {
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Album
         </Typography>
-        <ModalSettingButton />
+        <SettingButton />
       </Toolbar>
     </AppBar>
   );
