@@ -8,7 +8,7 @@ const generateId = () => {
 };
 
 const generateImgPath = (num: number) => {
-  return `https://picsum.photos/seed/${num + 1}/500/500`;
+  return `https://picsum.photos/seed/${num + 200}/500/500`;
 };
 
 export const photos: Photo[] = Array.from({ length: 100 }).map(() => ({
