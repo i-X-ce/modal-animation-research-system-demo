@@ -50,7 +50,7 @@ const defaultModalState: ModalState = {
 
 export const useModalStore = create<ModalStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...defaultModalState,
       openModal(content: ReactNode, name?: string) {
         set({ open: true, content, name: name || null });
