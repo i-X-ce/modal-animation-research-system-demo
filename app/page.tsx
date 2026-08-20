@@ -22,6 +22,7 @@ export default function Home() {
               PATH.viewTransitionDemo4,
               PATH.buttonAnimationDemo,
               PATH.viewTransitionDemo5,
+              PATH.viewTransitionDemo6,
             ].map(({ url, label }, index) => (
               <Link key={index} href={url}>
                 <ListItemButton>
