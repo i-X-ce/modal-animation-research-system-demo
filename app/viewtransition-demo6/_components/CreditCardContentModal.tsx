@@ -15,6 +15,7 @@ import {
 import CreditCardImage from "./CreditCardImage";
 import { CREDIT_CARD_KEYS_LABELS } from "../_types/creditCard";
 import { useModalStore } from "../_stores/modalStore";
+import { SubmitEventHandler, useTransition } from "react";
 
 interface CreditCardContentModalProps {
   id: DisplayCreditCard["id"];
@@ -27,14 +28,18 @@ const CreditCardContentModal = ({ id }: CreditCardContentModalProps) => {
   const toggleChecked = useCreditCardStore((s) => s.toggleFieldCheck);
   const submit = useCreditCardStore((s) => s.submitCreditCard);
   const closeModal = useModalStore((s) => s.closeModal);
+  const [isPending, startTransition] = useTransition();
 
   if (!props) {
     return null;
   }
 
-  const handleSubmit = () => {
-    submit(id);
-    closeModal();
+  const handleSubmit: SubmitEventHandler = (e) => {
+    e.preventDefault();
+    startTransition(async () => {
+      await submit(id);
+      closeModal();
+    });
   };
 
   const { imageCreditCard, textCreditCard, submitted, checked } = props;
@@ -45,7 +50,7 @@ const CreditCardContentModal = ({ id }: CreditCardContentModalProps) => {
         <CreditCardImage {...imageCreditCard} />
       </div>
 
-      <Stack sx={{ flex: 1 }}>
+      <Stack component="form" sx={{ flex: 1 }} onSubmit={handleSubmit}>
         <Stack spacing={4} sx={{ flex: 1, py: 4 }}>
           <Typography gutterBottom color="textSecondary">
             誤りのある箇所をチェックして、送信ボタンを押してください。
@@ -77,10 +82,11 @@ const CreditCardContentModal = ({ id }: CreditCardContentModalProps) => {
             <Button
               variant="contained"
               fullWidth
-              onClick={handleSubmit}
               disabled={submitted}
+              type="submit"
+              loading={isPending}
             >
-              送信
+              {isPending ? "送信中..." : submitted ? "送信済み" : "送信"}
             </Button>
           </div>
         </div>

@@ -24,7 +24,7 @@ type CreditCardState = {
 };
 
 type CreditCardActions = {
-  submitCreditCard: (id: string) => void;
+  submitCreditCard: (id: string) => Promise<void>;
   toggleFieldCheck: (
     id: string,
     field: Exclude<keyof CreditCard, "id">,
@@ -363,12 +363,13 @@ export const useCreditCardStore = create<CreditCardStore>()(
   persist(
     (set) => ({
       ...defaultCreditCardState,
-      submitCreditCard(id: string) {
+      async submitCreditCard(id: string) {
         set((state) => ({
           creditCards: state.creditCards.map((card) =>
             card.id === id ? { ...card, submitted: true } : card,
           ),
         }));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       },
       toggleFieldCheck(id: string, field: Exclude<keyof CreditCard, "id">) {
         set((state) => ({
@@ -411,7 +412,7 @@ export const useCreditCardStore = create<CreditCardStore>()(
     {
       name: "credit-card-store6",
       partialize: (state) => ({
-        settins: state.settings,
+        settings: state.settings,
       }),
     },
   ),
