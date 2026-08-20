@@ -370,7 +370,7 @@ export const useCreditCardStore = create<CreditCardStore>()((set) => ({
   toggleFieldCheck(id: string, field: Exclude<keyof CreditCard, "id">) {
     set((state) => ({
       creditCards: state.creditCards.map((card) =>
-        card.id === id
+        card.id === id && !card.submitted
           ? {
               ...card,
               checked: {

@@ -14,6 +14,7 @@ import {
 } from "../_stores/creditCardStore";
 import CreditCardImage from "./CreditCardImage";
 import { CREDIT_CARD_KEYS_LABELS } from "../_types/creditCard";
+import { useModalStore } from "../_stores/modalStore";
 
 interface CreditCardContentModalProps {
   id: DisplayCreditCard["id"];
@@ -25,21 +26,30 @@ const CreditCardContentModal = ({ id }: CreditCardContentModalProps) => {
   );
   const toggleChecked = useCreditCardStore((s) => s.toggleFieldCheck);
   const submit = useCreditCardStore((s) => s.submitCreditCard);
+  const closeModal = useModalStore((s) => s.closeModal);
 
   if (!props) {
     return null;
   }
 
+  const handleSubmit = () => {
+    submit(id);
+    closeModal();
+  };
+
   const { imageCreditCard, textCreditCard, submitted, checked } = props;
 
   return (
-    <div className="flex h-full">
+    <DialogContent className="h-full flex-1 flex">
       <div className="w-1/2 p-4">
         <CreditCardImage {...imageCreditCard} />
       </div>
 
-      <DialogContent className="flex-1 flex flex-col">
-        <Stack spacing={4} className="flex-1">
+      <Stack sx={{ flex: 1 }}>
+        <Stack spacing={4} sx={{ flex: 1, py: 4 }}>
+          <Typography gutterBottom color="textSecondary">
+            誤りのある箇所をチェックして、送信ボタンを押してください。
+          </Typography>
           {Object.entries(textCreditCard).map(([key, value]) => {
             if (key === "id") return null;
             const checkKey = key as keyof typeof checked;
@@ -55,6 +65,7 @@ const CreditCardContentModal = ({ id }: CreditCardContentModalProps) => {
                     checked={checked?.[checkKey]}
                     control={<Checkbox />}
                     label={value}
+                    disabled={submitted}
                   />
                 </Stack>
               </Stack>
@@ -66,15 +77,15 @@ const CreditCardContentModal = ({ id }: CreditCardContentModalProps) => {
             <Button
               variant="contained"
               fullWidth
-              onClick={() => submit(id)}
+              onClick={handleSubmit}
               disabled={submitted}
             >
               送信
             </Button>
           </div>
         </div>
-      </DialogContent>
-    </div>
+      </Stack>
+    </DialogContent>
   );
 };
 
