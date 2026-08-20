@@ -21,7 +21,7 @@ interface CreditCardContentModalProps {
   id: DisplayCreditCard["id"];
 }
 
-const CreditCardContentModal = ({ id }: CreditCardContentModalProps) => {
+const CreditCardModalContent = ({ id }: CreditCardContentModalProps) => {
   const props = useCreditCardStore((s) =>
     s.creditCards.find((c) => c.id === id),
   );
@@ -95,4 +95,4 @@ const CreditCardContentModal = ({ id }: CreditCardContentModalProps) => {
   );
 };
 
-export default CreditCardContentModal;
+export default CreditCardModalContent;

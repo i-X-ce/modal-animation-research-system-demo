@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import CreditCardImage from "./CreditCardImage";
 import { useModalStore, useModalTransition } from "../_stores/modalStore";
 import clsx from "clsx";
-import CreditCardContentModal from "./CreditCardContentModal";
+import CreditCardModalContent from "./CreditCardModalContent";
 import {
   DisplayCreditCard,
   useCreditCardStore,
@@ -32,7 +32,7 @@ const CreditCardCard = memo(({ id }: CreditCardCardProps) => {
   }
 
   const handleClick = () => {
-    openModal(<CreditCardContentModal id={id} />, layoutId);
+    openModal(<CreditCardModalContent id={id} />, layoutId);
   };
 
   const imageContent = <CreditCardImage {...props.imageCreditCard} />;
