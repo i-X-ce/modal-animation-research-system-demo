@@ -1,18 +1,30 @@
-import clsx from "clsx";
-import { CreditCard } from "../_types/creditCard";
-import { ArrowLeft } from "@mui/icons-material";
+"use client";
 
-interface CreditCardImageProps extends CreditCard {
+import clsx from "clsx";
+import { ArrowLeft } from "@mui/icons-material";
+import { memo } from "react";
+import {
+  DisplayCreditCard,
+  useCreditCardStore,
+} from "../_stores/creditCardStore";
+
+interface CreditCardImageProps {
+  id: DisplayCreditCard["id"];
   className?: string;
 }
 
-const CreditCardImage = ({
-  cardNumber,
-  cardHolder,
-  expirationMonth,
-  expirationYear,
-  className,
-}: CreditCardImageProps) => {
+const CreditCardImage = memo(({ id, className }: CreditCardImageProps) => {
+  const props = useCreditCardStore((s) =>
+    s.creditCards.find((c) => c.id === id),
+  );
+
+  if (!props) {
+    return null;
+  }
+
+  const { cardNumber, cardHolder, expirationMonth, expirationYear } =
+    props.imageCreditCard;
+
   return (
     <svg
       viewBox="0 0 400 300"
@@ -61,6 +73,8 @@ const CreditCardImage = ({
       </foreignObject>
     </svg>
   );
-};
+});
+
+CreditCardImage.displayName = "CreditCardImage";
 
 export default CreditCardImage;

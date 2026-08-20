@@ -23,8 +23,8 @@ const CreditCardCard = memo(({ id }: CreditCardCardProps) => {
   const layoutId = `credit-card-${id}`;
   const transition = useModalTransition();
   const openModal = useModalStore((s) => s.openModal);
-  const animationModal = useModalStore(
-    (s) => s.isAnimation && s.name === layoutId,
+  const isAnimationModal = useModalStore(
+    (s) => s.isAnimation && s.name === layoutId && s.settings.type === "view",
   );
 
   if (!props) {
@@ -43,7 +43,7 @@ const CreditCardCard = memo(({ id }: CreditCardCardProps) => {
       <motion.div
         transition={transition}
         layoutId={layoutId}
-        className={clsx("relative", animationModal ? "z-500" : "")}
+        className={clsx("relative", isAnimationModal ? "z-500" : "")}
       >
         <div>{imageContent}</div>
       </motion.div>

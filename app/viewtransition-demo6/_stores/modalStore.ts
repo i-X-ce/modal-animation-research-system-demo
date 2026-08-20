@@ -83,7 +83,7 @@ export const useModalStore = create<ModalStore>()(
 );
 
 export const useModalTransition = (): Transition => {
-  const { settings } = useModalStore();
+  const settings = useModalStore((s) => s.settings);
   switch (settings.type) {
     case "none":
       return { duration: 0 };
