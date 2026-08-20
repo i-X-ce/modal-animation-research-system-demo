@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { CreditCard } from "../_types/creditCard";
+import { persist } from "zustand/middleware";
 
 type RandomCreditKey = Exclude<keyof CreditCard, "id">; // ランダムを適用するCreditCardのキー
 
@@ -358,50 +359,60 @@ const defaultCreditCardState: CreditCardState = {
   },
 } as const;
 
-export const useCreditCardStore = create<CreditCardStore>()((set) => ({
-  ...defaultCreditCardState,
-  submitCreditCard(id: string) {
-    set((state) => ({
-      creditCards: state.creditCards.map((card) =>
-        card.id === id ? { ...card, submitted: true } : card,
-      ),
-    }));
-  },
-  toggleFieldCheck(id: string, field: Exclude<keyof CreditCard, "id">) {
-    set((state) => ({
-      creditCards: state.creditCards.map((card) =>
-        card.id === id && !card.submitted
-          ? {
-              ...card,
-              checked: {
-                ...card.checked,
-                [field]: !card.checked[field],
-              },
-            }
-          : card,
-      ),
-    }));
-  },
-  resetCreditCards() {
-    set(() => ({
-      creditCards: Array.from({ length: MAX_NUMBER_OF_CARDS }, (_, index) =>
-        generateDisplayCreditCard(index),
-      ),
-    }));
-  },
-  setSettings(settings: Partial<CreditCardSettings>) {
-    set((state) => ({
-      settings: {
-        ...state.settings,
-        ...settings,
+export const useCreditCardStore = create<CreditCardStore>()(
+  persist(
+    (set) => ({
+      ...defaultCreditCardState,
+      submitCreditCard(id: string) {
+        set((state) => ({
+          creditCards: state.creditCards.map((card) =>
+            card.id === id ? { ...card, submitted: true } : card,
+          ),
+        }));
       },
-    }));
-  },
-  resetSettings() {
-    set(() => ({
-      settings: {
-        ...defaultCreditCardState.settings,
+      toggleFieldCheck(id: string, field: Exclude<keyof CreditCard, "id">) {
+        set((state) => ({
+          creditCards: state.creditCards.map((card) =>
+            card.id === id && !card.submitted
+              ? {
+                  ...card,
+                  checked: {
+                    ...card.checked,
+                    [field]: !card.checked[field],
+                  },
+                }
+              : card,
+          ),
+        }));
       },
-    }));
-  },
-}));
+      resetCreditCards() {
+        set(() => ({
+          creditCards: Array.from({ length: MAX_NUMBER_OF_CARDS }, (_, index) =>
+            generateDisplayCreditCard(index),
+          ),
+        }));
+      },
+      setSettings(settings: Partial<CreditCardSettings>) {
+        set((state) => ({
+          settings: {
+            ...state.settings,
+            ...settings,
+          },
+        }));
+      },
+      resetSettings() {
+        set(() => ({
+          settings: {
+            ...defaultCreditCardState.settings,
+          },
+        }));
+      },
+    }),
+    {
+      name: "credit-card-store6",
+      partialize: (state) => ({
+        settins: state.settings,
+      }),
+    },
+  ),
+);
