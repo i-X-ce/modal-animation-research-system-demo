@@ -55,8 +55,8 @@ const CreditCardImage = memo(({ id, className }: CreditCardImageProps) => {
 
               <div className="relative flex gap-1 items-center justify-center mt-2">
                 <p>有効期限 {">"}</p>
-                <div>
-                  <p className="text-xs leading-0">MONTH / YEAR</p>
+                <div className="flex flex-col items-center">
+                  <p className="text-[10px] leading-0">MONTH / YEAR</p>
                   <p className="text-lg">
                     {expirationMonth} / {expirationYear.slice(-2)}
                   </p>
