@@ -29,6 +29,7 @@ import {
   MAX_NUMBER_OF_CARDS,
   useCreditCardStore,
 } from "../_stores/creditCardStore";
+import ModalCloseButton from "./ModalCloseButton";
 
 const EASINGS: ModalSettings["easing"][] = [
   "linear",
@@ -168,72 +169,75 @@ const SettingModalContent = () => {
   };
 
   return (
-    <Box>
-      <DialogTitle>設定</DialogTitle>
-      <DialogContent>
-        <Stack spacing={3} sx={{ mt: 2 }}>
-          <SettingTitle>モーダルの設定</SettingTitle>
-          <SettingSelector
-            label={"種類"}
-            value={type}
-            onChange={(value) => setModalSettings({ type: value })}
-            options={ANIMATION_TYPES}
-          />
-          <SettingSelector
-            label={"イージング"}
-            value={easing}
-            onChange={(value) => setModalSettings({ easing: value })}
-            options={EASINGS}
-          />
-          <SettingSlider
-            label="アニメーションの時間"
-            min={0}
-            max={2}
-            value={duration}
-            step={0.1}
-            unit="s"
-            onChange={(value) => setModalSettings({ duration: value })}
-          />
-          <SettingSlider
-            label="画面占有率"
-            min={0.1}
-            max={1}
-            value={coverage}
-            step={0.1}
-            onChange={(value) => setModalSettings({ coverage: value })}
-          />
+    <>
+      <Box>
+        <DialogTitle>設定</DialogTitle>
+        <DialogContent>
+          <Stack spacing={3} sx={{ mt: 2 }}>
+            <SettingTitle>モーダルの設定</SettingTitle>
+            <SettingSelector
+              label={"種類"}
+              value={type}
+              onChange={(value) => setModalSettings({ type: value })}
+              options={ANIMATION_TYPES}
+            />
+            <SettingSelector
+              label={"イージング"}
+              value={easing}
+              onChange={(value) => setModalSettings({ easing: value })}
+              options={EASINGS}
+            />
+            <SettingSlider
+              label="アニメーションの時間"
+              min={0}
+              max={2}
+              value={duration}
+              step={0.1}
+              unit="s"
+              onChange={(value) => setModalSettings({ duration: value })}
+            />
+            <SettingSlider
+              label="画面占有率"
+              min={0.1}
+              max={1}
+              value={coverage}
+              step={0.1}
+              onChange={(value) => setModalSettings({ coverage: value })}
+            />
 
-          <SettingTitle>システムの設定</SettingTitle>
-          <SettingSlider
-            label="カード枚数"
-            min={0}
-            max={MAX_NUMBER_OF_CARDS}
-            value={numberOfCards}
-            step={1}
-            unit="枚"
-            decimalScale={0}
-            onChange={(value) =>
-              setCreditCardSettings({ numberOfCards: value })
-            }
-          />
-          <SettingSlider
-            label="一行に表示するカード枚数"
-            min={0}
-            max={20}
-            value={columns}
-            step={1}
-            unit="枚"
-            decimalScale={0}
-            onChange={(value) => setSystemSettings({ columns: value })}
-          />
-        </Stack>
-        <DialogActions>
-          <Button onClick={handleReset} variant="outlined">
-            設定を初期値に戻す
-          </Button>
-        </DialogActions>
-      </DialogContent>
-    </Box>
+            <SettingTitle>システムの設定</SettingTitle>
+            <SettingSlider
+              label="カード枚数"
+              min={0}
+              max={MAX_NUMBER_OF_CARDS}
+              value={numberOfCards}
+              step={1}
+              unit="枚"
+              decimalScale={0}
+              onChange={(value) =>
+                setCreditCardSettings({ numberOfCards: value })
+              }
+            />
+            <SettingSlider
+              label="一行に表示するカード枚数"
+              min={0}
+              max={20}
+              value={columns}
+              step={1}
+              unit="枚"
+              decimalScale={0}
+              onChange={(value) => setSystemSettings({ columns: value })}
+            />
+          </Stack>
+          <DialogActions>
+            <Button onClick={handleReset} variant="outlined">
+              設定を初期値に戻す
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Box>
+      <ModalCloseButton />
+    </>
   );
 };
 
