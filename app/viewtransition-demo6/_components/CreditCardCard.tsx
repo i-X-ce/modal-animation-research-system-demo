@@ -24,7 +24,7 @@ const CreditCardCard = memo(({ id }: CreditCardCardProps) => {
   const transition = useModalTransition();
   const openModal = useModalStore((s) => s.openModal);
   const isAnimationModal = useModalStore(
-    (s) => s.isAnimation && s.name === layoutId && s.settings.type === "view",
+    (s) => s.isAnimation && s.name === layoutId && s.settings.type.value === "view",
   );
 
   if (!props) {

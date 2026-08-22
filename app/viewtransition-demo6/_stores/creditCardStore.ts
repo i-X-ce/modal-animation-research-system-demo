@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { CreditCard } from "../_types/creditCard";
 import { persist } from "zustand/middleware";
+import { ConfigurationMap } from "../_types/setting";
 
 type RandomCreditKey = Exclude<keyof CreditCard, "id">; // ランダムを適用するCreditCardのキー
 
@@ -14,13 +15,9 @@ export interface DisplayCreditCard {
   submitted: boolean; // 送信済みかどうか
 }
 
-interface CreditCardSettings {
-  numberOfCards: number; // 表示するクレジットカードの数
-}
-
 type CreditCardState = {
   creditCards: DisplayCreditCard[];
-  settings: CreditCardSettings;
+  settings: typeof CREDIT_CARD_CONFIG;
 };
 
 type CreditCardActions = {
@@ -30,11 +27,32 @@ type CreditCardActions = {
     field: Exclude<keyof CreditCard, "id">,
   ) => void;
   resetCreditCards: () => void;
-  setSettings: (settings: Partial<CreditCardSettings>) => void;
+  setSettings: <C extends keyof typeof CREDIT_CARD_CONFIG>(
+    key: C,
+    settings: Partial<ConfigurationMap[C]["value"]>,
+  ) => void;
   resetSettings: () => void;
 };
 
 type CreditCardStore = CreditCardState & CreditCardActions;
+
+export const CREDIT_CARD_CONFIG = {
+  numberOfCards: {
+    type: "number",
+    label: "表示するクレジットカードの数",
+    unit: "枚",
+    min: 0,
+    max: 100,
+    step: 1,
+    decimalScale: 0,
+    value: 100,
+  },
+  test: {
+    type: "boolean",
+    label: "テスト用の設定",
+    value: false,
+  },
+} satisfies ConfigurationMap;
 
 const generateDisplayCreditCard = (index: number): DisplayCreditCard => {
   const id = `c${index}`;
@@ -307,25 +325,6 @@ const generateDisplayCreditCard = (index: number): DisplayCreditCard => {
     return Math.random() < 0.5 ? randomizerChar(str) : str;
   };
 
-  // const randomKeys: RandomCreditKey[] = [
-  //   "cardNumber",
-  //   "cardHolder",
-  //   "expirationMonth",
-  //   "expirationYear",
-  // ];
-
-  // const randomIndex = Math.floor(Math.random() * randomKeys.length);
-
-  // const textCreditCard: CreditCard =
-  //   Math.random() < 1
-  //     ? {
-  //         ...imageCreditCard,
-  //         [randomKeys[randomIndex]]: randomizerChar(
-  //           imageCreditCard[randomKeys[randomIndex]],
-  //         ),
-  //       }
-  //     : { ...imageCreditCard };
-
   const textCreditCard: CreditCard = {
     id,
     cardNumber: weightedRandomizerChar(cardNumber),
@@ -354,9 +353,7 @@ const defaultCreditCardState: CreditCardState = {
   creditCards: Array.from({ length: MAX_NUMBER_OF_CARDS }, (_, index) =>
     generateDisplayCreditCard(index),
   ),
-  settings: {
-    numberOfCards: MAX_NUMBER_OF_CARDS,
-  },
+  settings: CREDIT_CARD_CONFIG,
 } as const;
 
 export const useCreditCardStore = create<CreditCardStore>()(
@@ -393,13 +390,22 @@ export const useCreditCardStore = create<CreditCardStore>()(
           ),
         }));
       },
-      setSettings(settings: Partial<CreditCardSettings>) {
-        set((state) => ({
-          settings: {
-            ...state.settings,
-            ...settings,
-          },
-        }));
+      setSettings(key, newValue) {
+        set((state) => {
+          if (state.settings[key] === undefined) {
+            console.warn(`Invalid settings key: ${key}`);
+            return state;
+          }
+          return {
+            settings: {
+              ...state.settings,
+              [key]: {
+                ...(state.settings[key] ?? {}),
+                value: newValue,
+              },
+            } as typeof state.settings,
+          };
+        });
       },
       resetSettings() {
         set(() => ({

@@ -8,7 +8,7 @@ interface CreditCardPageContentProps {
 }
 
 const CreditCardPageContainer = ({ children }: CreditCardPageContentProps) => {
-  const screenWidth = useSystemStore((s) => s.settings.screenWidth);
+  const screenWidth = useSystemStore((s) => s.settings.screenWidth.value);
 
   return (
     <div className="flex justify-center">

@@ -3,11 +3,13 @@
 import {
   Box,
   Button,
+  Checkbox,
   DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
   FormControl,
+  FormControlLabel,
   FormLabel,
   IconButton,
   InputLabel,
@@ -18,51 +20,36 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import {
-  ANIMATION_TYPES,
-  ModalSettings,
-  useModalStore,
-} from "../_stores/modalStore";
+import { MODAL_CONFIG, useModalStore } from "../_stores/modalStore";
 import { Add, Remove } from "@mui/icons-material";
-import { useSystemStore } from "../_stores/systemStore";
+import { SYSTEM_CONFIG, useSystemStore } from "../_stores/systemStore";
 import {
-  MAX_NUMBER_OF_CARDS,
+  CREDIT_CARD_CONFIG,
   useCreditCardStore,
 } from "../_stores/creditCardStore";
 import ModalCloseButton from "./ModalCloseButton";
+import { Configuration, CONFIGURATION_TYPES } from "../_types/setting";
 
-const EASINGS: ModalSettings["easing"][] = [
-  "linear",
-  "easeIn",
-  "easeOut",
-  "easeInOut",
-  "circIn",
-  "circOut",
-  "circInOut",
-  "backIn",
-  "backOut",
-  "backInOut",
-  "anticipate",
-] as const;
-
-const SettingSelector = <T extends number | string | boolean>({
+const SettingSelector = <
+  C extends Extract<
+    Configuration,
+    { type: typeof CONFIGURATION_TYPES.SELECTOR }
+  >,
+>({
   label,
   value,
   onChange,
   options,
 }: {
-  label: string;
-  value: string;
-  onChange: (value: T) => void;
-  options: T[] | ReadonlyArray<T>;
-}) => {
+  onChange: (value: C["value"]) => void;
+} & C) => {
   return (
     <FormControl size="small">
       <InputLabel>{label}</InputLabel>
       <Select
         value={value}
         label={label}
-        onChange={(e) => onChange(e.target.value as T)}
+        onChange={(e) => onChange(e.target.value)}
       >
         {options.map((option, index) => (
           <MenuItem key={index} value={String(option)}>
@@ -74,24 +61,22 @@ const SettingSelector = <T extends number | string | boolean>({
   );
 };
 
-const SettingSlider = ({
-  value = 0,
-  min = 0,
-  max = 0,
-  step = 0.1,
-  unit = "",
-  onChange,
+const SettingSlider = <
+  C extends Extract<Configuration, { type: typeof CONFIGURATION_TYPES.NUMBER }>,
+>({
   label,
-  decimalScale = 1,
+  min,
+  max,
+  step,
+  value,
+  unit,
+  decimalScale = 0,
+  onChange,
   ...props
 }: {
-  value: number;
-  step: number;
-  unit?: string;
-  onChange: (value: number) => void;
-  label: string;
-  decimalScale?: number;
-} & Omit<SliderProps, "onChange">) => {
+  onChange: (value: C["value"]) => void;
+} & C &
+  Omit<SliderProps, "onChange">) => {
   return (
     <FormControl>
       <FormLabel>{label}</FormLabel>
@@ -103,12 +88,12 @@ const SettingSlider = ({
           <Remove />
         </IconButton>
         <Slider
+          onChange={(_, value) => onChange(value as number)}
+          marks
+          value={value}
           min={min}
           max={max}
           step={step}
-          value={value}
-          onChange={(_, value) => onChange(value as number)}
-          marks
           {...props}
         />
         <IconButton onClick={() => onChange(Math.min(max, value + step))}>
@@ -119,24 +104,46 @@ const SettingSlider = ({
   );
 };
 
-// const SettingCheckbox = ({
-//   label,
-//   value,
-//   onChange,
-//   ...props
-// }: { label: string; value: boolean; onChange: (value: boolean) => void } & Omit<
-//   CheckboxProps,
-//   "value" | "onChange"
-// >) => {
-//   return (
-//     <FormControlLabel
-//       label={label}
-//       control={
-//         <Checkbox checked={value} onChange={(_, v) => onChange(v)} {...props} />
-//       }
-//     />
-//   );
-// };
+const SettingCheckbox = <
+  C extends Extract<
+    Configuration,
+    { type: typeof CONFIGURATION_TYPES.BOOLEAN }
+  >,
+>({
+  label,
+  value,
+  onChange,
+}: {
+  onChange: (value: C["value"]) => void;
+} & C) => {
+  return (
+    <FormControlLabel
+      label={label}
+      onChange={(_, v) => onChange(v)}
+      checked={value}
+      control={<Checkbox />}
+    />
+  );
+};
+
+const SwitchConfigUI = <C extends Configuration>({
+  config,
+  onChange,
+}: {
+  config: Configuration;
+  onChange: (value: C["value"]) => void;
+}) => {
+  switch (config.type) {
+    case CONFIGURATION_TYPES.NUMBER:
+      return <SettingSlider {...config} onChange={onChange} />;
+    case CONFIGURATION_TYPES.SELECTOR:
+      return <SettingSelector {...config} onChange={onChange} />;
+    case CONFIGURATION_TYPES.BOOLEAN:
+      return <SettingCheckbox {...config} onChange={onChange} />;
+    default:
+      return null;
+  }
+};
 
 const SettingTitle = ({ children }: { children: string }) => {
   return (
@@ -148,17 +155,14 @@ const SettingTitle = ({ children }: { children: string }) => {
 
 const SettingModalContent = () => {
   const modalSettings = useModalStore((s) => s.settings);
-  const { type, easing, duration, coverage } = modalSettings;
   const setModalSettings = useModalStore((s) => s.setSettings);
   const resetModalSettings = useModalStore((s) => s.resetSettings);
 
   const systemSettings = useSystemStore((s) => s.settings);
-  const { columns, screenWidth } = systemSettings;
   const setSystemSettings = useSystemStore((s) => s.setSettings);
   const resetSystemSettings = useSystemStore((s) => s.resetSettings);
 
   const creditCardSettings = useCreditCardStore((s) => s.settings);
-  const { numberOfCards } = creditCardSettings;
   const setCreditCardSettings = useCreditCardStore((s) => s.setSettings);
   const resetCreditCardSettings = useCreditCardStore((s) => s.resetSettings);
 
@@ -175,70 +179,40 @@ const SettingModalContent = () => {
         <DialogContent>
           <Stack spacing={3} sx={{ mt: 2 }}>
             <SettingTitle>モーダルの設定</SettingTitle>
-            <SettingSelector
-              label={"種類"}
-              value={type}
-              onChange={(value) => setModalSettings({ type: value })}
-              options={ANIMATION_TYPES}
-            />
-            <SettingSelector
-              label={"イージング"}
-              value={easing}
-              onChange={(value) => setModalSettings({ easing: value })}
-              options={EASINGS}
-            />
-            <SettingSlider
-              label="アニメーションの時間"
-              min={0}
-              max={2}
-              value={duration}
-              step={0.1}
-              unit="s"
-              onChange={(value) => setModalSettings({ duration: value })}
-            />
-            <SettingSlider
-              label="画面占有率"
-              min={0.1}
-              max={1}
-              value={coverage}
-              step={0.1}
-              onChange={(value) => setModalSettings({ coverage: value })}
-            />
+            {Object.entries(modalSettings).map(([key, config]) => (
+              <SwitchConfigUI
+                key={key}
+                config={config}
+                onChange={(value) =>
+                  setModalSettings(key as keyof typeof MODAL_CONFIG, value)
+                }
+              />
+            ))}
 
             <SettingTitle>システムの設定</SettingTitle>
-            <SettingSlider
-              label="カード枚数"
-              min={0}
-              max={MAX_NUMBER_OF_CARDS}
-              value={numberOfCards}
-              step={1}
-              unit="枚"
-              decimalScale={0}
-              onChange={(value) =>
-                setCreditCardSettings({ numberOfCards: value })
-              }
-            />
-            <SettingSlider
-              label="一行に表示するカード枚数"
-              min={0}
-              max={20}
-              value={columns}
-              step={1}
-              unit="枚"
-              decimalScale={0}
-              onChange={(value) => setSystemSettings({ columns: value })}
-            />
-            <SettingSlider
-              label="画面幅"
-              min={0}
-              max={1920}
-              value={screenWidth}
-              step={10}
-              unit="px"
-              decimalScale={0}
-              onChange={(value) => setSystemSettings({ screenWidth: value })}
-            />
+            {Object.entries(creditCardSettings).map(([key, config]) => (
+              <SwitchConfigUI
+                key={key}
+                config={config}
+                onChange={(value) =>
+                  setCreditCardSettings(
+                    key as keyof typeof CREDIT_CARD_CONFIG,
+                    value,
+                  )
+                }
+              />
+            ))}
+            {Object.entries(systemSettings).map(([key, config]) => (
+              <SwitchConfigUI
+                key={key}
+                config={config}
+                onChange={(value) =>
+                  setSystemSettings(key as keyof typeof SYSTEM_CONFIG, value)
+                }
+              />
+            ))}
           </Stack>
+
           <DialogActions>
             <Button onClick={handleReset} variant="outlined">
               設定を初期値に戻す

@@ -12,8 +12,8 @@ const Modal = () => {
   const onExitComplete = useModalStore((s) => s.onExitComplete);
   const name = useModalStore((s) => s.name);
   const content = useModalStore((s) => s.content);
-  const type = useModalStore((s) => s.settings.type);
-  const coverage = useModalStore((s) => s.settings.coverage);
+  const type = useModalStore((s) => s.settings.type.value);
+  const coverage = useModalStore((s) => s.settings.coverage.value);
   const size = Math.round(Math.sqrt(coverage) * 100);
   const isAnimation = useModalStore((s) => s.isAnimation);
   const setIsAnimation = useModalStore((s) => s.setIsAnimation);

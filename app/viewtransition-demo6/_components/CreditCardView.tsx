@@ -5,8 +5,10 @@ import { useSystemStore } from "../_stores/systemStore";
 import CreditCardCard from "./CreditCardCard";
 
 const CreditCardView = () => {
-  const numberOfCards = useCreditCardStore((s) => s.settings.numberOfCards);
-  const columns = useSystemStore((s) => s.settings.columns);
+  const numberOfCards = useCreditCardStore(
+    (s) => s.settings.numberOfCards.value,
+  );
+  const columns = useSystemStore((s) => s.settings.columns.value);
   const creditCards = useCreditCardStore((s) => s.creditCards);
 
   return (
