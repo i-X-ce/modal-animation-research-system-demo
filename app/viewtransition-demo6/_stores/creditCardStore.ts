@@ -47,11 +47,6 @@ export const CREDIT_CARD_CONFIG = {
     decimalScale: 0,
     value: 100,
   },
-  test: {
-    type: "boolean",
-    label: "テスト用の設定",
-    value: false,
-  },
 } satisfies ConfigurationMap;
 
 const generateDisplayCreditCard = (index: number): DisplayCreditCard => {
