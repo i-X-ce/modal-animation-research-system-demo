@@ -153,7 +153,7 @@ const SettingModalContent = () => {
   const resetModalSettings = useModalStore((s) => s.resetSettings);
 
   const systemSettings = useSystemStore((s) => s.settings);
-  const { columns } = systemSettings;
+  const { columns, screenWidth } = systemSettings;
   const setSystemSettings = useSystemStore((s) => s.setSettings);
   const resetSystemSettings = useSystemStore((s) => s.resetSettings);
 
@@ -227,6 +227,16 @@ const SettingModalContent = () => {
               unit="枚"
               decimalScale={0}
               onChange={(value) => setSystemSettings({ columns: value })}
+            />
+            <SettingSlider
+              label="画面幅"
+              min={0}
+              max={1920}
+              value={screenWidth}
+              step={10}
+              unit="px"
+              decimalScale={0}
+              onChange={(value) => setSystemSettings({ screenWidth: value })}
             />
           </Stack>
           <DialogActions>

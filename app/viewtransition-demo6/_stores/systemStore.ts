@@ -5,6 +5,7 @@ import { persist } from "zustand/middleware";
 
 type SystemSettings = {
   columns: number;
+  screenWidth: number;
 };
 
 type SystemState = {
@@ -21,6 +22,7 @@ type SystemStore = SystemState & SystemAction;
 const defaultSystemState: SystemState = {
   settings: {
     columns: 8,
+    screenWidth: 1920,
   },
 } as const;
 
