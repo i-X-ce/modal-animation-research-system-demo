@@ -126,12 +126,12 @@ const SettingCheckbox = <
   );
 };
 
-const SwitchConfigUI = <C extends Configuration>({
+const SwitchConfigUI = ({
   config,
   onChange,
 }: {
   config: Configuration;
-  onChange: (value: C["value"]) => void;
+  onChange: (value: Configuration["value"]) => void;
 }) => {
   switch (config.type) {
     case CONFIGURATION_TYPES.NUMBER:
@@ -179,38 +179,50 @@ const SettingModalContent = () => {
         <DialogContent>
           <Stack spacing={3} sx={{ mt: 2 }}>
             <SettingTitle>モーダルの設定</SettingTitle>
-            {Object.entries(modalSettings).map(([key, config]) => (
-              <SwitchConfigUI
-                key={key}
-                config={config}
-                onChange={(value) =>
-                  setModalSettings(key as keyof typeof MODAL_CONFIG, value)
-                }
-              />
-            ))}
+            {Object.entries(MODAL_CONFIG).map(([_key, _config]) => {
+              const key = _key as keyof typeof MODAL_CONFIG;
+              const config = {
+                ..._config,
+                value: modalSettings[key].value,
+              } as Configuration;
+              return (
+                <SwitchConfigUI
+                  key={key}
+                  config={config}
+                  onChange={(value) => setModalSettings(key, value)}
+                />
+              );
+            })}
 
             <SettingTitle>システムの設定</SettingTitle>
-            {Object.entries(creditCardSettings).map(([key, config]) => (
-              <SwitchConfigUI
-                key={key}
-                config={config}
-                onChange={(value) =>
-                  setCreditCardSettings(
-                    key as keyof typeof CREDIT_CARD_CONFIG,
-                    value,
-                  )
-                }
-              />
-            ))}
-            {Object.entries(systemSettings).map(([key, config]) => (
-              <SwitchConfigUI
-                key={key}
-                config={config}
-                onChange={(value) =>
-                  setSystemSettings(key as keyof typeof SYSTEM_CONFIG, value)
-                }
-              />
-            ))}
+            {Object.entries(CREDIT_CARD_CONFIG).map(([_key, _config]) => {
+              const key = _key as keyof typeof CREDIT_CARD_CONFIG;
+              const config = {
+                ..._config,
+                value: creditCardSettings[key].value,
+              } as Configuration;
+              return (
+                <SwitchConfigUI
+                  key={key}
+                  config={config}
+                  onChange={(value) => setCreditCardSettings(key, value)}
+                />
+              );
+            })}
+            {Object.entries(systemSettings).map(([_key, _config]) => {
+              const key = _key as keyof typeof SYSTEM_CONFIG;
+              const config = {
+                ..._config,
+                value: systemSettings[key].value,
+              } as Configuration;
+              return (
+                <SwitchConfigUI
+                  key={key}
+                  config={config}
+                  onChange={(value) => setSystemSettings(key, value)}
+                />
+              );
+            })}
           </Stack>
 
           <DialogActions>
