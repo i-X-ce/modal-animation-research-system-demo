@@ -60,6 +60,7 @@ type SystemAction = {
   check: () => void; // チェックボックスにチェック
   openModal: () => void; // モーダルを開く
   closeModal: () => void; // モーダルを閉じる
+  mouseMove: (x: number, y: number) => void; // マウスの移動
   addSystemLog: (tag: LogTag, message?: string) => void; // システムログを追加
   addMouseLog: (x: number, y: number) => void; // マウスログを追加
   setSettings: <C extends keyof typeof SYSTEM_CONFIG>(
@@ -103,7 +104,7 @@ const defaultSystemState: SystemState = {
 
 export const useSystemStore = create<SystemStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...defaultSystemState,
       start() {
         set(() => ({ systemStep: SYSTEM_STEP.CHECKING }));
@@ -141,6 +142,17 @@ export const useSystemStore = create<SystemStore>()(
           systemLog: [
             ...state.systemLog,
             generateSystemLog(LOG_TAG.CLOSE_MODAL),
+          ],
+        }));
+      },
+      mouseMove(x, y) {
+        if (get().systemStep !== SYSTEM_STEP.CHECKING) {
+          return;
+        }
+        set((s) => ({
+          mouseLog: [
+            ...s.mouseLog,
+            { type: "mouse_log", x, y, timestamp: Date.now() },
           ],
         }));
       },

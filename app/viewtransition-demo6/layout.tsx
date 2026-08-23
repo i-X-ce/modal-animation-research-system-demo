@@ -2,6 +2,7 @@ import { CssBaseline } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { ReactNode } from "react";
 import Modal from "./_components/Modal";
+import MouseTracker from "./_components/MouseTracker";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       </AppRouterCacheProvider>
       <CssBaseline />
       <Modal />
+      <MouseTracker />
     </>
   );
 }
