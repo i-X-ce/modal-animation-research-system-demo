@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { ConfigurationMap } from "../_types/setting";
+import { useSystemStore } from "./systemStore";
 
 export const ANIMATION_TYPES = ["view", "classic", "none"] as const;
 
@@ -93,9 +94,11 @@ export const useModalStore = create<ModalStore>()(
       ...defaultModalState,
       openModal(content: ReactNode, name?: string) {
         set({ open: true, content, name: name || null });
+        useSystemStore.getState().openModal();
       },
       closeModal() {
         set({ open: false });
+        useSystemStore.getState().closeModal();
       },
       onExitComplete() {
         set({ content: null, name: null });
