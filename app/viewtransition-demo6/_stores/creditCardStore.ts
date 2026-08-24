@@ -45,7 +45,7 @@ export const CREDIT_CARD_CONFIG = {
     max: 100,
     step: 1,
     decimalScale: 0,
-    value: 100,
+    value: 15,
   },
 } satisfies ConfigurationMap;
 

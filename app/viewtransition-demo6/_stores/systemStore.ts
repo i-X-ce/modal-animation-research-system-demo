@@ -81,7 +81,7 @@ export const SYSTEM_CONFIG = {
     max: 20,
     step: 1,
     decimalScale: 0,
-    value: 8,
+    value: 5,
   },
   screenWidth: {
     type: "number",
