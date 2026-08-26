@@ -15,16 +15,8 @@ export default function Home() {
       <main className="p-4">
         <Paper>
           <List>
-            {[
-              PATH.viewTransitionDemo,
-              PATH.viewTransitionDemo2,
-              PATH.viewTransitionDemo3,
-              PATH.viewTransitionDemo4,
-              PATH.buttonAnimationDemo,
-              PATH.viewTransitionDemo5,
-              PATH.viewTransitionDemo6,
-            ].map(({ url, label }, index) => (
-              <Link key={index} href={url}>
+            {Object.entries(PATH).map(([key, { url, label }]) => (
+              <Link key={key} href={url}>
                 <ListItemButton>
                   <ListItem>
                     <ListItemText>{label}</ListItemText>

@@ -35,6 +35,10 @@ export const PATH = {
     url: "/viewtransition-demo6",
     label: "View Transition モーダルデモ6 （クレジットカード）",
   },
+  viewTransitionDemo7: {
+    url: "/viewtransition-demo7",
+    label: "View Transition モーダルデモ7 （アルバム）",
+  },
 } satisfies Record<string, PathItem>;
 
 /**
