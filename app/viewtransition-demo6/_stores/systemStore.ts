@@ -191,7 +191,7 @@ export const useSystemStore = create<SystemStore>()(
       },
     }),
     {
-      name: "system-store6",
+      name: "system-store7",
       partialize: (state) => ({ settings: state.settings }),
     },
   ),

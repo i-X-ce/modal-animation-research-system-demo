@@ -411,7 +411,7 @@ export const useCreditCardStore = create<CreditCardStore>()(
       },
     }),
     {
-      name: "credit-card-store6",
+      name: "credit-card-store7",
       partialize: (state) => ({
         settings: state.settings,
       }),
