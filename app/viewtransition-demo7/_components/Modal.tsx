@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useModalStore, useModalTransition } from "../_stores/modalStore";
 import clsx from "clsx";
 import { Paper } from "@mui/material";
+import { useAlbumStore } from "../_stores/albumStore";
 
 const Modal = () => {
   const open = useModalStore((s) => s.open);
@@ -17,10 +18,12 @@ const Modal = () => {
   const size = Math.round(Math.sqrt(coverage) * 100);
   const isAnimation = useModalStore((s) => s.isAnimation);
   const setIsAnimation = useModalStore((s) => s.setIsAnimation);
+  const setOpenPhotoId = useAlbumStore((s) => s.setOpenPhotoId);
 
   const handleClose = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     closeModal();
+    setOpenPhotoId(null);
   };
 
   const onAnimationStart = () => {

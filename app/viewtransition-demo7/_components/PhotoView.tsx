@@ -18,8 +18,8 @@ import { useSystemStore } from "../_stores/systemStore";
 const PhotoView = () => {
   const photos = useAlbumStore((state) => state.photos);
   const movePhoto = useAlbumStore((state) => state.movePhoto);
-  const activeId = useAlbumStore((state) => state.activeId);
-  const setActiveId = useAlbumStore((state) => state.setActiveId);
+  const activeId = useAlbumStore((state) => state.activePhotoId);
+  const setActiveId = useAlbumStore((state) => state.setActivePhotoId);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 3 } }),
   );

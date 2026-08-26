@@ -17,8 +17,9 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
   const { id, imageUrl } = photoProps;
   const openModal = useModalStore((s) => s.openModal);
   const { attributes, listeners, setNodeRef } = useSortable({ id });
-  const isDragging = useAlbumStore((s) => s.activeId === id);
+  const isDragging = useAlbumStore((s) => s.activePhotoId === id);
   const modalTransition = useModalTransition();
+  const setOpenPhotoId = useAlbumStore((s) => s.setOpenPhotoId);
 
   const imageLayoutId = `photo-card-${id}`;
   const containerLayoutId = `photo-card-container-${id}`;
@@ -30,6 +31,7 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
 
   const handleClick = () => {
     openModal(<PhotoModalContent {...photoProps} />, imageLayoutId);
+    setOpenPhotoId(id);
   };
 
   const imageContent = (

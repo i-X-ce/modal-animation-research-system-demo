@@ -3,6 +3,8 @@ import { CssBaseline } from "@mui/material";
 import { ReactNode } from "react";
 import AlbumAppBar from "./_components/AlbumAppBar";
 import Modal from "./_components/Modal";
+import PhotoInformation from "./_components/PhotoInformation";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 
 export const metadata = {
   title: PATH.viewTransitionDemo5.label,
@@ -11,10 +13,13 @@ export const metadata = {
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <>
-      <AlbumAppBar />
-      {children}
+      <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+        <AlbumAppBar />
+        {children}
+      </AppRouterCacheProvider>
       <CssBaseline />
       <Modal />
+      <PhotoInformation />
     </>
   );
 }

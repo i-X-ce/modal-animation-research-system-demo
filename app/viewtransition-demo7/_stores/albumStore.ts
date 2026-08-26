@@ -8,19 +8,22 @@ import { UniqueIdentifier } from "@dnd-kit/core";
 
 type AlbumState = {
   photos: Photo[];
-  activeId: UniqueIdentifier | null;
+  activePhotoId: UniqueIdentifier | null; // 掴んでいる写真ID
+  openPhotoId: Photo["id"] | null; // モーダルで開いている写真ID
 };
 
 type AlbumActions = {
   movePhoto: (activeId: Photo["id"], overId: Photo["id"]) => void;
-  setActiveId: (id: UniqueIdentifier | null) => void;
+  setActivePhotoId: (id: UniqueIdentifier | null) => void;
+  setOpenPhotoId: (id: Photo["id"] | null) => void;
 };
 
 type AlbumStore = AlbumState & AlbumActions;
 
 const defaultAlbumState: AlbumState = {
   photos: photos,
-  activeId: null,
+  activePhotoId: null,
+  openPhotoId: null,
 } as const;
 
 export const useAlbumStore = create<AlbumStore>((set) => ({
@@ -37,5 +40,6 @@ export const useAlbumStore = create<AlbumStore>((set) => ({
         photos: arrayMove(photos, activeIndex, overIndex),
       };
     }),
-  setActiveId: (id) => set({ activeId: id }),
+  setActivePhotoId: (id) => set({ activePhotoId: id }),
+  setOpenPhotoId: (id) => set({ openPhotoId: id }),
 }));
