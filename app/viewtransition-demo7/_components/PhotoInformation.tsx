@@ -4,7 +4,6 @@ import { Box, IconButton, Paper, Stack } from "@mui/material";
 import { useState } from "react";
 import { Info } from "@mui/icons-material";
 import { useAlbumStore } from "../_stores/albumStore";
-import { motion } from "motion/react";
 import { formatIndex, useSystemStore } from "../_stores/systemStore";
 
 const PhotoInformationContent = () => {
@@ -19,6 +18,8 @@ const PhotoInformationContent = () => {
   };
 
   if (!photo) return null;
+
+  const { datetime, place } = photo;
 
   return (
     <Box
@@ -38,9 +39,12 @@ const PhotoInformationContent = () => {
         </IconButton>
 
         {open && (
-          <motion.div initial={{ width: 0 }} animate={{ width: "auto" }}>
-            <Stack>時間: {formatIndex(photo.datetime, indexType)}</Stack>
-          </motion.div>
+          <Stack spacing={2} sx={{ p: 2 }}>
+            <Box>時間: {formatIndex(datetime, indexType)}</Box>
+            <Box>
+              場所: {place.prefecture}, {place.city}
+            </Box>
+          </Stack>
         )}
       </Paper>
     </Box>
