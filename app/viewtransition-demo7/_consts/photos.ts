@@ -55,4 +55,5 @@ export const photos: Photo[] = Array.from({ length: 100 }).map(() => ({
   id: generateId(),
   datetime: generateIndex(),
   place: generatePlace(),
+  isDisplay: true,
 }));

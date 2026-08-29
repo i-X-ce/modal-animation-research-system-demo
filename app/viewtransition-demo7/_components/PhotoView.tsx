@@ -54,9 +54,12 @@ const PhotoView = () => {
           className="grid grid-cols-8 overflow-x-clip"
           style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
         >
-          {photos.slice(0, numberOfCards).map((photo) => (
-            <PhotoCard key={photo.id} {...photo} />
-          ))}
+          {photos
+            .slice(0, numberOfCards)
+            .filter((photo) => photo.isDisplay)
+            .map((photo) => (
+              <PhotoCard key={photo.id} {...photo} />
+            ))}
         </div>
       </SortableContext>
 

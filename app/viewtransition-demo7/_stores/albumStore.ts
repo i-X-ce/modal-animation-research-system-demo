@@ -16,6 +16,7 @@ type AlbumActions = {
   movePhoto: (activeId: Photo["id"], overId: Photo["id"]) => void;
   setActivePhotoId: (id: UniqueIdentifier | null) => void;
   setOpenPhotoId: (id: Photo["id"] | null) => void;
+  removePhoto: (id: Photo["id"]) => void;
 };
 
 type AlbumStore = AlbumState & AlbumActions;
@@ -42,4 +43,8 @@ export const useAlbumStore = create<AlbumStore>((set) => ({
     }),
   setActivePhotoId: (id) => set({ activePhotoId: id }),
   setOpenPhotoId: (id) => set({ openPhotoId: id }),
+  removePhoto: (id) =>
+    set((state) => ({
+      photos: state.photos.filter((photo) => photo.id !== id),
+    })),
 }));

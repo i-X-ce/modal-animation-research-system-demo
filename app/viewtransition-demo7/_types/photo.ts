@@ -6,4 +6,5 @@ export interface Photo {
     prefecture: string;
     city: string;
   };
+  isDisplay: boolean;
 }
