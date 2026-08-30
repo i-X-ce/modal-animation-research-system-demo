@@ -57,7 +57,9 @@ export const useAlbumStore = create<AlbumStore>((set, get) => ({
   },
   removePhoto: (id) =>
     set((state) => ({
-      photos: state.photos.filter((photo) => photo.id !== id),
+      photos: state.photos.map((photo) =>
+        photo.id === id ? { ...photo, isDisplay: false } : photo,
+      ),
     })),
   openInformation: () => set({ isOpenInformation: true }),
   closeInformation: () => set({ isOpenInformation: false }),
