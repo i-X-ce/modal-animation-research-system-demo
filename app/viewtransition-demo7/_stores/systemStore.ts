@@ -1,12 +1,22 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+export const PHOTO_INFORMATION_DIRECTIONS = [
+  "top",
+  "bottom",
+  "left",
+  "right",
+] as const;
+
+type PhotoInformationDirection = (typeof PHOTO_INFORMATION_DIRECTIONS)[number];
+
 type SystemSettings = {
   numberOfCards: number;
   columns: number;
   indexType: IndexType;
   lockInformation: boolean; // 画像情報を表示中にモーダルを閉じることができるか
   displayIndexOnModal: boolean; // モーダルにインデックスを表示するか
+  photoInformationDirection: PhotoInformationDirection; // 画像情報の表示位置
 };
 
 type SystemState = {
@@ -29,6 +39,7 @@ const defaultSystemState: SystemState = {
     indexType: "datetime",
     lockInformation: false,
     displayIndexOnModal: true,
+    photoInformationDirection: "bottom",
   },
 } as const;
 

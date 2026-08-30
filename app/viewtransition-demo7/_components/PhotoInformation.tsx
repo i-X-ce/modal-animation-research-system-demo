@@ -14,6 +14,7 @@ const PhotoInformationContent = () => {
   const openInformation = useAlbumStore((s) => s.openInformation);
   const closeInformation = useAlbumStore((s) => s.closeInformation);
   const removePhoto = useAlbumStore((s) => s.removePhoto);
+  const direction = useSystemStore((s) => s.settings.photoInformationDirection);
 
   const handleToggle = () => {
     if (open) {
@@ -28,6 +29,8 @@ const PhotoInformationContent = () => {
     removePhoto(photo.id);
   };
 
+  const isVertical = direction === "top" || direction === "bottom";
+
   if (!photo) return null;
 
   const { datetime, place } = photo;
@@ -37,17 +40,32 @@ const PhotoInformationContent = () => {
       sx={{
         position: "fixed",
         display: "flex",
-        justifyContent: "center",
-        insetInline: 0,
-        bottom: 0,
+        alignItems: isVertical ? "auto" : "center",
+        justifyContent: isVertical ? "center" : "auto",
+        insetInline: isVertical ? 0 : "auto",
+        insetBlock: !isVertical ? 0 : "auto",
+        top: direction === "top" ? 0 : "none",
+        bottom: direction === "bottom" ? 0 : "none",
+        left: direction === "left" ? 0 : "none",
+        right: direction === "right" ? 0 : "none",
         p: 2,
         zIndex: 100,
         pointerEvents: "none",
       }}
     >
-      <Stack spacing={1} direction={"row"}>
-        <Paper elevation={3} sx={{ pointerEvents: "auto", alignSelf: "end" }}>
-          <Stack direction={"row"} sx={{ alignItems: "end" }}>
+      <Stack
+        spacing={1}
+        direction={isVertical ? "row" : "column"}
+        sx={{
+          alignItems:
+            direction === "top" || direction === "left" ? "start" : "end",
+        }}
+      >
+        <Paper elevation={3} sx={{ pointerEvents: "auto" }}>
+          <Stack
+            direction={isVertical ? "row" : "column"}
+            sx={{ alignItems: "end" }}
+          >
             <IconButton onClick={handleToggle} size="large">
               <Info />
             </IconButton>

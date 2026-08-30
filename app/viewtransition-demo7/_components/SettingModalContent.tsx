@@ -29,6 +29,7 @@ import { Add, Remove } from "@mui/icons-material";
 import {
   INDEX_TYPES,
   MAX_NUMBER_OF_CARDS,
+  PHOTO_INFORMATION_DIRECTIONS,
   useSystemStore,
 } from "../_stores/systemStore";
 
@@ -149,6 +150,7 @@ const SettingModalContent = () => {
     indexType,
     lockInformation,
     displayIndexOnModal,
+    photoInformationDirection,
   } = systemSettings;
   const setModalSettings = useModalStore((s) => s.setSettings);
   const setSystemSettings = useSystemStore((s) => s.setSettings);
@@ -200,6 +202,14 @@ const SettingModalContent = () => {
             value={indexType}
             onChange={(value) => setSystemSettings({ indexType: value })}
             options={INDEX_TYPES}
+          />
+          <SettingSelector
+            label="画像情報の表示位置"
+            value={photoInformationDirection}
+            onChange={(value) =>
+              setSystemSettings({ photoInformationDirection: value })
+            }
+            options={PHOTO_INFORMATION_DIRECTIONS}
           />
           <SettingSlider
             label="カード枚数"
