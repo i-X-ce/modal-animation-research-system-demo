@@ -143,7 +143,13 @@ const SettingModalContent = () => {
   const modalSettings = useModalStore((s) => s.settings);
   const { type, easing, duration, coverage } = modalSettings;
   const systemSettings = useSystemStore((s) => s.settings);
-  const { numberOfCards, columns, indexType, lockInformation } = systemSettings;
+  const {
+    numberOfCards,
+    columns,
+    indexType,
+    lockInformation,
+    displayIndexOnModal,
+  } = systemSettings;
   const setModalSettings = useModalStore((s) => s.setSettings);
   const setSystemSettings = useSystemStore((s) => s.setSettings);
   const resetModalSettings = useModalStore((s) => s.resetSettings);
@@ -219,6 +225,13 @@ const SettingModalContent = () => {
             label="画像情報表示時にモーダルを閉じれなくする"
             value={lockInformation}
             onChange={(value) => setSystemSettings({ lockInformation: value })}
+          />
+          <SettingCheckbox
+            label="インデックスをモーダルの表示する"
+            value={displayIndexOnModal}
+            onChange={(value) =>
+              setSystemSettings({ displayIndexOnModal: value })
+            }
           />
         </Stack>
         <DialogActions>

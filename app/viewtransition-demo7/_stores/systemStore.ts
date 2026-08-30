@@ -6,6 +6,7 @@ type SystemSettings = {
   columns: number;
   indexType: IndexType;
   lockInformation: boolean; // 画像情報を表示中にモーダルを閉じることができるか
+  displayIndexOnModal: boolean; // モーダルにインデックスを表示するか
 };
 
 type SystemState = {
@@ -27,6 +28,7 @@ const defaultSystemState: SystemState = {
     columns: 8,
     indexType: "datetime",
     lockInformation: false,
+    displayIndexOnModal: true,
   },
 } as const;
 

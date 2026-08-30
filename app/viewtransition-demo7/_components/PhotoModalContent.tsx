@@ -13,6 +13,7 @@ const PhotoModalContent = ({
 }: PhotoModalContentProps) => {
   const indexType = useSystemStore((s) => s.settings.indexType);
   const formattedIndex = formatIndex(datetime, indexType);
+  const displayIndex = useSystemStore((s) => s.settings.displayIndexOnModal);
 
   return (
     <div className="relative w-full h-full">
@@ -24,9 +25,11 @@ const PhotoModalContent = ({
         alt={id}
       />
       <div className="absolute inset-x-0 h-25 bg-linear-to-t from-transparent to-black/30" />
-      <div className="absolute p-4">
-        <p className="text-white text-2xl font-bold">{formattedIndex}</p>
-      </div>
+      {displayIndex && (
+        <div className="absolute p-4">
+          <p className="text-white text-2xl font-bold">{formattedIndex}</p>
+        </div>
+      )}
     </div>
   );
 };
