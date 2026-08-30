@@ -3,10 +3,13 @@
 import {
   Box,
   Button,
+  Checkbox,
+  CheckboxProps,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
   FormLabel,
   IconButton,
   InputLabel,
@@ -117,30 +120,30 @@ const SettingSlider = ({
   );
 };
 
-// const SettingCheckbox = ({
-//   label,
-//   value,
-//   onChange,
-//   ...props
-// }: { label: string; value: boolean; onChange: (value: boolean) => void } & Omit<
-//   CheckboxProps,
-//   "value" | "onChange"
-// >) => {
-//   return (
-//     <FormControlLabel
-//       label={label}
-//       control={
-//         <Checkbox checked={value} onChange={(_, v) => onChange(v)} {...props} />
-//       }
-//     />
-//   );
-// };
+const SettingCheckbox = ({
+  label,
+  value,
+  onChange,
+  ...props
+}: { label: string; value: boolean; onChange: (value: boolean) => void } & Omit<
+  CheckboxProps,
+  "value" | "onChange"
+>) => {
+  return (
+    <FormControlLabel
+      label={label}
+      control={
+        <Checkbox checked={value} onChange={(_, v) => onChange(v)} {...props} />
+      }
+    />
+  );
+};
 
 const SettingModalContent = () => {
   const modalSettings = useModalStore((s) => s.settings);
   const { type, easing, duration, coverage } = modalSettings;
   const systemSettings = useSystemStore((s) => s.settings);
-  const { numberOfCards, columns, indexType } = systemSettings;
+  const { numberOfCards, columns, indexType, lockInformation } = systemSettings;
   const setModalSettings = useModalStore((s) => s.setSettings);
   const setSystemSettings = useSystemStore((s) => s.setSettings);
   const resetModalSettings = useModalStore((s) => s.resetSettings);
@@ -156,12 +159,6 @@ const SettingModalContent = () => {
       <DialogTitle>モーダル設定</DialogTitle>
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 2 }}>
-          <SettingSelector
-            label="インデックスの種類"
-            value={indexType}
-            onChange={(value) => setSystemSettings({ indexType: value })}
-            options={INDEX_TYPES}
-          />
           <SettingSelector
             label={"種類"}
             value={type}
@@ -191,6 +188,13 @@ const SettingModalContent = () => {
             step={0.1}
             onChange={(value) => setModalSettings({ coverage: value })}
           />
+
+          <SettingSelector
+            label="インデックスの種類"
+            value={indexType}
+            onChange={(value) => setSystemSettings({ indexType: value })}
+            options={INDEX_TYPES}
+          />
           <SettingSlider
             label="カード枚数"
             min={0}
@@ -210,6 +214,11 @@ const SettingModalContent = () => {
             unit="枚"
             decimalScale={0}
             onChange={(value) => setSystemSettings({ columns: value })}
+          />
+          <SettingCheckbox
+            label="画像情報表示時にモーダルを閉じれなくする"
+            value={lockInformation}
+            onChange={(value) => setSystemSettings({ lockInformation: value })}
           />
         </Stack>
         <DialogActions>

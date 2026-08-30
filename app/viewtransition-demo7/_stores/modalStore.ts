@@ -4,6 +4,8 @@ import { BezierDefinition, EasingDefinition, Transition } from "motion";
 import { ReactNode } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useSystemStore } from "./systemStore";
+import { useAlbumStore } from "./albumStore";
 
 export const ANIMATION_TYPES = ["view", "classic", "none"] as const;
 
@@ -56,6 +58,13 @@ export const useModalStore = create<ModalStore>()(
         set({ open: true, content, name: name || null });
       },
       closeModal() {
+        const isOpenInformation = useAlbumStore.getState().isOpenInformation;
+        const lockInformation =
+          useSystemStore.getState().settings.lockInformation;
+        if (isOpenInformation && lockInformation) {
+          return;
+        }
+        useAlbumStore.getState().closeInformation();
         set({ open: false });
       },
       onExitComplete() {

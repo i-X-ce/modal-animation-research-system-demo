@@ -1,7 +1,6 @@
 "use client";
 
 import { Box, IconButton, Paper, Stack } from "@mui/material";
-import { useState } from "react";
 import { Delete, Info } from "@mui/icons-material";
 import { useAlbumStore } from "../_stores/albumStore";
 import { formatIndex, useSystemStore } from "../_stores/systemStore";
@@ -11,11 +10,17 @@ const PhotoInformationContent = () => {
     s.photos.find((p) => p.id === s.openPhotoId),
   );
   const indexType = useSystemStore((s) => s.settings.indexType);
-  const [open, setOpen] = useState(false);
+  const open = useAlbumStore((s) => s.isOpenInformation);
+  const openInformation = useAlbumStore((s) => s.openInformation);
+  const closeInformation = useAlbumStore((s) => s.closeInformation);
   const removePhoto = useAlbumStore((s) => s.removePhoto);
 
   const handleToggle = () => {
-    setOpen((prev) => !prev);
+    if (open) {
+      closeInformation();
+    } else {
+      openInformation();
+    }
   };
 
   const handleRemove = () => {

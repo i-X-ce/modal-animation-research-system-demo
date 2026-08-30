@@ -5,6 +5,7 @@ type SystemSettings = {
   numberOfCards: number;
   columns: number;
   indexType: IndexType;
+  lockInformation: boolean; // 画像情報を表示中にモーダルを閉じることができるか
 };
 
 type SystemState = {
@@ -25,6 +26,7 @@ const defaultSystemState: SystemState = {
     numberOfCards: MAX_NUMBER_OF_CARDS,
     columns: 8,
     indexType: "datetime",
+    lockInformation: false,
   },
 } as const;
 
