@@ -11,7 +11,7 @@ const generateImgPath = (num: number) => {
   return `https://picsum.photos/seed/${num + 200}/500/500`;
 };
 
-const generatePlace = (): Photo["place"] => {
+const generatePlace = (): EXIFData["place"] => {
   const places = {
     // 北海道: ["札幌市", "函館市", "旭川市"],
     // 青森県: ["青森市", "弘前市", "八戸市"],
@@ -51,8 +51,7 @@ const generatePlace = (): Photo["place"] => {
 };
 
 const generateEXIFData = (): EXIFData => {
-  const rp = <T>(arr: T[]): T =>
-    arr[Math.floor(Math.random() * arr.length)];
+  const rp = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
   const rn = (min: number, max: number): number =>
     Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -72,6 +71,7 @@ const generateEXIFData = (): EXIFData => {
     exposureProgram: rp([1, 2, 3, 4]),
     whiteBalance: rp([0, 1]),
     flash: rp([0, 1]),
+    place: generatePlace(),
     GPSAltitude: rn(0, 10000),
     GPSAltitudeRef: rp([0, 1]),
     GPSImgDirection: rn(0, 360),

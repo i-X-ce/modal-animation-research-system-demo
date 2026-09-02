@@ -2,10 +2,10 @@ export interface Photo {
   id: string;
   imageUrl: string;
   datetime: number;
-  place: {
-    prefecture: string;
-    city: string;
-  };
+  // place: {
+  //   prefecture: string;
+  //   city: string;
+  // };
   isDisplay: boolean;
   EXIFData: EXIFData;
 }
@@ -66,6 +66,10 @@ export interface EXIFData {
   // GPSLongitude: [number, number, number];
   // /** 経度参照 (ASCII) 'E' | 'W' */
   // GPSLongitudeRef: "E" | "W";
+  place: {
+    prefecture: string;
+    city: string;
+  };
 
   /** 高度 m (RATIONAL) */
   GPSAltitude: number;
@@ -119,16 +123,21 @@ export const EXIFDATA_LABELS: Record<keyof EXIFData, string> = {
   exposureProgram: "ホワイトバランス",
   whiteBalance: "フラッシュ",
   flash: "フラッシュ",
+
+  place: "撮影場所",
+
   GPSAltitude: "高度",
   GPSAltitudeRef: "高度参照",
   GPSImgDirection: "コンパス方式",
   GPSImgDirectionRef: "方位参照",
+
   pixelXDimension: "画面幅",
   pixelYDimension: "画像高さ",
   xResolution: "X方向解像度",
   yResolution: "Y方向解像度",
   resolutionUnit: "解像度単位",
   colorSpace: "色空間",
+
   JPEGInterchangeFormat: "サムネイルデータのオフセット",
   JPEGInterchangeFormatLength: "サムネイルデータのバイト長",
 } as const;
@@ -149,6 +158,9 @@ export const EXIFDataFormatters = {
   exposureProgram: (value) => String(value),
   whiteBalance: (value) => (value === 0 ? "自動" : "マニュアル"),
   flash: (value) => (value === 0 ? "発光せず" : "発光"),
+
+  place: (value) => `${value.prefecture}, ${value.city}`,
+
   GPSAltitude: (value) => `${value} m`,
   GPSAltitudeRef: (value) => (value === 0 ? "海抜以上" : "海抜以下"),
   GPSImgDirection: (value) => `${value}°`,

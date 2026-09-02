@@ -39,7 +39,7 @@ const PhotoInformationContent = () => {
 
   if (!photo) return null;
 
-  const { datetime, place, EXIFData } = photo;
+  const { datetime, EXIFData } = photo;
 
   return (
     <Box
@@ -93,9 +93,6 @@ const PhotoInformationContent = () => {
               }}
             >
               <Box>時間: {formatIndex(datetime, indexType)}</Box>
-              <Box>
-                場所: {place.prefecture}, {place.city}
-              </Box>
               {Object.entries(EXIFData).map(([_key, _value]) => {
                 const key = _key as keyof EXIFData;
                 const label = EXIFDATA_LABELS[key];
