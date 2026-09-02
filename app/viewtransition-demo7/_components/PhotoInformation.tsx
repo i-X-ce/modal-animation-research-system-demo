@@ -4,6 +4,12 @@ import { Box, IconButton, Paper, Stack } from "@mui/material";
 import { Delete, Info } from "@mui/icons-material";
 import { useAlbumStore } from "../_stores/albumStore";
 import { formatIndex, useSystemStore } from "../_stores/systemStore";
+import {
+  EXIFData,
+  EXIFDATA_LABELS,
+  EXIFDataFormatters,
+  formatEXIFValue,
+} from "../_types/photo";
 
 const PhotoInformationContent = () => {
   const photo = useAlbumStore((s) =>
@@ -33,7 +39,7 @@ const PhotoInformationContent = () => {
 
   if (!photo) return null;
 
-  const { datetime, place } = photo;
+  const { datetime, place, EXIFData } = photo;
 
   return (
     <Box
@@ -77,11 +83,29 @@ const PhotoInformationContent = () => {
 
         {open && (
           <Paper elevation={3}>
-            <Stack spacing={2} sx={{ p: 2 }}>
+            <Stack
+              spacing={2}
+              sx={{
+                p: 2,
+                maxHeight: "80dvh",
+                overflowY: "auto",
+                pointerEvents: "auto",
+              }}
+            >
               <Box>時間: {formatIndex(datetime, indexType)}</Box>
               <Box>
                 場所: {place.prefecture}, {place.city}
               </Box>
+              {Object.entries(EXIFData).map(([_key, _value]) => {
+                const key = _key as keyof EXIFData;
+                const label = EXIFDATA_LABELS[key];
+                const value = _value as EXIFData[keyof EXIFData];
+                return (
+                  <Box key={_key}>
+                    {label}: {formatEXIFValue(key, value)}
+                  </Box>
+                );
+              })}
             </Stack>
           </Paper>
         )}

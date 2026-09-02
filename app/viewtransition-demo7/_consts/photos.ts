@@ -1,5 +1,5 @@
 import { generateIndex } from "../_stores/systemStore";
-import { Photo } from "../_types/photo";
+import { EXIFData, Photo } from "../_types/photo";
 
 let cnt = 0;
 
@@ -50,10 +50,48 @@ const generatePlace = (): Photo["place"] => {
   return { prefecture, city };
 };
 
+const generateEXIFData = (): EXIFData => {
+  const rp = <T>(arr: T[]): T =>
+    arr[Math.floor(Math.random() * arr.length)];
+  const rn = (min: number, max: number): number =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
+
+  return {
+    make: rp(["Canon", "Nikon", "Sony", "Fujifilm"]),
+    model: rp(["EOS R5", "Z7 II", "Alpha 1", "X-T4"]),
+    lensModel: rp(["24-70mm f/2.8", "70-200mm f/2.8", "50mm f/1.4"]),
+    bodySerialNumber: `SN${rn(100000, 999999)}`,
+    software: rp(["Adobe Photoshop", "Lightroom", "Capture One"]),
+    fNumber: rn(1, 22),
+    exposureTime: rn(1, 1000) / 1000,
+    ISOSpeedRatings: rp([100, 200, 400, 800, 1600]),
+    exposureBiasValue: rn(-3, 3),
+    focalLength: rn(18, 200),
+    focalLengthIn35mmFilm: rn(18, 200),
+    meteringMode: rp([1, 2, 3]),
+    exposureProgram: rp([1, 2, 3, 4]),
+    whiteBalance: rp([0, 1]),
+    flash: rp([0, 1]),
+    GPSAltitude: rn(0, 10000),
+    GPSAltitudeRef: rp([0, 1]),
+    GPSImgDirection: rn(0, 360),
+    GPSImgDirectionRef: rp(["T", "M"]),
+    pixelXDimension: rn(1000, 8000),
+    pixelYDimension: rn(1000, 8000),
+    xResolution: rn(72, 300),
+    yResolution: rn(72, 300),
+    resolutionUnit: rp([2, 3]),
+    colorSpace: rp([1, 2]),
+    JPEGInterchangeFormat: rn(0, 100000),
+    JPEGInterchangeFormatLength: rn(0, 100000),
+  };
+};
+
 export const photos: Photo[] = Array.from({ length: 100 }).map(() => ({
   imageUrl: generateImgPath(cnt),
   id: generateId(),
   datetime: generateIndex(),
   place: generatePlace(),
   isDisplay: true,
+  EXIFData: generateEXIFData(),
 }));
