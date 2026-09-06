@@ -1,15 +1,27 @@
 "use client";
 
-import { Box, IconButton, Paper, Stack } from "@mui/material";
+import { Box, IconButton, Paper, Stack, Typography } from "@mui/material";
 import { Delete, Info } from "@mui/icons-material";
 import { useAlbumStore } from "../_stores/albumStore";
 import { formatIndex, useSystemStore } from "../_stores/systemStore";
-import {
-  EXIFData,
-  EXIFDATA_LABELS,
-  EXIFDataFormatters,
-  formatEXIFValue,
-} from "../_types/photo";
+import { EXIFData, EXIFDATA_LABELS, formatEXIFValue } from "../_types/photo";
+
+const InformationItem = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) => {
+  return (
+    <Box sx={{ display: "flex", gap: 1 }}>
+      <Typography sx={{ flex: 1, minWidth: 0, fontWeight: "bold" }}>
+        {label}
+      </Typography>
+      <Typography sx={{ flex: 1, minWidth: 0 }}>{value}</Typography>
+    </Box>
+  );
+};
 
 const PhotoInformationContent = () => {
   const photo = useAlbumStore((s) =>
@@ -57,6 +69,7 @@ const PhotoInformationContent = () => {
         p: 2,
         zIndex: 100,
         pointerEvents: "none",
+        width: "auto",
       }}
     >
       <Stack
@@ -90,17 +103,23 @@ const PhotoInformationContent = () => {
                 maxHeight: "80dvh",
                 overflowY: "auto",
                 pointerEvents: "auto",
+                // minWidth: "600px",
               }}
             >
-              <Box>時間: {formatIndex(datetime, indexType)}</Box>
+              <InformationItem
+                label="時間"
+                value={formatIndex(datetime, indexType)}
+              />
               {Object.entries(EXIFData).map(([_key, _value]) => {
                 const key = _key as keyof EXIFData;
                 const label = EXIFDATA_LABELS[key];
                 const value = _value as EXIFData[keyof EXIFData];
                 return (
-                  <Box key={_key}>
-                    {label}: {formatEXIFValue(key, value)}
-                  </Box>
+                  <InformationItem
+                    key={_key}
+                    label={label}
+                    value={formatEXIFValue(key, value)}
+                  />
                 );
               })}
             </Stack>
