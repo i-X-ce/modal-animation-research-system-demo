@@ -2,10 +2,8 @@ import { PATH } from "@/consts/path";
 import { CssBaseline } from "@mui/material";
 import { ReactNode } from "react";
 import AlbumAppBar from "./_components/AlbumAppBar";
-import Modal from "./_components/Modal";
-import PhotoInformation from "./_components/PhotoInformation";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import MouseTracker from "./_components/MouseTracker";
+import ClientProviders from "./_components/ClientProviders";
 
 export const metadata = {
   title: PATH.viewTransitionDemo5.label,
@@ -19,9 +17,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         {children}
       </AppRouterCacheProvider>
       <CssBaseline />
-      <Modal />
-      <PhotoInformation />
-      <MouseTracker />
+      <ClientProviders />
     </>
   );
 }
