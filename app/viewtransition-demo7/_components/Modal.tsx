@@ -56,9 +56,7 @@ const Modal = () => {
       {open && (
         <div className="fixed inset-0 flex items-center justify-center z-100">
           <motion.div
-            className={clsx(
-              "absolute inset-0 bg-black/30 backdrop-blur-lg transition-opacity duration-100",
-            )}
+            className={clsx("absolute inset-0 bg-black/30 backdrop-blur-lg")}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
