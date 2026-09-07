@@ -1,9 +1,9 @@
-import PhotoView from "./_components/PhotoView";
+import StepPanel from "./_components/StepPanel";
 
 export default function Page() {
   return (
     <main>
-      <PhotoView />
+      <StepPanel />
     </main>
   );
 }

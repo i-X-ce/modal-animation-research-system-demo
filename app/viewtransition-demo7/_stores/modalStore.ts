@@ -55,6 +55,7 @@ export const useModalStore = create<ModalStore>()(
     (set) => ({
       ...defaultModalState,
       openModal(content: ReactNode, name?: string) {
+        useSystemStore.getState().openModal();
         set({ open: true, content, name: name || null });
       },
       closeModal() {
@@ -65,6 +66,7 @@ export const useModalStore = create<ModalStore>()(
           return;
         }
         useAlbumStore.getState().closeInformation();
+        useSystemStore.getState().closeModal();
         set({ open: false });
       },
       onExitComplete() {

@@ -42,6 +42,7 @@ export const useAlbumStore = create<AlbumStore>((set, get) => ({
       const overIndex = photos.findIndex((photo) => photo.id === overId);
       if (activeIndex === -1 || overIndex === -1) return state;
 
+      useSystemStore.getState().movePhotos(activeId, overId);
       return {
         photos: arrayMove(photos, activeIndex, overIndex),
       };
@@ -55,12 +56,20 @@ export const useAlbumStore = create<AlbumStore>((set, get) => ({
     }
     set({ openPhotoId: id });
   },
-  removePhoto: (id) =>
+  removePhoto: (id) => {
+    useSystemStore.getState().removePhoto(id);
     set((state) => ({
       photos: state.photos.map((photo) =>
         photo.id === id ? { ...photo, isDisplay: false } : photo,
       ),
-    })),
-  openInformation: () => set({ isOpenInformation: true }),
-  closeInformation: () => set({ isOpenInformation: false }),
+    }));
+  },
+  openInformation: () => {
+    useSystemStore.getState().openInformation();
+    set({ isOpenInformation: true });
+  },
+  closeInformation: () => {
+    useSystemStore.getState().closeInformation();
+    set({ isOpenInformation: false });
+  },
 }));
