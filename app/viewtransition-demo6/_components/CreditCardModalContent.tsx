@@ -52,7 +52,7 @@ const CreditCardModalContent = ({ id }: CreditCardContentModalProps) => {
         <DialogTitle>内容チェック</DialogTitle>
         <DialogContent className="flex-1 flex">
           <div className="w-1/2 p-4">
-            <CreditCardImage {...imageCreditCard} />
+            <CreditCardImage {...imageCreditCard} open />
           </div>
 
           <Stack component="form" sx={{ flex: 1 }} onSubmit={handleSubmit}>
