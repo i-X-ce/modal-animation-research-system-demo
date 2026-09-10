@@ -8,7 +8,7 @@ const generateId = () => {
 };
 
 const generateImgPath = (num: number) => {
-  return `https://picsum.photos/seed/${num + 200}/500/500`;
+  return `images/fireworks/fireworks${String((num % 21) + 1).padStart(3, "0")}.jpg`;
 };
 
 const generatePlace = (): EXIFData["place"] => {
