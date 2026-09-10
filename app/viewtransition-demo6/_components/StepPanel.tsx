@@ -5,12 +5,22 @@ import { SYSTEM_STEP, useSystemStore } from "../_stores/systemStore";
 import CreditCardPageContainer from "./CreditCardPageContainer";
 import CreditCardView from "./CreditCardView";
 import CreditCardAppBar from "./CreditCardAppBar";
+import { useCreditCardStore } from "../_stores/creditCardStore";
 
 const StepPanel = () => {
   const step = useSystemStore((s) => s.systemStep);
   const start = useSystemStore((s) => s.start);
   const complete = useSystemStore((s) => s.complete);
   const end = useSystemStore((s) => s.end);
+  const requiresAllSubmits = useSystemStore(
+    (s) => s.settings.requiresAllSubmits.value,
+  );
+  const enableSubmit = useCreditCardStore(
+    (s) =>
+      s.creditCards
+        .slice(0, s.settings.numberOfCards.value)
+        .every((card) => card.submitted) || !requiresAllSubmits,
+  );
   const csvLink = useSystemStore((s) => s.csvLink);
 
   const content = (() => {
@@ -28,7 +38,11 @@ const StepPanel = () => {
           <>
             <CreditCardView />
             <Box sx={{ p: 2, display: "flex", justifyContent: "end" }}>
-              <Button onClick={complete} variant="contained">
+              <Button
+                onClick={complete}
+                variant="contained"
+                disabled={!enableSubmit}
+              >
                 チェック完了
               </Button>
             </Box>

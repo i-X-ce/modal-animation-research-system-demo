@@ -148,6 +148,11 @@ export const SYSTEM_CONFIG = {
     decimalScale: 0,
     value: 1920,
   },
+  requiresAllSubmits: {
+    type: "boolean",
+    label: "全て送信しないとチェック完了できなくする",
+    value: true,
+  },
 } satisfies ConfigurationMap;
 
 const defaultSystemState: SystemState = {
