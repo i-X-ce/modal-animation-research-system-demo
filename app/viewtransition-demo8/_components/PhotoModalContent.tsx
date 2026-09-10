@@ -21,7 +21,7 @@ const PhotoModalContent = ({
         width={100}
         height={100}
         src={imageUrl}
-        className="absolute w-full h-full object-cover bg-center"
+        className="absolute w-full h-full object-contain bg-center"
         alt={id}
       />
       <div className="absolute inset-x-0 h-25 bg-linear-to-t from-transparent to-black/30" />
