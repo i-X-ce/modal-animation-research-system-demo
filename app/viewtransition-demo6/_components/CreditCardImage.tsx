@@ -14,6 +14,22 @@ interface CreditCardImageProps {
   className?: string;
 }
 
+const MaskBar = memo(({ disable = false }: { disable?: boolean }) => {
+  const isMask = useCreditCardStore((s) => s.settings.mask.value);
+
+  if (disable) {
+    return null;
+  }
+
+  if (!isMask) {
+    return null;
+  }
+
+  return <div className="absolute inset-0 bg-black" />;
+});
+
+MaskBar.displayName = "MaskBar";
+
 const CreditCardImage = memo(
   ({ id, open, className }: CreditCardImageProps) => {
     const isBlur = useCreditCardStore((s) => s.settings.blur.value);
@@ -54,20 +70,27 @@ const CreditCardImage = memo(
                   <p className="text-xl">ABC CARD</p>
                 </div>
 
-                <div className="relative text-3xl">{cardNumber}</div>
+                <div className="relative text-3xl">
+                  <MaskBar disable={open} />
+                  {cardNumber}
+                </div>
 
                 <div className="relative flex gap-1 items-center justify-center mt-2">
                   <p>有効期限 {">"}</p>
                   <div className="flex flex-col items-center">
                     <p className="text-[10px] leading-0">MONTH / YEAR</p>
-                    <p className="text-lg">
+                    <div className="text-lg relative">
+                      <MaskBar disable={open} />
                       {expirationMonth} / {expirationYear.slice(-2)}
-                    </p>
+                    </div>
                   </div>
                 </div>
 
                 <div className="absolute bottom-2 inset-x-2 flex justify-between items-baseline px-2">
-                  <p className="text-xl">{cardHolder}</p>
+                  <div className="relative text-xl">
+                    <MaskBar disable={open} />
+                    {cardHolder}
+                  </div>
                   <p className="text-3xl font-bold">ABC</p>
                 </div>
               </div>

@@ -53,6 +53,11 @@ export const CREDIT_CARD_CONFIG = {
     label: "クレジットカードの画像をぼかす",
     value: true,
   },
+  mask: {
+    type: "boolean",
+    label: "クレジットカードの情報を隠す",
+    value: true,
+  },
 } satisfies ConfigurationMap;
 
 const generateDisplayCreditCard = (index: number): DisplayCreditCard => {
