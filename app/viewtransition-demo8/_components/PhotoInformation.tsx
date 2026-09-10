@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, IconButton, Paper, Stack, Typography } from "@mui/material";
-import { Delete, Info } from "@mui/icons-material";
+import { /* Delete ,*/ Info } from "@mui/icons-material";
 import { useAlbumStore } from "../_stores/albumStore";
 import { formatIndex, useSystemStore } from "../_stores/systemStore";
 import { EXIFData, EXIFDATA_LABELS, formatEXIFValue } from "../_types/photo";
@@ -31,7 +31,7 @@ const PhotoInformationContent = () => {
   const open = useAlbumStore((s) => s.isOpenInformation);
   const openInformation = useAlbumStore((s) => s.openInformation);
   const closeInformation = useAlbumStore((s) => s.closeInformation);
-  const removePhoto = useAlbumStore((s) => s.removePhoto);
+  // const removePhoto = useAlbumStore((s) => s.removePhoto);
   const direction = useSystemStore((s) => s.settings.photoInformationDirection);
 
   const handleToggle = () => {
@@ -42,10 +42,10 @@ const PhotoInformationContent = () => {
     }
   };
 
-  const handleRemove = () => {
-    if (!photo) return;
-    removePhoto(photo.id);
-  };
+  // const handleRemove = () => {
+  //   if (!photo) return;
+  //   removePhoto(photo.id);
+  // };
 
   const isVertical = direction === "top" || direction === "bottom";
 
@@ -88,9 +88,9 @@ const PhotoInformationContent = () => {
             <IconButton onClick={handleToggle} size="large">
               <Info />
             </IconButton>
-            <IconButton onClick={handleRemove} size="large" color="error">
+            {/* <IconButton onClick={handleRemove} size="large" color="error">
               <Delete />
-            </IconButton>
+            </IconButton> */}
           </Stack>
         </Paper>
 

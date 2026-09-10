@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { photos } from "../_consts/photos";
 import { Photo } from "../_types/photo";
-import { arrayMove } from "@dnd-kit/sortable";
+// import { arrayMove } from "@dnd-kit/sortable";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { useSystemStore } from "./systemStore";
 
@@ -35,18 +35,18 @@ const defaultAlbumState: AlbumState = {
 export const useAlbumStore = create<AlbumStore>((set, get) => ({
   ...defaultAlbumState,
 
-  movePhoto: (activeId, overId) =>
-    set((state) => {
-      const { photos } = state;
-      const activeIndex = photos.findIndex((photo) => photo.id === activeId);
-      const overIndex = photos.findIndex((photo) => photo.id === overId);
-      if (activeIndex === -1 || overIndex === -1) return state;
-
-      useSystemStore.getState().movePhotos(activeId, overId);
-      return {
-        photos: arrayMove(photos, activeIndex, overIndex),
-      };
-    }),
+  movePhoto: (/* activeId, overId */) => {
+    // set((state) => {
+    //   const { photos } = state;
+    //   const activeIndex = photos.findIndex((photo) => photo.id === activeId);
+    //   const overIndex = photos.findIndex((photo) => photo.id === overId);
+    //   if (activeIndex === -1 || overIndex === -1) return state;
+    //   useSystemStore.getState().movePhotos(activeId, overId);
+    //   return {
+    //     photos: arrayMove(photos, activeIndex, overIndex),
+    //   };
+    // });
+  },
   setActivePhotoId: (id) => set({ activePhotoId: id }),
   setOpenPhotoId: (id) => {
     const lockInformation = useSystemStore.getState().settings.lockInformation;
@@ -56,13 +56,13 @@ export const useAlbumStore = create<AlbumStore>((set, get) => ({
     }
     set({ openPhotoId: id });
   },
-  removePhoto: (id) => {
-    useSystemStore.getState().removePhoto(id);
-    set((state) => ({
-      photos: state.photos.map((photo) =>
-        photo.id === id ? { ...photo, isDisplay: false } : photo,
-      ),
-    }));
+  removePhoto: (/* id */) => {
+    // useSystemStore.getState().removePhoto(id);
+    // set((state) => ({
+    //   photos: state.photos.map((photo) =>
+    //     photo.id === id ? { ...photo, isDisplay: false } : photo,
+    //   ),
+    // }));
   },
   openInformation: () => {
     useSystemStore.getState().openInformation();
