@@ -48,6 +48,11 @@ export const CREDIT_CARD_CONFIG = {
     decimalScale: 0,
     value: 15,
   },
+  blur: {
+    type: "boolean",
+    label: "クレジットカードの画像をぼかす",
+    value: true,
+  },
 } satisfies ConfigurationMap;
 
 const generateDisplayCreditCard = (index: number): DisplayCreditCard => {
@@ -424,7 +429,7 @@ export const useCreditCardStore = create<CreditCardStore>()(
       },
     }),
     {
-      name: "credit-card-store7",
+      name: "credit-card-store6",
       partialize: (state) => ({
         settings: state.settings,
       }),

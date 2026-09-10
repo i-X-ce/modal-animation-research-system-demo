@@ -128,7 +128,7 @@ export const useModalStore = create<ModalStore>()(
       },
     }),
     {
-      name: "modal-store7",
+      name: "modal-store6",
       partialize: (state) => ({
         settings: state.settings,
       }),

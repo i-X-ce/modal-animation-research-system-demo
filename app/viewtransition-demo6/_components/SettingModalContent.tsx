@@ -209,7 +209,7 @@ const SettingModalContent = () => {
                 />
               );
             })}
-            {Object.entries(systemSettings).map(([_key, _config]) => {
+            {Object.entries(SYSTEM_CONFIG).map(([_key, _config]) => {
               const key = _key as keyof typeof SYSTEM_CONFIG;
               const config = {
                 ..._config,
