@@ -100,7 +100,7 @@ const PhotoInformationContent = () => {
               spacing={2}
               sx={{
                 p: 2,
-                maxHeight: "80dvh",
+                maxHeight: "60dvh",
                 overflowY: "auto",
                 pointerEvents: "auto",
                 // minWidth: "600px",
