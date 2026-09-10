@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { SYSTEM_STEP, useSystemStore } from "../_stores/systemStore";
 import CreditCardPageContainer from "./CreditCardPageContainer";
 import CreditCardView from "./CreditCardView";
@@ -11,6 +11,7 @@ const StepPanel = () => {
   const start = useSystemStore((s) => s.start);
   const complete = useSystemStore((s) => s.complete);
   const end = useSystemStore((s) => s.end);
+  const csvLink = useSystemStore((s) => s.csvLink);
 
   const content = (() => {
     switch (step) {
@@ -36,9 +37,19 @@ const StepPanel = () => {
       case SYSTEM_STEP.END:
         return (
           <Box sx={{ p: 4 }}>
-            <Button onClick={end} variant="contained">
-              終了する
-            </Button>
+            <Stack spacing={2} sx={{ display: "flex", alignItems: "center" }}>
+              <Button
+                size="large"
+                variant="contained"
+                href={csvLink().url}
+                download={csvLink().filename}
+              >
+                ログをCSVでダウンロード
+              </Button>
+              <Button onClick={end} size="large" variant="contained">
+                終了する
+              </Button>
+            </Stack>
           </Box>
         );
     }

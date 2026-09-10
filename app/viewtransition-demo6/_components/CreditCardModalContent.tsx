@@ -18,7 +18,6 @@ import { CREDIT_CARD_KEYS_LABELS } from "../_types/creditCard";
 import { useModalStore } from "../_stores/modalStore";
 import { SubmitEventHandler, useTransition } from "react";
 import ModalCloseButton from "./ModalCloseButton";
-import { useSystemStore } from "../_stores/systemStore";
 
 interface CreditCardContentModalProps {
   id: DisplayCreditCard["id"];
@@ -32,8 +31,6 @@ const CreditCardModalContent = ({ id }: CreditCardContentModalProps) => {
   const submit = useCreditCardStore((s) => s.submitCreditCard);
   const closeModal = useModalStore((s) => s.closeModal);
   const [isPending, startTransition] = useTransition();
-  const systemSubmit = useSystemStore((s) => s.submit);
-  const check = useSystemStore((s) => s.check);
 
   if (!props) {
     return null;
@@ -41,7 +38,6 @@ const CreditCardModalContent = ({ id }: CreditCardContentModalProps) => {
 
   const handleSubmit: SubmitEventHandler = (e) => {
     e.preventDefault();
-    systemSubmit();
     startTransition(async () => {
       await submit(id);
       closeModal();
@@ -77,7 +73,6 @@ const CreditCardModalContent = ({ id }: CreditCardContentModalProps) => {
                       <FormControlLabel
                         onChange={() => {
                           toggleChecked(id, checkKey);
-                          check();
                         }}
                         checked={checked?.[checkKey]}
                         control={<Checkbox />}

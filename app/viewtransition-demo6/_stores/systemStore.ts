@@ -3,6 +3,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { ConfigurationMap } from "../_types/setting";
+import { useModalStore } from "./modalStore";
+import { CreditCard } from "../_types/creditCard";
+import { useCreditCardStore } from "./creditCardStore";
 
 export const SYSTEM_STEP = {
   START: "start",
@@ -14,6 +17,7 @@ type SystemStep = (typeof SYSTEM_STEP)[keyof typeof SYSTEM_STEP];
 
 export const LOG_TAG = {
   START: "start",
+  COMPLETE: "complete",
   END: "end",
   CHECK: "check",
   SUBMIT: "submit",
@@ -38,12 +42,54 @@ export interface MouseLog {
   y: number;
 }
 
-const generateSystemLog = (tag: LogTag, message?: string): SystemLog => ({
-  type: "system_log",
-  tag,
-  timestamp: Date.now(),
-  message: message || "",
-});
+export interface OutputLog {
+  tag: LogTag;
+  timestamp: number;
+  x: number;
+  y: number;
+  message: string;
+}
+
+const generateSystemLog = (tag: LogTag, message?: string): SystemLog => {
+  return {
+    type: "system_log",
+    tag,
+    timestamp: Date.now(),
+    message: message || "",
+  };
+};
+
+const combineLogs = (
+  systemLog: SystemLog[],
+  mouseLog: MouseLog[],
+): OutputLog[] => {
+  const combinedLog: OutputLog[] = [...systemLog, ...mouseLog]
+    .sort((a, b) => a.timestamp - b.timestamp)
+    .reduce((acc, log) => {
+      const lastLog = acc[acc.length - 1];
+      const newLog: OutputLog = (() => {
+        if (log.type === "system_log") {
+          return {
+            tag: log.tag,
+            timestamp: log.timestamp,
+            x: lastLog?.x ?? 0,
+            y: lastLog?.y ?? 0,
+            message: log.message,
+          };
+        } else {
+          return {
+            tag: LOG_TAG.MOUSE_MOVE,
+            timestamp: log.timestamp,
+            x: log.x,
+            y: log.y,
+            message: "",
+          };
+        }
+      })();
+      return [...acc, newLog];
+    }, [] as OutputLog[]);
+  return combinedLog;
+};
 
 interface SystemState {
   settings: typeof SYSTEM_CONFIG;
@@ -52,22 +98,31 @@ interface SystemState {
   mouseLog: MouseLog[];
 }
 
+interface LogFile {
+  url: string;
+  filename: string;
+}
+
 type SystemAction = {
   start: () => void; // システムの開始
   complete: () => void; // チェック完了
   end: () => void; // システムの終了
-  submit: () => void; // 送信ボタンを押す
-  check: () => void; // チェックボックスにチェック
+  submit: (cardId: CreditCard["id"]) => void; // 送信ボタンを押す
+  check: (
+    id: string,
+    field: Exclude<keyof CreditCard, "id">,
+    value: boolean,
+  ) => void; // チェックボックスにチェック
   openModal: () => void; // モーダルを開く
   closeModal: () => void; // モーダルを閉じる
   mouseMove: (x: number, y: number) => void; // マウスの移動
-  addSystemLog: (tag: LogTag, message?: string) => void; // システムログを追加
   addMouseLog: (x: number, y: number) => void; // マウスログを追加
   setSettings: <C extends keyof typeof SYSTEM_CONFIG>(
     key: C,
     settings: Partial<ConfigurationMap[C]["value"]>,
   ) => void; // 設定を更新
   resetSettings: () => void; // 設定をリセット
+  csvLink: () => LogFile;
 };
 
 type SystemStore = SystemState & SystemAction;
@@ -108,9 +163,30 @@ export const useSystemStore = create<SystemStore>()(
       ...defaultSystemState,
       start() {
         set(() => ({ systemStep: SYSTEM_STEP.CHECKING }));
+        const modalSettings = useModalStore.getState().settings;
+        const creditCardSettings = useCreditCardStore.getState().settings;
+        set((state) => ({
+          systemStep: SYSTEM_STEP.CHECKING,
+          systemLog: [
+            ...state.systemLog,
+            generateSystemLog(
+              LOG_TAG.START,
+              [
+                ...Object.entries(state.settings),
+                ...Object.entries(modalSettings),
+                ...Object.entries(creditCardSettings),
+              ]
+                .map(([key, config]) => `${key}=${config.value}`)
+                .join(" | "),
+            ),
+          ],
+        }));
       },
       complete() {
-        set(() => ({ systemStep: SYSTEM_STEP.END }));
+        set((s) => ({
+          systemStep: SYSTEM_STEP.END,
+          systemLog: [...s.systemLog, generateSystemLog(LOG_TAG.COMPLETE)],
+        }));
       },
       end() {
         set(() => ({
@@ -119,14 +195,23 @@ export const useSystemStore = create<SystemStore>()(
           mouseLog: [],
         }));
       },
-      submit() {
+      submit(cardId) {
         set((state) => ({
-          systemLog: [...state.systemLog, generateSystemLog(LOG_TAG.SUBMIT)],
+          systemLog: [
+            ...state.systemLog,
+            generateSystemLog(LOG_TAG.SUBMIT, `cardId=${cardId}`),
+          ],
         }));
       },
-      check() {
+      check(id, field, value) {
         set((state) => ({
-          systemLog: [...state.systemLog, generateSystemLog(LOG_TAG.CHECK)],
+          systemLog: [
+            ...state.systemLog,
+            generateSystemLog(
+              LOG_TAG.CHECK,
+              `cardId=${id} | field=${field} | value=${String(value)}`,
+            ),
+          ],
         }));
       },
       openModal() {
@@ -154,11 +239,6 @@ export const useSystemStore = create<SystemStore>()(
             ...s.mouseLog,
             { type: "mouse_log", x, y, timestamp: Date.now() },
           ],
-        }));
-      },
-      addSystemLog(tag, message) {
-        set((state) => ({
-          systemLog: [...state.systemLog, generateSystemLog(tag, message)],
         }));
       },
       addMouseLog(x, y) {
@@ -189,6 +269,34 @@ export const useSystemStore = create<SystemStore>()(
       resetSettings() {
         set({ settings: defaultSystemState.settings });
       },
+      csvLink() {
+        const { systemLog, mouseLog } = useSystemStore.getState();
+        const combinedLogs = combineLogs(systemLog, mouseLog);
+
+        const escapeCSV = (value: string | number) => {
+          if (value === null || value === undefined) return '""';
+          const str = String(value);
+          return `"${str.replace(/"/g, '""')}"`;
+        };
+
+        const headers = Object.keys(combinedLogs[0] || {})
+          .map(escapeCSV)
+          .join(",");
+
+        const rows = combinedLogs.map((log) =>
+          Object.values(log).map(escapeCSV).join(","),
+        );
+
+        const csv = [headers, ...rows].join("\n");
+
+        const bom = new Uint8Array([0xef, 0xbb, 0xbf]);
+        const blob = new Blob([bom, csv], { type: "text/csv;charset=utf-8;" });
+
+        return {
+          url: URL.createObjectURL(blob),
+          filename: fileName("csv"),
+        };
+      },
     }),
     {
       name: "system-store7",
@@ -196,3 +304,15 @@ export const useSystemStore = create<SystemStore>()(
     },
   ),
 );
+
+const fileName = (extension: "json" | "csv") =>
+  `system_log_${new Date()
+    .toLocaleString("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
+    .replace(/\D/g, "")}.${extension}`;

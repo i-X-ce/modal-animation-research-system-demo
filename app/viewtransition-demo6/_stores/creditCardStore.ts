@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { CreditCard } from "../_types/creditCard";
 import { persist } from "zustand/middleware";
 import { ConfigurationMap } from "../_types/setting";
+import { useSystemStore } from "./systemStore";
 
 type RandomCreditKey = Exclude<keyof CreditCard, "id">; // ランダムを適用するCreditCardのキー
 
@@ -353,7 +354,7 @@ const defaultCreditCardState: CreditCardState = {
 
 export const useCreditCardStore = create<CreditCardStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...defaultCreditCardState,
       async submitCreditCard(id: string) {
         set((state) => ({
@@ -361,9 +362,21 @@ export const useCreditCardStore = create<CreditCardStore>()(
             card.id === id ? { ...card, submitted: true } : card,
           ),
         }));
+        useSystemStore.getState().submit(id);
         await new Promise((resolve) => setTimeout(resolve, 1000));
       },
       toggleFieldCheck(id: string, field: Exclude<keyof CreditCard, "id">) {
+        useSystemStore
+          .getState()
+          .check(
+            id,
+            field,
+            !(
+              get().creditCards.find((card) => card.id === id)?.checked[
+                field
+              ] ?? true
+            ),
+          );
         set((state) => ({
           creditCards: state.creditCards.map((card) =>
             card.id === id && !card.submitted
