@@ -24,7 +24,6 @@ const PhotoView = () => {
     useSensor(PointerSensor, { activationConstraint: { distance: 3 } }),
   );
   const numberOfCards = useSystemStore((state) => state.settings.numberOfCards);
-  const columns = useSystemStore((state) => state.settings.columns);
 
   const activePhoto = photos.find((photo) => photo.id === activeId);
 
@@ -51,15 +50,12 @@ const PhotoView = () => {
     >
       <SortableContext items={photos} strategy={rectSortingStrategy}>
         <div
-          className="grid grid-cols-8 overflow-x-clip"
-          style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+          className="flex flex-wrap overflow-x-clip"
+          // style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
         >
-          {photos
-            .slice(0, numberOfCards)
-            .filter((photo) => photo.isDisplay)
-            .map((photo) => (
-              <PhotoCard key={photo.id} {...photo} />
-            ))}
+          {photos.slice(0, numberOfCards).map((photo) => (
+            <PhotoCard key={photo.id} {...photo} />
+          ))}
         </div>
       </SortableContext>
 

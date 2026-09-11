@@ -8,18 +8,20 @@ import { useAlbumStore } from "../_stores/albumStore";
 import { useModalStore, useModalTransition } from "../_stores/modalStore";
 import PhotoModalContent from "./PhotoModalContent";
 import Image from "next/image";
+import { useSystemStore } from "../_stores/systemStore";
 
 interface PhotoCardProps extends Photo {
   isOverlay?: boolean;
 }
 
 const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
-  const { id, imageUrl } = photoProps;
+  const { id, imageUrl, isDisplay } = photoProps;
   const openModal = useModalStore((s) => s.openModal);
   // const { attributes, listeners, setNodeRef } = useSortable({ id });
   const isDragging = useAlbumStore((s) => s.activePhotoId === id);
   const modalTransition = useModalTransition();
   const setOpenPhotoId = useAlbumStore((s) => s.setOpenPhotoId);
+  const columns = useSystemStore((state) => state.settings.columns);
 
   const imageLayoutId = `photo-card-${id}`;
   const containerLayoutId = `photo-card-container-${id}`;
@@ -46,10 +48,6 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
     />
   );
 
-  if (isDragging && !isOverlay) {
-    return <div />;
-  }
-
   return (
     <motion.div
       // {...(isOverlay ? {} : attributes)}
@@ -57,16 +55,19 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
       onClick={handleClick}
       layoutId={isDragging && !isOverlay ? undefined : containerLayoutId}
       // ref={isOverlay ? undefined : setNodeRef}
-      className={clsx("relative w-full aspect-square")}
+      className={clsx("aspect-square relative")}
+      style={{
+        width: isDisplay ? `calc(100% / ${columns} - 0.5px)` : "0.02px",
+      }}
       transition={{ type: "spring", bounce: 0.3, duration: 0.3 }}
     >
-      <div className="absolute inset-0">{imageContent}</div>
+      {isDisplay && <div className="absolute inset-0">{imageContent}</div>}
       <motion.div
         className={clsx("absolute inset-0", isActiveAnimation && "z-100")}
         layoutId={imageLayoutId}
         transition={isAnimation ? modalTransition : { duration: 0 }}
       >
-        {imageContent}
+        {isDisplay && imageContent}
       </motion.div>
     </motion.div>
   );
