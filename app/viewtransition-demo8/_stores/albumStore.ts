@@ -56,13 +56,13 @@ export const useAlbumStore = create<AlbumStore>((set, get) => ({
     }
     set({ openPhotoId: id });
   },
-  removePhoto: (/* id */) => {
-    // useSystemStore.getState().removePhoto(id);
-    // set((state) => ({
-    //   photos: state.photos.map((photo) =>
-    //     photo.id === id ? { ...photo, isDisplay: false } : photo,
-    //   ),
-    // }));
+  removePhoto: (id) => {
+    useSystemStore.getState().removePhoto(id);
+    set((state) => ({
+      photos: state.photos.map((photo) =>
+        photo.id === id ? { ...photo, isDisplay: false } : photo,
+      ),
+    }));
   },
   openInformation: () => {
     useSystemStore.getState().openInformation();
