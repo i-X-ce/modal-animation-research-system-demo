@@ -37,15 +37,18 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
   };
 
   const imageContent = (
-    <Image
-      width={100}
-      height={100}
-      src={imageUrl}
-      alt={id}
-      className="w-full h-full object-cover "
-      loading="eager"
-      draggable={false}
-    />
+    <>
+      <Image
+        width={100}
+        height={100}
+        src={imageUrl}
+        alt={id}
+        className="w-full h-full object-cover"
+        loading="eager"
+        draggable={false}
+      />
+      <div className="absolute border-b border-r border-white inset-0" />
+    </>
   );
 
   return (
