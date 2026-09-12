@@ -22,6 +22,7 @@ import {
 } from "@mui/material";
 import {
   ANIMATION_TYPES,
+  BACKDROP_TYPES,
   ModalSettings,
   useModalStore,
 } from "../_stores/modalStore";
@@ -142,7 +143,7 @@ const SettingCheckbox = ({
 
 const SettingModalContent = () => {
   const modalSettings = useModalStore((s) => s.settings);
-  const { type, easing, duration, coverage } = modalSettings;
+  const { type, easing, duration, coverage, backdrop } = modalSettings;
   const systemSettings = useSystemStore((s) => s.settings);
   const {
     numberOfCards,
@@ -178,6 +179,12 @@ const SettingModalContent = () => {
             value={easing}
             onChange={(value) => setModalSettings({ easing: value })}
             options={EASINGS}
+          />
+          <SettingSelector
+            label={"バックドロップ"}
+            value={backdrop}
+            onChange={(value) => setModalSettings({ backdrop: value })}
+            options={BACKDROP_TYPES}
           />
           <SettingSlider
             label="アニメーションの時間"

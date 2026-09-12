@@ -8,14 +8,17 @@ import { useSystemStore } from "./systemStore";
 import { useAlbumStore } from "./albumStore";
 
 export const ANIMATION_TYPES = ["view", "classic", "none"] as const;
-
 export type AnimationType = (typeof ANIMATION_TYPES)[number];
+
+export const BACKDROP_TYPES = ["blur", "white", "black"] as const;
+export type BackdropType = (typeof BACKDROP_TYPES)[number];
 
 export type ModalSettings = {
   type: AnimationType; // アニメーションの種類（view: ViewTransition風, classic: スライドイン, none: 無し）
   easing: Exclude<EasingDefinition, BezierDefinition>; // アニメーションのイージング
   duration: number; // アニメーションの時間（秒）
   coverage: number; // 画面占有率
+  backdrop: BackdropType; // 背景の種類（blur: ぼかし, white: 白, black: 黒）
 };
 
 type ModalState = {
@@ -46,6 +49,7 @@ const defaultModalState: ModalState = {
     easing: "easeInOut",
     duration: 0.5,
     coverage: 0.5,
+    backdrop: "blur",
   },
   isAnimation: false,
 } as const;

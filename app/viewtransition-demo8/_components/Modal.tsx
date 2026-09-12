@@ -16,6 +16,7 @@ const Modal = () => {
   const type = useModalStore((s) => s.settings.type);
   const coverage = useModalStore((s) => s.settings.coverage);
   const size = Math.round(Math.sqrt(coverage) * 100);
+  const backdropType = useModalStore((s) => s.settings.backdrop);
   const isAnimation = useModalStore((s) => s.isAnimation);
   const setIsAnimation = useModalStore((s) => s.setIsAnimation);
   const setOpenPhotoId = useAlbumStore((s) => s.setOpenPhotoId);
@@ -56,7 +57,12 @@ const Modal = () => {
       {open && (
         <div className="fixed inset-0 flex items-center justify-center z-100">
           <motion.div
-            className={clsx("absolute inset-0 bg-black/30 backdrop-blur-lg")}
+            className={clsx(
+              "absolute inset-0",
+              backdropType === "blur" && "bg-black/30 backdrop-blur-lg",
+              backdropType === "white" && "bg-white",
+              backdropType === "black" && "bg-black",
+            )}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
