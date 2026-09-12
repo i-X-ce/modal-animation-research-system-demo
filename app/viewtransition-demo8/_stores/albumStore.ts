@@ -41,6 +41,7 @@ export const useAlbumStore = create<AlbumStore>((set, get) => ({
     set({
       photos: generatePhotos(
         useSystemStore.getState().settings.numberOfCards,
+        useSystemStore.getState().settings.photoType,
         useSystemStore.getState().settings.seed,
       ),
     });

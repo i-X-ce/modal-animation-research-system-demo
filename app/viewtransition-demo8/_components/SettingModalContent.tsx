@@ -31,6 +31,7 @@ import {
   INDEX_TYPES,
   MAX_NUMBER_OF_CARDS,
   PHOTO_INFORMATION_DIRECTIONS,
+  PHOTO_TYPES,
   SEEDS,
   useSystemStore,
 } from "../_stores/systemStore";
@@ -154,6 +155,7 @@ const SettingModalContent = () => {
     displayIndexOnModal,
     photoInformationDirection,
     seed,
+    photoType,
   } = systemSettings;
   const setModalSettings = useModalStore((s) => s.setSettings);
   const setSystemSettings = useSystemStore((s) => s.setSettings);
@@ -225,6 +227,12 @@ const SettingModalContent = () => {
             value={seed}
             onChange={(value) => setSystemSettings({ seed: value })}
             options={SEEDS}
+          />
+          <SettingSelector
+            label="写真の種類"
+            value={photoType}
+            onChange={(value) => setSystemSettings({ photoType: value })}
+            options={PHOTO_TYPES}
           />
           <SettingSlider
             label="カード枚数"

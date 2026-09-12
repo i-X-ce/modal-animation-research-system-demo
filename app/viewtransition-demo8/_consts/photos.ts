@@ -1,4 +1,4 @@
-import { IndexType } from "../_stores/systemStore";
+import { IndexType, PhotoType } from "../_stores/systemStore";
 import { EXIFData, Photo } from "../_types/photo";
 import seedrandom from "seedrandom";
 
@@ -6,8 +6,9 @@ const generateId = (cnt: number) => {
   return `p${cnt++}`;
 };
 
-const generateImgPath = (num: number) => {
-  return `images/fireworks/fireworks${String((num % 21) + 1).padStart(3, "0")}.jpg`;
+const generateImgPath = (num: number, photoType: PhotoType) => {
+  // return `images/fireworks/fireworks${String((num % 21) + 1).padStart(3, "0")}.jpg`;
+  return `images/${photoType}/${photoType}${String((num % 21) + 1).padStart(3, "0")}.jpg`;
 };
 
 const generatePlace = (seed?: string): EXIFData["place"] => {
@@ -125,13 +126,23 @@ export const formatIndex = (index: number, indexType: IndexType) => {
   }
 };
 
-export const generatePhoto = (cnt: number, seed?: string): Photo => ({
-  imageUrl: generateImgPath(cnt),
+export const generatePhoto = (
+  cnt: number,
+  photoType: PhotoType,
+  seed?: string,
+): Photo => ({
+  imageUrl: generateImgPath(cnt, photoType),
   id: generateId(cnt),
   datetime: generateIndex(seed),
   isDisplay: true,
   EXIFData: generateEXIFData(seed),
 });
 
-export const generatePhotos = (cnt: number, seed?: string): Photo[] =>
-  Array.from({ length: cnt }).map((_, i) => generatePhoto(i, `${seed}-${i}`));
+export const generatePhotos = (
+  cnt: number,
+  photoType: PhotoType,
+  seed?: string,
+): Photo[] =>
+  Array.from({ length: cnt }).map((_, i) =>
+    generatePhoto(i, photoType, `${seed}-${i}`),
+  );

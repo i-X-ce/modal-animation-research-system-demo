@@ -110,6 +110,9 @@ export const SEEDS = [
 ];
 type Seed = (typeof SEEDS)[number];
 
+export const PHOTO_TYPES = ["fireworks", "forest"] as const;
+export type PhotoType = (typeof PHOTO_TYPES)[number];
+
 type SystemSettings = {
   numberOfCards: number;
   columns: number;
@@ -118,6 +121,7 @@ type SystemSettings = {
   displayIndexOnModal: boolean; // モーダルにインデックスを表示するか
   photoInformationDirection: PhotoInformationDirection; // 画像情報の表示位置
   seed: Seed; // 乱数のシード値
+  photoType: PhotoType; // 画像の種類
 };
 
 type SystemState = {
@@ -161,6 +165,7 @@ const defaultSystemState: SystemState = {
     displayIndexOnModal: false,
     photoInformationDirection: "bottom",
     seed: SEEDS[1],
+    photoType: "forest",
   },
   systemStep: SYSTEM_STEP.START,
   systemLog: [],
