@@ -5,7 +5,7 @@ import { Delete, Info } from "@mui/icons-material";
 import { useAlbumStore } from "../_stores/albumStore";
 import { useSystemStore } from "../_stores/systemStore";
 import { EXIFData, EXIFDATA_LABELS, formatEXIFValue } from "../_types/photo";
-import { formatIndex } from "../_consts/photos";
+import { formatIndex } from "../_util/photos";
 
 const InformationItem = ({
   label,

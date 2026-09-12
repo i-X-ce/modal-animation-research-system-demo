@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { Photo } from "../_types/photo";
-import {  useSystemStore } from "../_stores/systemStore";
-import { formatIndex } from "../_consts/photos";
+import { useSystemStore } from "../_stores/systemStore";
+import { formatIndex } from "../_util/photos";
 
 interface PhotoModalContentProps extends Photo {}
 

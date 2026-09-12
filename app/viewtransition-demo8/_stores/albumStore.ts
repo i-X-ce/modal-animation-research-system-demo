@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import { generatePhotos } from "../_consts/photos";
+import { generatePhotos } from "../_util/photos";
 import { Photo } from "../_types/photo";
 // import { arrayMove } from "@dnd-kit/sortable";
 import { UniqueIdentifier } from "@dnd-kit/core";
