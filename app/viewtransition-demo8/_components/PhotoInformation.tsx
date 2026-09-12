@@ -3,8 +3,9 @@
 import { Box, IconButton, Paper, Stack, Typography } from "@mui/material";
 import { Delete, Info } from "@mui/icons-material";
 import { useAlbumStore } from "../_stores/albumStore";
-import { formatIndex, useSystemStore } from "../_stores/systemStore";
+import { useSystemStore } from "../_stores/systemStore";
 import { EXIFData, EXIFDATA_LABELS, formatEXIFValue } from "../_types/photo";
+import { formatIndex } from "../_consts/photos";
 
 const InformationItem = ({
   label,

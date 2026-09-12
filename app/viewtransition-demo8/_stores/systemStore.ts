@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useModalStore } from "./modalStore";
 import { Photo } from "../_types/photo";
+import { useAlbumStore } from "./albumStore";
 
 export const SYSTEM_STEP = {
   START: "start",
@@ -93,8 +94,21 @@ export const PHOTO_INFORMATION_DIRECTIONS = [
   "left",
   "right",
 ] as const;
-
 type PhotoInformationDirection = (typeof PHOTO_INFORMATION_DIRECTIONS)[number];
+
+export const SEEDS = [
+  "seed0",
+  "seed1",
+  "seed2",
+  "seed3",
+  "seed4",
+  "seed5",
+  "seed6",
+  "seed7",
+  "seed8",
+  "seed9",
+];
+type Seed = (typeof SEEDS)[number];
 
 type SystemSettings = {
   numberOfCards: number;
@@ -103,6 +117,7 @@ type SystemSettings = {
   lockInformation: boolean; // 画像情報を表示中にモーダルを閉じることができるか
   displayIndexOnModal: boolean; // モーダルにインデックスを表示するか
   photoInformationDirection: PhotoInformationDirection; // 画像情報の表示位置
+  seed: Seed; // 乱数のシード値
 };
 
 type SystemState = {
@@ -145,6 +160,7 @@ const defaultSystemState: SystemState = {
     lockInformation: true,
     displayIndexOnModal: false,
     photoInformationDirection: "bottom",
+    seed: SEEDS[1],
   },
   systemStep: SYSTEM_STEP.START,
   systemLog: [],
@@ -164,6 +180,7 @@ export const useSystemStore = create<SystemStore>()(
         set({ settings: defaultSystemState.settings });
       },
       start() {
+        useAlbumStore.getState().resetPhotos();
         const modalSettings = useModalStore.getState().settings;
         set((state) => ({
           systemStep: SYSTEM_STEP.DOING,
@@ -295,42 +312,6 @@ export const useSystemStore = create<SystemStore>()(
 export const INDEX_TYPES = ["date", "datetime", "number"] as const;
 
 export type IndexType = (typeof INDEX_TYPES)[number];
-
-const MIN_DATE = new Date("2023-01-01T00:00:00Z");
-const MAX_DATE = new Date("2025-01-01T00:00:00Z");
-
-export const generateIndex = () => {
-  const minDate = new Date(MIN_DATE);
-  const maxDate = new Date(MAX_DATE);
-  const randomTime =
-    minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime());
-  return new Date(randomTime).getTime();
-};
-
-export const formatIndex = (index: number, indexType: IndexType) => {
-  const date = new Date(index);
-  switch (indexType) {
-    case "date":
-      return date.toLocaleDateString("us-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-    case "datetime":
-      return date.toLocaleString("us-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    case "number":
-      const range = MAX_DATE.getTime() - MIN_DATE.getTime();
-      const maxNumber = 1000; // 表示の最大値
-      const diff = index - MIN_DATE.getTime();
-      return Math.floor((maxNumber * diff) / range).toString();
-  }
-};
 
 const fileName = (extension: "json" | "csv") =>
   `system_log_${new Date()

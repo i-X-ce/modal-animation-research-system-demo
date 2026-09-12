@@ -1,9 +1,8 @@
-import { generateIndex } from "../_stores/systemStore";
+import { IndexType } from "../_stores/systemStore";
 import { EXIFData, Photo } from "../_types/photo";
+import seedrandom from "seedrandom";
 
-let cnt = 0;
-
-const generateId = () => {
+const generateId = (cnt: number) => {
   return `p${cnt++}`;
 };
 
@@ -11,7 +10,7 @@ const generateImgPath = (num: number) => {
   return `images/fireworks/fireworks${String((num % 21) + 1).padStart(3, "0")}.jpg`;
 };
 
-const generatePlace = (): EXIFData["place"] => {
+const generatePlace = (seed?: string): EXIFData["place"] => {
   const places = {
     // 北海道: ["札幌市", "函館市", "旭川市"],
     // 青森県: ["青森市", "弘前市", "八戸市"],
@@ -42,18 +41,20 @@ const generatePlace = (): EXIFData["place"] => {
     // 沖縄県: ["那覇市", "沖縄市", "うるま市"],
   } as const satisfies Record<string, readonly [string, string, string]>;
 
+  const rng = seedrandom(seed);
   const prefecture =
-    Object.keys(places)[Math.floor(Math.random() * Object.keys(places).length)];
+    Object.keys(places)[Math.floor(rng() * Object.keys(places).length)];
   const cities = places[prefecture as keyof typeof places];
-  const city = cities[Math.floor(Math.random() * cities.length)];
+  const city = cities[Math.floor(rng() * cities.length)];
 
   return { prefecture, city };
 };
 
-const generateEXIFData = (): EXIFData => {
-  const rp = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+const generateEXIFData = (seed?: string): EXIFData => {
+  const rng = seedrandom(seed);
+  const rp = <T>(arr: T[]): T => arr[Math.floor(rng() * arr.length)];
   const rn = (min: number, max: number): number =>
-    Math.floor(Math.random() * (max - min + 1)) + min;
+    Math.floor(rng() * (max - min + 1)) + min;
 
   return {
     make: rp(["Canon", "Nikon", "Sony", "Fujifilm"]),
@@ -71,7 +72,7 @@ const generateEXIFData = (): EXIFData => {
     exposureProgram: rp([1, 2, 3, 4]),
     whiteBalance: rp([0, 1]),
     flash: rp([0, 1]),
-    place: generatePlace(),
+    place: generatePlace(seed),
     GPSAltitude: rn(0, 10000),
     GPSAltitudeRef: rp([0, 1]),
     GPSImgDirection: rn(0, 360),
@@ -87,11 +88,50 @@ const generateEXIFData = (): EXIFData => {
   };
 };
 
-export const photos: Photo[] = Array.from({ length: 100 }).map(() => ({
+const MIN_DATE = new Date("2023-01-01T00:00:00Z");
+const MAX_DATE = new Date("2025-01-01T00:00:00Z");
+
+export const generateIndex = (seed?: string) => {
+  const rng = seedrandom(seed);
+  const minDate = new Date(MIN_DATE);
+  const maxDate = new Date(MAX_DATE);
+  const randomTime =
+    minDate.getTime() + rng() * (maxDate.getTime() - minDate.getTime());
+  return new Date(randomTime).getTime();
+};
+
+export const formatIndex = (index: number, indexType: IndexType) => {
+  const date = new Date(index);
+  switch (indexType) {
+    case "date":
+      return date.toLocaleDateString("us-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    case "datetime":
+      return date.toLocaleString("us-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    case "number":
+      const range = MAX_DATE.getTime() - MIN_DATE.getTime();
+      const maxNumber = 1000; // 表示の最大値
+      const diff = index - MIN_DATE.getTime();
+      return Math.floor((maxNumber * diff) / range).toString();
+  }
+};
+
+export const generatePhoto = (cnt: number, seed?: string): Photo => ({
   imageUrl: generateImgPath(cnt),
-  id: generateId(),
-  datetime: generateIndex(),
-  place: generatePlace(),
+  id: generateId(cnt),
+  datetime: generateIndex(seed),
   isDisplay: true,
-  EXIFData: generateEXIFData(),
-}));
+  EXIFData: generateEXIFData(seed),
+});
+
+export const generatePhotos = (cnt: number, seed?: string): Photo[] =>
+  Array.from({ length: cnt }).map((_, i) => generatePhoto(i, `${seed}-${i}`));

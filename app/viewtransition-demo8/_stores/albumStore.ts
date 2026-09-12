@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import { photos } from "../_consts/photos";
+import { generatePhotos } from "../_consts/photos";
 import { Photo } from "../_types/photo";
 // import { arrayMove } from "@dnd-kit/sortable";
 import { UniqueIdentifier } from "@dnd-kit/core";
@@ -16,6 +16,7 @@ type AlbumState = {
 };
 
 type AlbumActions = {
+  resetPhotos: (seed?: string) => void;
   movePhoto: (activeId: Photo["id"], overId: Photo["id"]) => void;
   setActivePhotoId: (id: UniqueIdentifier | null) => void;
   setOpenPhotoId: (id: Photo["id"] | null) => void;
@@ -27,7 +28,7 @@ type AlbumActions = {
 type AlbumStore = AlbumState & AlbumActions;
 
 const defaultAlbumState: AlbumState = {
-  photos: photos,
+  photos: [],
   activePhotoId: null,
   openPhotoId: null,
   isOpenInformation: false,
@@ -36,6 +37,14 @@ const defaultAlbumState: AlbumState = {
 export const useAlbumStore = create<AlbumStore>((set, get) => ({
   ...defaultAlbumState,
 
+  resetPhotos() {
+    set({
+      photos: generatePhotos(
+        useSystemStore.getState().settings.numberOfCards,
+        useSystemStore.getState().settings.seed,
+      ),
+    });
+  },
   movePhoto: (/* activeId, overId */) => {
     // set((state) => {
     //   const { photos } = state;
