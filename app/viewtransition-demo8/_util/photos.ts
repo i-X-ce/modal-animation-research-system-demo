@@ -146,3 +146,15 @@ export const generatePhotos = (
   Array.from({ length: cnt }).map((_, i) =>
     generatePhoto(i, photoType, `${seed}-${i}`),
   );
+
+/**
+ * 消すべき写真かどうかを判定する関数
+ * @param photo
+ * @returns
+ */
+export const checkRemovePhoto = (photo: Photo): boolean => {
+  const { EXIFData } = photo;
+  return (
+    EXIFData.place.prefecture === "東京都" && EXIFData.place.city === "新宿区"
+  );
+};

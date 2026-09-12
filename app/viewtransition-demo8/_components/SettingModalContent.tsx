@@ -156,6 +156,7 @@ const SettingModalContent = () => {
     photoInformationDirection,
     seed,
     photoType,
+    removeCounter,
   } = systemSettings;
   const setModalSettings = useModalStore((s) => s.setSettings);
   const setSystemSettings = useSystemStore((s) => s.setSettings);
@@ -265,6 +266,11 @@ const SettingModalContent = () => {
             onChange={(value) =>
               setSystemSettings({ displayIndexOnModal: value })
             }
+          />
+          <SettingCheckbox
+            label="画像削除のカウンターを表示する"
+            value={removeCounter}
+            onChange={(value) => setSystemSettings({ removeCounter: value })}
           />
         </Stack>
         <DialogActions>
