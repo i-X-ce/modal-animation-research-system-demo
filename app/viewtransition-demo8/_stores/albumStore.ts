@@ -6,6 +6,7 @@ import { Photo } from "../_types/photo";
 // import { arrayMove } from "@dnd-kit/sortable";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { useSystemStore } from "./systemStore";
+import { useModalStore } from "./modalStore";
 
 type AlbumState = {
   photos: Photo[];
@@ -58,6 +59,8 @@ export const useAlbumStore = create<AlbumStore>((set, get) => ({
   },
   removePhoto: (id) => {
     useSystemStore.getState().removePhoto(id);
+    useAlbumStore.getState().closeInformation();
+    useModalStore.getState().closeModal();
     set((state) => ({
       photos: state.photos.map((photo) =>
         photo.id === id ? { ...photo, isDisplay: false } : photo,
