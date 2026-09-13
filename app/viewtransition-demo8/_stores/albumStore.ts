@@ -70,7 +70,6 @@ export const useAlbumStore = create<AlbumStore>((set, get) => ({
   },
   removePhoto: (id) => {
     useSystemStore.getState().removePhoto(id);
-    useAlbumStore.getState().closeInformation();
     useModalStore.getState().closeModal();
     set((state) => ({
       photos: state.photos.map((photo) =>

@@ -50,7 +50,7 @@ const PhotoInformationContent = () => {
 
   const isVertical = direction === "top" || direction === "bottom";
 
-  if (!photo) return null;
+  if (!photo || !photo.isDisplay) return null;
 
   const { datetime, EXIFData } = photo;
 

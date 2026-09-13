@@ -69,7 +69,6 @@ export const useModalStore = create<ModalStore>()(
         if (isOpenInformation && lockInformation) {
           return;
         }
-        useAlbumStore.getState().closeInformation();
         useSystemStore.getState().closeModal();
         set({ open: false });
       },
