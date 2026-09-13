@@ -156,7 +156,8 @@ const SettingModalContent = () => {
     photoInformationDirection,
     seed,
     photoType,
-    removeCounter,
+    displayRemoveCounter,
+    numberOfRemovePhotos,
   } = systemSettings;
   const setModalSettings = useModalStore((s) => s.setSettings);
   const setSystemSettings = useSystemStore((s) => s.setSettings);
@@ -246,6 +247,18 @@ const SettingModalContent = () => {
             onChange={(value) => setSystemSettings({ numberOfCards: value })}
           />
           <SettingSlider
+            label="消すべきカード枚数"
+            min={0}
+            max={numberOfCards}
+            value={numberOfRemovePhotos}
+            step={1}
+            unit="枚"
+            decimalScale={0}
+            onChange={(value) =>
+              setSystemSettings({ numberOfRemovePhotos: value })
+            }
+          />
+          <SettingSlider
             label="一行に表示するカード枚数"
             min={0}
             max={20}
@@ -269,8 +282,10 @@ const SettingModalContent = () => {
           />
           <SettingCheckbox
             label="画像削除のカウンターを表示する"
-            value={removeCounter}
-            onChange={(value) => setSystemSettings({ removeCounter: value })}
+            value={displayRemoveCounter}
+            onChange={(value) =>
+              setSystemSettings({ displayRemoveCounter: value })
+            }
           />
         </Stack>
         <DialogActions>

@@ -122,7 +122,8 @@ type SystemSettings = {
   photoInformationDirection: PhotoInformationDirection; // 画像情報の表示位置
   seed: Seed; // 乱数のシード値
   photoType: PhotoType; // 画像の種類
-  removeCounter: boolean; // 画像削除のカウンターを表示するか
+  displayRemoveCounter: boolean; // 画像削除のカウンターを表示するか
+  numberOfRemovePhotos: number; // 削除する画像の枚数
 };
 
 type SystemState = {
@@ -167,7 +168,8 @@ const defaultSystemState: SystemState = {
     photoInformationDirection: "bottom",
     seed: SEEDS[1],
     photoType: "forest",
-    removeCounter: false,
+    displayRemoveCounter: false,
+    numberOfRemovePhotos: 3,
   },
   systemStep: SYSTEM_STEP.START,
   systemLog: [],

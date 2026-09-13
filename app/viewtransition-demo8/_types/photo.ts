@@ -1,4 +1,12 @@
+export const PHOTO_MARKERS = {
+  DEFAULT: "default",
+  REMOVE: "remove",
+} as const;
+
+export type PhotoMaker = (typeof PHOTO_MARKERS)[keyof typeof PHOTO_MARKERS];
+
 export interface Photo {
+  _marker: PhotoMaker;
   id: string;
   imageUrl: string;
   datetime: number;

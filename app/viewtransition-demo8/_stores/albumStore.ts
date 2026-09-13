@@ -43,6 +43,7 @@ export const useAlbumStore = create<AlbumStore>((set, get) => ({
         useSystemStore.getState().settings.numberOfCards,
         useSystemStore.getState().settings.photoType,
         useSystemStore.getState().settings.seed,
+        useSystemStore.getState().settings.numberOfRemovePhotos,
       ),
     });
   },

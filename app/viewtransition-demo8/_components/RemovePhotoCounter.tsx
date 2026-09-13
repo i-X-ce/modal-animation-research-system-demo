@@ -2,13 +2,13 @@
 
 import { Typography } from "@mui/material";
 import { useAlbumStore } from "../_stores/albumStore";
-import { checkRemovePhoto } from "../_util/photos";
 import { useSystemStore } from "../_stores/systemStore";
+import { PHOTO_MARKERS } from "../_types/photo";
 
 const RemovePhotoCounter = () => {
-  const isDisplay = useSystemStore((s) => s.settings.removeCounter);
+  const isDisplay = useSystemStore((s) => s.settings.displayRemoveCounter);
   const maxRemoveCnt = useAlbumStore(
-    (s) => s.photos.filter((p) => checkRemovePhoto(p)).length,
+    (s) => s.photos.filter((p) => p._marker === PHOTO_MARKERS.REMOVE).length,
   );
   const removeCnt = useAlbumStore(
     (s) => s.photos.filter((p) => !p.isDisplay).length,

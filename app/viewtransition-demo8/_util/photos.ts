@@ -1,5 +1,5 @@
 import { IndexType, PhotoType } from "../_stores/systemStore";
-import { EXIFData, Photo } from "../_types/photo";
+import { EXIFData, Photo, PHOTO_MARKERS } from "../_types/photo";
 import seedrandom from "seedrandom";
 
 const generateId = (cnt: number) => {
@@ -11,37 +11,21 @@ const generateImgPath = (num: number, photoType: PhotoType) => {
   return `images/${photoType}/${photoType}${String((num % 21) + 1).padStart(3, "0")}.jpg`;
 };
 
-const generatePlace = (seed?: string): EXIFData["place"] => {
-  const places = {
-    // 北海道: ["札幌市", "函館市", "旭川市"],
-    // 青森県: ["青森市", "弘前市", "八戸市"],
-    // 宮城県: ["仙台市", "石巻市", "大崎市"],
+type PlaceMap = Record<string, readonly string[]>;
 
-    東京都: ["新宿区", "渋谷区", "港区"],
-    神奈川県: ["横浜市", "川崎市", "相模原市"],
-    // 埼玉県: ["さいたま市", "川口市", "川越市"],
+const DEFAULT_PLACES = {
+  東京都: ["渋谷区", "港区"],
+  神奈川県: ["横浜市", "川崎市", "相模原市"],
+} as const satisfies PlaceMap;
 
-    // 愛知県: ["名古屋市", "豊田市", "岡崎市"],
-    // 静岡県: ["静岡市", "浜松市", "沼津市"],
-    // 長野県: ["長野市", "松本市", "上田市"],
+const REMOVE_PLACES = {
+  東京都: ["新宿区"],
+} as const satisfies PlaceMap;
 
-    // 大阪府: ["大阪市", "堺市", "東大阪市"],
-    // 京都府: ["京都市", "宇治市", "亀岡市"],
-    // 兵庫県: ["神戸市", "姫路市", "西宮市"],
-
-    // 広島県: ["広島市", "福山市", "呉市"],
-    // 岡山県: ["岡山市", "倉敷市", "津山市"],
-    // 山口県: ["下関市", "山口市", "宇部市"],
-
-    // 香川県: ["高松市", "丸亀市", "坂出市"],
-    // 愛媛県: ["松山市", "今治市", "新居浜市"],
-    // 高知県: ["高知市", "南国市", "四万十市"],
-
-    // 福岡県: ["福岡市", "北九州市", "久留米市"],
-    // 熊本県: ["熊本市", "八代市", "天草市"],
-    // 沖縄県: ["那覇市", "沖縄市", "うるま市"],
-  } as const satisfies Record<string, readonly [string, string, string]>;
-
+const generatePlace = (
+  seed: string,
+  places: PlaceMap = DEFAULT_PLACES,
+): EXIFData["place"] => {
   const rng = seedrandom(seed);
   const prefecture =
     Object.keys(places)[Math.floor(rng() * Object.keys(places).length)];
@@ -51,7 +35,7 @@ const generatePlace = (seed?: string): EXIFData["place"] => {
   return { prefecture, city };
 };
 
-const generateEXIFData = (seed?: string): EXIFData => {
+const generateEXIFData = (seed: string): EXIFData => {
   const rng = seedrandom(seed);
   const rp = <T>(arr: T[]): T => arr[Math.floor(rng() * arr.length)];
   const rn = (min: number, max: number): number =>
@@ -129,32 +113,45 @@ export const formatIndex = (index: number, indexType: IndexType) => {
 export const generatePhoto = (
   cnt: number,
   photoType: PhotoType,
-  seed?: string,
-): Photo => ({
-  imageUrl: generateImgPath(cnt, photoType),
-  id: generateId(cnt),
-  datetime: generateIndex(seed),
-  isDisplay: true,
-  EXIFData: generateEXIFData(seed),
-});
+  seed: string,
+  shouldRemove: boolean,
+): Photo => {
+  const photo: Photo = {
+    _marker: PHOTO_MARKERS.DEFAULT,
+    imageUrl: generateImgPath(cnt, photoType),
+    id: generateId(cnt),
+    datetime: generateIndex(seed),
+    isDisplay: true,
+    EXIFData: generateEXIFData(seed),
+  };
+
+  if (shouldRemove) {
+    return {
+      ...photo,
+      _marker: PHOTO_MARKERS.REMOVE,
+      EXIFData: {
+        ...photo.EXIFData,
+        place: generatePlace(seed, REMOVE_PLACES),
+      },
+    };
+  } else {
+    return photo;
+  }
+};
 
 export const generatePhotos = (
   cnt: number,
   photoType: PhotoType,
-  seed?: string,
-): Photo[] =>
-  Array.from({ length: cnt }).map((_, i) =>
-    generatePhoto(i, photoType, `${seed}-${i}`),
+  seed: string,
+  removeCnt: number = 0,
+): Photo[] => {
+  const rng = seedrandom(seed);
+  const indexes = Array.from({ length: cnt }, (_, i) => i).sort(
+    () => rng() - 0.5,
   );
+  const removeIndexSet = new Set<number>(indexes.slice(0, removeCnt));
 
-/**
- * 消すべき写真かどうかを判定する関数
- * @param photo
- * @returns
- */
-export const checkRemovePhoto = (photo: Photo): boolean => {
-  const { EXIFData } = photo;
-  return (
-    EXIFData.place.prefecture === "東京都" && EXIFData.place.city === "新宿区"
+  return Array.from({ length: cnt }).map((_, i) =>
+    generatePhoto(i, photoType, `${seed}-${i}`, removeIndexSet.has(i)),
   );
 };
