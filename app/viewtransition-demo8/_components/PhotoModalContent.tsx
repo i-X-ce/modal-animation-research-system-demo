@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Photo } from "../_types/photo";
 import { useSystemStore } from "../_stores/systemStore";
 import { formatIndex } from "../_util/photos";
+import ModalCloseButton from "./ModalCloseButton";
 
 interface PhotoModalContentProps extends Photo {}
 
@@ -33,6 +34,7 @@ const PhotoModalContent = ({
           </div>
         </>
       )}
+      <ModalCloseButton />
     </div>
   );
 };
