@@ -69,6 +69,7 @@ export const useAlbumStore = create<AlbumStore>((set, get) => ({
     set({ openPhotoId: id });
   },
   removePhoto: (id) => {
+    get().closeInformation();
     useSystemStore.getState().removePhoto(id);
     useModalStore.getState().closeModal();
     set((state) => ({
