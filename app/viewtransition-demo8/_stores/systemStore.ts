@@ -124,6 +124,7 @@ type SystemSettings = {
   photoType: PhotoType; // 画像の種類
   displayRemoveCounter: boolean; // 画像削除のカウンターを表示するか
   numberOfRemovePhotos: number; // 削除する画像の枚数
+  removeAnimation: boolean; // 画像削除時のアニメーションを有効にするか
 };
 
 type SystemState = {
@@ -170,6 +171,7 @@ const defaultSystemState: SystemState = {
     photoType: "forest",
     displayRemoveCounter: false,
     numberOfRemovePhotos: 3,
+    removeAnimation: false,
   },
   systemStep: SYSTEM_STEP.START,
   systemLog: [],

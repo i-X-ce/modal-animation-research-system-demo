@@ -22,6 +22,9 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
   const modalTransition = useModalTransition();
   const setOpenPhotoId = useAlbumStore((s) => s.setOpenPhotoId);
   const columns = useSystemStore((state) => state.settings.columns);
+  const removeAnimation = useSystemStore(
+    (state) => state.settings.removeAnimation,
+  );
 
   const imageLayoutId = `photo-card-${id}`;
   const containerLayoutId = `photo-card-container-${id}`;
@@ -62,7 +65,11 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
       style={{
         width: isDisplay ? `calc(100% / ${columns} - 0.5px)` : "0.02px",
       }}
-      transition={{ type: "spring", bounce: 0.3, duration: 0.3 }}
+      transition={
+        removeAnimation
+          ? { type: "spring", bounce: 0.3, duration: 0.3 }
+          : { duration: 0 }
+      }
     >
       {isDisplay && <div className="absolute inset-0">{imageContent}</div>}
       <motion.div

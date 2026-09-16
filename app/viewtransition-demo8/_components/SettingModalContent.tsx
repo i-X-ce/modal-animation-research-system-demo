@@ -158,6 +158,7 @@ const SettingModalContent = () => {
     photoType,
     displayRemoveCounter,
     numberOfRemovePhotos,
+    removeAnimation,
   } = systemSettings;
   const setModalSettings = useModalStore((s) => s.setSettings);
   const setSystemSettings = useSystemStore((s) => s.setSettings);
@@ -286,6 +287,11 @@ const SettingModalContent = () => {
             onChange={(value) =>
               setSystemSettings({ displayRemoveCounter: value })
             }
+          />
+          <SettingCheckbox
+            label="画像削除時のアニメーションを有効にする"
+            value={removeAnimation}
+            onChange={(value) => setSystemSettings({ removeAnimation: value })}
           />
         </Stack>
         <DialogActions>
