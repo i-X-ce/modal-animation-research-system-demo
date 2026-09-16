@@ -26,7 +26,13 @@ const StepPanel = () => {
           <>
             <PhotoView />
             <Box sx={{ p: 2, display: "flex", justifyContent: "end" }}>
-              <Button onClick={complete} variant="contained">
+              <Button
+                onClick={complete}
+                size="large"
+                variant="contained"
+                href={csvLink().url}
+                download={csvLink().filename}
+              >
                 チェック完了
               </Button>
             </Box>
