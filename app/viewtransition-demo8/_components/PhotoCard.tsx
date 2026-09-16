@@ -58,7 +58,7 @@ const PhotoCard = ({ isOverlay, ...photoProps }: PhotoCardProps) => {
       onClick={handleClick}
       layoutId={isDragging && !isOverlay ? undefined : containerLayoutId}
       // ref={isOverlay ? undefined : setNodeRef}
-      className={clsx("aspect-square relative")}
+      className="aspect-square relative select-none"
       style={{
         width: isDisplay ? `calc(100% / ${columns} - 0.5px)` : "0.02px",
       }}
