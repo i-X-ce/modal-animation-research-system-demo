@@ -1,3 +1,4 @@
+import { withBasePath } from "@/consts/path";
 import { IndexType, PhotoType } from "../_stores/systemStore";
 import { EXIFData, Photo, PHOTO_MARKERS } from "../_types/photo";
 import seedrandom from "seedrandom";
@@ -8,7 +9,9 @@ const generateId = (cnt: number) => {
 
 const generateImgPath = (num: number, photoType: PhotoType) => {
   // return `images/fireworks/fireworks${String((num % 21) + 1).padStart(3, "0")}.jpg`;
-  return `images/${photoType}/${photoType}${String((num % 21) + 1).padStart(3, "0")}.jpg`;
+  return withBasePath(
+    `images/${photoType}/${photoType}${String((num % 21) + 1).padStart(3, "0")}.jpg`,
+  );
 };
 
 type PlaceMap = Record<string, readonly string[]>;
