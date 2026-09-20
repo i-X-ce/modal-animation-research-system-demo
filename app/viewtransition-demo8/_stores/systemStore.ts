@@ -149,7 +149,7 @@ type SystemAction = {
   movePhotos: (photoId1: Photo["id"], photoId2: Photo["id"]) => void; // 画像の入れ替え
   openInformation: () => void; // 画像情報の表示
   closeInformation: () => void; // 画像情報の非表示
-  openModal: () => void; // モーダルを開く
+  openModal: (name?: string) => void; // モーダルを開く
   closeModal: () => void; // モーダルを閉じる
   mouseMove: (x: number, y: number) => void; // マウスの移動
   csvLink: () => LogFile; // CSVリンクを生成
@@ -257,11 +257,11 @@ export const useSystemStore = create<SystemStore>()(
           ],
         }));
       },
-      openModal() {
+      openModal(name) {
         set((state) => ({
           systemLog: [
             ...state.systemLog,
-            generateSystemLog(LOG_TAG.OPEN_MODAL),
+            generateSystemLog(LOG_TAG.OPEN_MODAL, name ? `name=${name}` : ""),
           ],
         }));
       },

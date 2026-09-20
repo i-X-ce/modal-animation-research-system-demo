@@ -59,7 +59,7 @@ export const useModalStore = create<ModalStore>()(
     (set) => ({
       ...defaultModalState,
       openModal(content: ReactNode, name?: string) {
-        useSystemStore.getState().openModal();
+        useSystemStore.getState().openModal(name);
         set({ open: true, content, name: name || null });
       },
       closeModal() {
