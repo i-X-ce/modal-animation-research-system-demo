@@ -11,6 +11,13 @@ const StepPanel = () => {
   const end = useSystemStore((s) => s.end);
   const csvLink = useSystemStore((s) => s.csvLink);
 
+  const downloadCsv = () => {
+    const link = document.createElement("a");
+    link.href = csvLink().url;
+    link.download = csvLink().filename;
+    link.click();
+  };
+
   const handleStart = () => {
     const element = document.documentElement;
     if (element.requestFullscreen) {
@@ -29,6 +36,7 @@ const StepPanel = () => {
       bodyElement.style.overflow = "";
     }
     complete();
+    downloadCsv();
   };
 
   const content = (() => {
@@ -46,13 +54,7 @@ const StepPanel = () => {
           <>
             <PhotoView />
             <Box sx={{ p: 2, display: "flex", justifyContent: "end" }}>
-              <Button
-                onClick={handleComplete}
-                size="large"
-                variant="contained"
-                href={csvLink().url}
-                download={csvLink().filename}
-              >
+              <Button onClick={handleComplete} size="large" variant="contained">
                 チェック完了
               </Button>
             </Box>
