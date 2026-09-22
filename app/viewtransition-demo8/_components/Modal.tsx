@@ -28,18 +28,18 @@ const Modal = () => {
   };
 
   const onAnimationStart = () => {
-    const bodyElement = document.body;
-    if (bodyElement) {
-      bodyElement.style.overflow = "hidden";
-    }
+    // const bodyElement = document.body;
+    // if (bodyElement) {
+    //   bodyElement.style.overflow = "hidden";
+    // }
     setIsAnimation(true);
   };
 
   const handleExitComplete = () => {
-    const bodyElement = document.body;
-    if (bodyElement) {
-      bodyElement.style.overflow = "";
-    }
+    // const bodyElement = document.body;
+    // if (bodyElement) {
+    //   bodyElement.style.overflow = "";
+    // }
     onExitComplete();
   };
 

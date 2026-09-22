@@ -11,12 +11,32 @@ const StepPanel = () => {
   const end = useSystemStore((s) => s.end);
   const csvLink = useSystemStore((s) => s.csvLink);
 
+  const handleStart = () => {
+    const element = document.documentElement;
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    }
+    const bodyElement = document.body;
+    if (bodyElement) {
+      bodyElement.style.overflow = "hidden";
+    }
+    start();
+  };
+
+  const handleComplete = () => {
+    const bodyElement = document.body;
+    if (bodyElement) {
+      bodyElement.style.overflow = "";
+    }
+    complete();
+  };
+
   const content = (() => {
     switch (step) {
       case SYSTEM_STEP.START:
         return (
           <Box sx={{ p: 4 }}>
-            <Button onClick={start} variant="contained">
+            <Button onClick={handleStart} variant="contained">
               スタート
             </Button>
           </Box>
@@ -27,7 +47,7 @@ const StepPanel = () => {
             <PhotoView />
             <Box sx={{ p: 2, display: "flex", justifyContent: "end" }}>
               <Button
-                onClick={complete}
+                onClick={handleComplete}
                 size="large"
                 variant="contained"
                 href={csvLink().url}
