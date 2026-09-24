@@ -247,7 +247,7 @@ const SettingModalContent = () => {
             decimalScale={0}
             onChange={(value) => setSystemSettings({ numberOfCards: value })}
           />
-          <SettingSlider
+          {/* <SettingSlider
             label="消すべきカード枚数"
             min={0}
             max={numberOfCards}
@@ -258,7 +258,7 @@ const SettingModalContent = () => {
             onChange={(value) =>
               setSystemSettings({ numberOfRemovePhotos: value })
             }
-          />
+          /> */}
           <SettingSlider
             label="一行に表示するカード枚数"
             min={0}
