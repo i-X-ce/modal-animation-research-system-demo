@@ -110,7 +110,7 @@ export const SEEDS = [
 ];
 type Seed = (typeof SEEDS)[number];
 
-export const PHOTO_TYPES = ["fireworks", "forest"] as const;
+export const PHOTO_TYPES = ["fireworks", "forest", "fireworks2"] as const;
 export type PhotoType = (typeof PHOTO_TYPES)[number];
 
 type SystemSettings = {
