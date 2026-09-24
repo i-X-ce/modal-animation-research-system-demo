@@ -10,7 +10,7 @@ const generateId = (cnt: number) => {
 const generateImgPath = (num: number, photoType: PhotoType) => {
   // return `images/fireworks/fireworks${String((num % 21) + 1).padStart(3, "0")}.jpg`;
   return withBasePath(
-    `images/${photoType}/${photoType}${String((num % 18) + 1).padStart(3, "0")}.jpg`,
+    `images/${photoType}/${photoType}_${String((num % 18) + 1).padStart(3, "0")}.jpg`,
   );
 };
 
