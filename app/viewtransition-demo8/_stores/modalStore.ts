@@ -35,6 +35,8 @@ type ModalAction = {
   onExitComplete: () => void;
   setSettings: (settings: Partial<ModalState["settings"]>) => void;
   resetSettings: () => void;
+  inputSettingsJson: (json: string) => void;
+  outputSettingsJson: () => string;
   setIsAnimation: (isAnimation: boolean) => void;
 };
 
@@ -56,7 +58,7 @@ const defaultModalState: ModalState = {
 
 export const useModalStore = create<ModalStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...defaultModalState,
       openModal(content: ReactNode, name?: string) {
         useSystemStore.getState().openModal(name);
@@ -82,6 +84,21 @@ export const useModalStore = create<ModalStore>()(
       },
       resetSettings() {
         set({ settings: defaultModalState.settings });
+      },
+      inputSettingsJson(json) {
+        try {
+          const parsed = JSON.parse(json);
+          if (typeof parsed === "object" && parsed !== null) {
+            set((state) => ({
+              settings: { ...state.settings, ...parsed },
+            }));
+          }
+        } catch (error) {
+          console.error("Invalid JSON input:", error);
+        }
+      },
+      outputSettingsJson() {
+        return JSON.stringify(get().settings, null, 2);
       },
       setIsAnimation(isAnimation) {
         set({ isAnimation });

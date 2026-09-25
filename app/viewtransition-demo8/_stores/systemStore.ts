@@ -142,6 +142,8 @@ type LogFile = {
 type SystemAction = {
   setSettings: (settings: Partial<SystemState["settings"]>) => void;
   resetSettings: () => void;
+  inputSettingsJson: (json: string) => void; // 設定の入力
+  outputSettingsJson: () => string; // 設定の出力
   start: () => void; // システムの開始
   complete: () => void; // チェック完了
   end: () => void; // システムの終了
@@ -189,6 +191,21 @@ export const useSystemStore = create<SystemStore>()(
       },
       resetSettings() {
         set({ settings: defaultSystemState.settings });
+      },
+      inputSettingsJson(json) {
+        try {
+          const parsed = JSON.parse(json);
+          if (typeof parsed === "object" && parsed !== null) {
+            set((state) => ({
+              settings: { ...state.settings, ...parsed },
+            }));
+          }
+        } catch (error) {
+          console.error("Invalid JSON input:", error);
+        }
+      },
+      outputSettingsJson() {
+        return JSON.stringify(get().settings, null, 2);
       },
       start() {
         useAlbumStore.getState().resetPhotos();

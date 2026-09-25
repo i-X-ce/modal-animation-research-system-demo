@@ -18,6 +18,7 @@ import {
   Slider,
   SliderProps,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import {
@@ -35,6 +36,7 @@ import {
   SEEDS,
   useSystemStore,
 } from "../_stores/systemStore";
+import { useState } from "react";
 
 const EASINGS: ModalSettings["easing"][] = [
   "linear",
@@ -164,10 +166,47 @@ const SettingModalContent = () => {
   const setSystemSettings = useSystemStore((s) => s.setSettings);
   const resetModalSettings = useModalStore((s) => s.resetSettings);
   const resetSystemSettings = useSystemStore((s) => s.resetSettings);
+  const inputModalSettingsJson = useModalStore((s) => s.inputSettingsJson);
+  const outputModalSettingsJson = useModalStore((s) => s.outputSettingsJson);
+  const inputSystemSettingsJson = useSystemStore((s) => s.inputSettingsJson);
+  const outputSystemSettingsJson = useSystemStore((s) => s.outputSettingsJson);
+  const [jsonInput, setJsonInput] = useState("");
 
   const handleReset = () => {
     resetModalSettings();
     resetSystemSettings();
+  };
+
+  const handleSettingsJsonOutput = () => {
+    const modalSettingsJson = outputModalSettingsJson();
+    const systemSettingsJson = outputSystemSettingsJson();
+    const combinedSettings = {
+      modalSettings: JSON.parse(modalSettingsJson),
+      systemSettings: JSON.parse(systemSettingsJson),
+    };
+    window.navigator.clipboard.writeText(
+      JSON.stringify(combinedSettings, null, 2),
+    );
+  };
+
+  const handleSettingsJsonInput = () => {
+    try {
+      const parsed = JSON.parse(jsonInput);
+      if (
+        typeof parsed === "object" &&
+        parsed !== null &&
+        "modalSettings" in parsed &&
+        "systemSettings" in parsed
+      ) {
+        const { modalSettings, systemSettings } = parsed;
+        inputModalSettingsJson(JSON.stringify(modalSettings));
+        inputSystemSettingsJson(JSON.stringify(systemSettings));
+      } else {
+        console.error("Invalid JSON input: Missing required keys");
+      }
+    } catch (error) {
+      console.error("Invalid JSON input:", error);
+    }
   };
 
   return (
@@ -175,6 +214,23 @@ const SettingModalContent = () => {
       <DialogTitle>モーダル設定</DialogTitle>
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 2 }}>
+          <Stack spacing={2}>
+            <TextField
+              multiline
+              label="JSON"
+              value={jsonInput}
+              onChange={(e) => setJsonInput(e.target.value)}
+              minRows={10}
+            />
+            <Stack direction={"row"} spacing={2}>
+              <Button variant="outlined" onClick={handleSettingsJsonOutput}>
+                設定をコピー
+              </Button>
+              <Button variant="contained" onClick={handleSettingsJsonInput}>
+                読み込み
+              </Button>
+            </Stack>
+          </Stack>
           <SettingSelector
             label={"種類"}
             value={type}
