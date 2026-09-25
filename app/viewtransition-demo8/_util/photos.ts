@@ -148,11 +148,28 @@ export const generatePhotos = (
   seed: string,
   removeCnt: number = 0,
 ): Photo[] => {
+  const getRandomIndices = (
+    cnt: number,
+    selectCnt: number,
+    rng: () => number,
+  ): Set<number> => {
+    const indices = Array.from({ length: cnt }, (_, i) => i);
+    const result = new Set<number>();
+
+    for (let i = 0; i < selectCnt; i++) {
+      const randIndex = i + Math.floor(rng() * (cnt - i));
+      const chosen = indices[randIndex];
+
+      indices[randIndex] = indices[i];
+      indices[i] = chosen;
+
+      result.add(chosen);
+    }
+    return result;
+  };
+
   const rng = seedrandom(seed);
-  const indexes = Array.from({ length: cnt }, (_, i) => i).sort(
-    () => rng() - 0.5,
-  );
-  const removeIndexSet = new Set<number>(indexes.slice(0, removeCnt));
+  const removeIndexSet = getRandomIndices(cnt, removeCnt, rng);
 
   return Array.from({ length: cnt }).map((_, i) =>
     generatePhoto(i, photoType, `${seed}-${i}`, removeIndexSet.has(i)),
