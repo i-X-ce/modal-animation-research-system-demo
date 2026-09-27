@@ -213,7 +213,6 @@ export const useSystemStore = create<SystemStore>()(
         set((state) => ({
           systemStep: SYSTEM_STEP.DOING,
           systemLog: [
-            ...state.systemLog,
             generateSystemLog(
               LOG_TAG.START,
               [
